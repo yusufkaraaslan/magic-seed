@@ -1,0 +1,35 @@
+---
+description: Universal workflow generator. Apply when the developer asks to initialize magic-seed, design or implement a feature, run a wizard (design, implement, pr, test, deploy, docs), validate a feature for PR, capture lessons learned, or search the project knowledge base.
+alwaysApply: false
+---
+
+# magic-seed (Cursor wrapper)
+
+This is the Cursor packaging of magic-seed. The full platform-neutral workflow lives in `instructions.md` at the repo root (one directory above `.cursor/rules/` once installed). **Read it before acting on any magic-seed intent.**
+
+---
+
+## When to apply this rule
+
+Cursor activates this rule when the developer's request matches the `description` above. Typical triggers:
+
+- "Initialize magic-seed for this project"
+- "Design a feature called <name>"
+- "Implement the next issue for <feature>"
+- "Validate <feature> for PR"
+- "Process PR feedback for <feature>"
+- "Capture lessons learned for <feature>"
+- "Search the knowledge base for <query>"
+
+If the developer expresses any of these intents — naturally phrased or with explicit wizard names — translate it to the corresponding magic-seed action and follow `instructions.md`.
+
+---
+
+## What this wrapper does
+
+This file exists only to:
+
+1. Provide the YAML frontmatter Cursor's agent uses to recognize when magic-seed is relevant.
+2. Point the agent at `instructions.md` for the full workflow logic.
+
+All workflow logic — detection, discovery, profile loading, wizard generation, knowledge-base structure, review gates — lives in `instructions.md`. Do not duplicate it here.
