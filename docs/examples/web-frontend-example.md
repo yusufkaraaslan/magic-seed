@@ -26,7 +26,7 @@ TaskMaster/
 ## Step 1: Initialize
 
 ```
-Developer: /magic-seed init
+Developer: "Initialize magic-seed for this project"
 
 AI: Detecting project type...
     Found: package.json, src/, .tsx files
@@ -44,7 +44,7 @@ AI: Generating wizards...
 **Feature:** Task Categories
 
 ```
-Developer: /design-wizard task-categories
+Developer: "Design a feature called task-categories"
 
 AI: Phase 2: DESIGN (Visual-First)
     
@@ -77,7 +77,7 @@ AI: Creating issues...
 ## Step 3: Implement
 
 ```
-Developer: /implement-wizard task-categories
+Developer: "Implement the next issue for task-categories"
 
 AI: Issue: model.md
     Creating types...
@@ -111,7 +111,7 @@ AI: Issue: model.md
 ## Step 4: PR
 
 ```
-Developer: /pr-wizard task-categories
+Developer: "Validate task-categories for PR"
 
 AI: pre-pr validation...
     ✓ Documentation

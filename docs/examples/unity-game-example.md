@@ -26,7 +26,7 @@ SpaceDefender/
 ## Step 1: Initialize
 
 ```
-Developer: /magic-seed init
+Developer: "Initialize magic-seed for this project"
 
 AI: Detecting project type...
     Found: Assets/, *.cs, ProjectSettings/
@@ -61,7 +61,7 @@ AI: Install complete!
 **Feature:** Shield Power-Up
 
 ```
-Developer: /design-wizard shield-powerup
+Developer: "Design a feature called shield-powerup"
 
 AI: Phase 1: UNDERSTAND
     Loading SpaceDefender architecture...
@@ -112,7 +112,7 @@ AI: Phase 5: FINALIZE
 ## Step 3: Implement
 
 ```
-Developer: /implement-wizard shield-powerup
+Developer: "Implement the next issue for shield-powerup"
 
 AI: Resuming from first pending issue...
     Issue: model.md
@@ -158,7 +158,7 @@ AI: Next issue: controller.md
 ## Step 4: PR
 
 ```
-Developer: /pr-wizard shield-powerup
+Developer: "Validate shield-powerup for PR"
 
 AI: Mode: pre-pr
     
@@ -175,7 +175,7 @@ Developer: [Creates PR]
 
 [Reviewers comment...]
 
-Developer: /pr-wizard shield-powerup --mode=feedback
+Developer: "Process PR feedback for shield-powerup" (PR wizard, feedback mode)
 
 AI: Processing feedback...
     Comment 1: "Shield duration should be configurable"
@@ -193,7 +193,7 @@ AI: Committing fixes...
     
 [PR merged...]
 
-Developer: /pr-wizard shield-powerup --mode=capture
+Developer: "Capture lessons from shield-powerup" (PR wizard, capture mode)
 
 AI: Capturing knowledge...
     ✓ lessons-learned.md created

@@ -15,15 +15,24 @@ Or download and extract to `.ai-workflow/`.
 
 ---
 
-## Step 2: Initialize
+## Step 2: Activate the wrapper for your AI platform
 
-Open your AI assistant (Claude, Cursor, etc.) and type:
+Follow the install guide for the platform you use:
 
-```
-/magic-seed init
-```
+- Claude Code → [`platforms/claude/README.md`](../platforms/claude/README.md)
+- Cursor → [`platforms/cursor/README.md`](../platforms/cursor/README.md)
+- GitHub Copilot → [`platforms/github-copilot/README.md`](../platforms/github-copilot/README.md)
+- OpenCode → [`platforms/opencode/README.md`](../platforms/opencode/README.md)
+- Kimi Code CLI → [`platforms/kimi-code/README.md`](../platforms/kimi-code/README.md)
 
-The AI will:
+The wrapper teaches your AI how to recognize magic-seed intents on your platform.
+
+---
+
+## Step 3: Initialize
+
+Ask your AI to initialize magic-seed for the project (use the platform's invocation style — slash command on platforms that support them, natural language anywhere). The AI will:
+
 1. Detect your project type
 2. Ask a few questions
 3. Generate wizards
@@ -31,11 +40,9 @@ The AI will:
 
 ---
 
-## Step 3: Design Your First Feature
+## Step 4: Design Your First Feature
 
-```
-/design-wizard my-feature
-```
+Ask your AI: "Design a feature called my-feature."
 
 The AI will:
 1. Load your project context
@@ -48,11 +55,9 @@ The AI will:
 
 ---
 
-## Step 4: Implement
+## Step 5: Implement
 
-```
-/implement-wizard my-feature
-```
+Ask your AI: "Implement the next issue for my-feature."
 
 The AI will:
 1. Read the first issue
@@ -65,13 +70,9 @@ The AI will:
 
 ---
 
-## Step 5: PR
+## Step 6: PR
 
-After all issues are complete:
-
-```
-/pr-wizard my-feature
-```
+After all issues are complete, ask your AI: "Validate my-feature for PR."
 
 The AI will:
 1. Validate everything
@@ -95,7 +96,7 @@ The AI will:
 The AI will ask you to choose a profile or create a custom one. Pick the closest match.
 
 ### "Wizards not generated"
-Check that `.ai-workflow/wizards/` exists after `/magic-seed init`.
+Check that `.ai-workflow/wizards/` exists after the AI finishes initialization.
 
 ### "Design phase stuck"
 Type `A` or `Accept` explicitly. The AI waits for your approval.

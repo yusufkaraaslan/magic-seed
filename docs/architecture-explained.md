@@ -90,7 +90,7 @@ Contains:
 ## How It Works: Execution Flow
 
 ```
-Developer: /magic-seed init
+Developer asks to initialize magic-seed.
 
 AI reads:
   universal/rules.md                    → "Apply these always"
@@ -112,9 +112,9 @@ AI generates wizards:
   → Applies rules
   → Writes to .ai-workflow/wizards/
 
-Developer uses wizards:
-  /design-wizard my-feature
-    → AI reads .ai-workflow/wizards/design-wizard.md
+Developer uses wizards by asking:
+  "Design a feature called my-feature"
+    → AI reads the generated design-wizard.md in .ai-workflow/wizards/
     → Follows instructions
     → Presents for review at each phase
 ```

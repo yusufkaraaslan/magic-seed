@@ -172,8 +172,8 @@ Before major releases or after security incidents.
 To share with profile users:
 
 1. Create file `profiles/{type}/skeletons/{name}-wizard.md`
-2. Add to profile README wizard table
-3. Update profile's SKILL.md with new command
+2. Add the wizard to the profile's README capability table
+3. Document the new wizard's intent in `instructions.md` if it should be discoverable globally; otherwise the profile's skeletons surface it during initialization
 
 ---
 
@@ -210,10 +210,10 @@ Custom wizards can integrate with the main workflow:
 ```markdown
 ## Integration
 
-Run this wizard after `/implement-wizard` and before `/pr-wizard`:
+Run this wizard after the implement wizard and before the PR wizard:
 
 ```
-/design-wizard     → /implement-wizard  → /security-audit  → /pr-wizard
+design wizard  →  implement wizard  →  security-audit wizard  →  PR wizard
 ```
 
 If security audit fails, fix issues before PR.

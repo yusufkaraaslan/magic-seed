@@ -170,9 +170,9 @@ pub fn execute(args: AddArgs) -> Result<()> {
 ## Step 6: Test
 
 1. Create test Rust project
-2. Run `/magic-seed init`
+2. Initialize magic-seed for it
 3. Verify detection
-4. Run `/design-wizard test-feature`
+4. Ask the AI to design a feature called `test-feature`
 5. Verify output
 
 ---

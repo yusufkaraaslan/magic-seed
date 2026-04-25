@@ -32,33 +32,42 @@ cd your-project
 git clone https://github.com/yourusername/magic-seed.git .ai-workflow
 ```
 
-### 2. Run the wizard generator
+### 2. Activate the wrapper for your AI platform
 
-In Claude Code, Cursor, or any AI assistant:
+Pick the platform you use and follow the install instructions in its directory:
 
-```
-/magic-seed init
-```
+| Platform | Install guide |
+|----------|---------------|
+| Claude Code | [`platforms/claude/README.md`](platforms/claude/README.md) |
+| Cursor | [`platforms/cursor/README.md`](platforms/cursor/README.md) |
+| GitHub Copilot | [`platforms/github-copilot/README.md`](platforms/github-copilot/README.md) |
+| OpenCode | [`platforms/opencode/README.md`](platforms/opencode/README.md) |
+| Kimi Code CLI | [`platforms/kimi-code/README.md`](platforms/kimi-code/README.md) |
 
-The AI will:
+Each wrapper is a thin file that points the AI at the platform-neutral [`instructions.md`](instructions.md). All workflow logic is the same; only the activation mechanism differs per tool.
+
+### 3. Initialize magic-seed
+
+Ask your AI to initialize magic-seed for the project. Each platform's install guide shows the exact invocation — slash command on platforms that support them (like Claude Code), or natural language anywhere ("initialize magic-seed for this project"). The AI will:
+
 1. **Detect** your project type (Unity, Godot, React, FastAPI, etc.)
 2. **Ask** you about project-specific decisions
 3. **Generate** wizards tailored to your project
 4. **Install** them to `.ai-workflow/wizards/`
 
-### 3. Use your wizards
+### 4. Use your wizards
 
-```
-/design-wizard my-feature     # Design a new feature
-/implement-wizard my-feature  # Implement the next issue
-/pr-wizard my-feature         # Validate and submit PR
-```
+Ask the AI to run a wizard against a feature. Examples (use whatever invocation style your platform supports — slash command on Claude Code, natural language anywhere):
+
+- "Design a feature called my-feature" — runs the design wizard
+- "Implement the next issue for my-feature" — runs the implement wizard
+- "Validate my-feature for PR" — runs the PR wizard
 
 ---
 
 ## What You Get
 
-After running `/magic-seed init`, your project has:
+After initializing magic-seed, your project has:
 
 ```
 .ai-workflow/
@@ -114,7 +123,7 @@ docs/features/my-feature/
 ## How It Works
 
 ```
-Developer: /magic-seed init
+Developer asks to initialize magic-seed.
 
 AI reads:
   instructions.md                → "I am a workflow generator"
@@ -148,10 +157,10 @@ AI presents for review:
   → Developer: [A]ccept / [F]eedback / [R]eject
   → Iterates until accepted
 
-Developer uses wizards:
-  → /design-wizard my-feature
-  → /implement-wizard my-feature
-  → /pr-wizard my-feature
+Developer uses wizards by asking:
+  → "Design a feature called my-feature"
+  → "Implement the next issue for my-feature"
+  → "Validate my-feature for PR"
 ```
 
 ---

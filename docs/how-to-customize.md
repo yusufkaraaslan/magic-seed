@@ -48,9 +48,9 @@ Rules here are merged with profile rules. In conflicts, custom rules win.
 
 To modify a wizard's behavior:
 
-1. Copy from profile:
+1. Copy from profile (replace `<wizard-name>` with the wizard you want to override, e.g. `design-wizard`):
    ```bash
-   cp .ai-workflow/profiles/{type}/skeletons/design-wizard.md .ai-workflow/wizards/design-wizard.md
+   cp .ai-workflow/profiles/{type}/skeletons/<wizard-name>.md .ai-workflow/wizards/<wizard-name>.md
    ```
 
 2. Edit the copy:
@@ -166,12 +166,12 @@ Document how your team works in `docs/team/workflows.md`:
 
 ## Feature Development
 1. Create ticket in {tool}
-2. Run `/design-wizard`
+2. Run the design wizard
 3. Get design approved by tech lead
-4. Run `/implement-wizard`
-5. Run `/test-wizard`
+4. Run the implement wizard
+5. Run the test wizard
 6. Create PR (minimum 1 reviewer)
-7. Run `/pr-wizard`
+7. Run the PR wizard
 8. Merge after approval
 
 ## Hotfix Process

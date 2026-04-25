@@ -188,7 +188,7 @@ pub fn execute(args: AddArgs) -> Result<()> {
 ## Step 6: Test Your Profile
 
 1. Create a test project with your tech stack
-2. Run `/magic-seed init`
+2. Initialize magic-seed for it
 3. Verify detection works
 4. Run each wizard
 5. Check generated output
