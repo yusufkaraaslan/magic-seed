@@ -7,7 +7,7 @@
 
 ## When to Use
 
-- After `/implement-wizard` completes (for new features)
+- After the implement wizard completes (for new features)
 - Standalone for existing code that lacks tests
 - Before PR to ensure coverage
 

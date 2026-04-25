@@ -7,15 +7,15 @@
 
 ## When to Use
 
-After `/implement-wizard` has completed all issues.
+After the implement wizard has completed all issues.
 
 ## Modes
 
-| Mode | Command | When to Use |
-|------|---------|-------------|
-| **pre-pr** | `/pr-wizard {name}` | Before creating PR |
-| **feedback** | `/pr-wizard {name} --mode=feedback` | PR has review comments |
-| **capture** | `/pr-wizard {name} --mode=capture` | After PR is merged |
+| Mode | How to invoke | When to Use |
+|------|---------------|-------------|
+| **pre-pr** | Run the PR wizard for `{name}` (default mode) | Before creating PR |
+| **feedback** | Run the PR wizard for `{name}` in `feedback` mode | PR has review comments |
+| **capture** | Run the PR wizard for `{name}` in `capture` mode | After PR is merged |
 
 ## Input
 
@@ -46,7 +46,7 @@ Cannot proceed: N issue(s) not complete
   02-logic.md  in_progress
   03-integration.md  pending
 
-Run /implement-wizard {name} to complete.
+Run the implement wizard for {name} to complete.
 ```
 
 ### Step 2: Documentation Check

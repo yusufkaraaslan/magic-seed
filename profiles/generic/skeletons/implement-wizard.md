@@ -7,7 +7,7 @@
 
 ## When to Use
 
-After `/design-wizard` has completed and design is signed off.
+After the design wizard has completed and design is signed off.
 
 ## Input
 
@@ -24,7 +24,7 @@ After `/design-wizard` has completed and design is signed off.
 
 ## Prerequisites
 
-- `/design-wizard` completed and signed off
+- Design wizard completed and signed off
 - At least one issue file exists
 
 ---

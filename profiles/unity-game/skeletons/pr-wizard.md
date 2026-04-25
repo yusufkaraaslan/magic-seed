@@ -7,11 +7,11 @@
 
 ## Modes
 
-| Mode | Command | When |
-|------|---------|------|
-| **pre-pr** | `/pr-wizard {name}` | Before creating PR |
-| **feedback** | `/pr-wizard {name} --mode=feedback` | PR has comments |
-| **capture** | `/pr-wizard {name} --mode=capture` | After merge |
+| Mode | How to invoke | When |
+|------|---------------|------|
+| **pre-pr** | Run the PR wizard for `{name}` (default mode) | Before creating PR |
+| **feedback** | Run the PR wizard for `{name}` in `feedback` mode | PR has comments |
+| **capture** | Run the PR wizard for `{name}` in `capture` mode | After merge |
 
 ---
 

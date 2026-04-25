@@ -241,7 +241,7 @@ AI: Generating text documentation from approved diagram...
 
 ## Customization
 
-Users can customize this wizard by editing `.ai-workflow/wizards/design-wizard.md`:
+Users can customize this wizard by editing the generated copy in `.ai-workflow/wizards/`:
 
 - Add phases (e.g., "Security Review")
 - Remove phases (e.g., skip sequence diagrams for simple features)

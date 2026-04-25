@@ -7,7 +7,7 @@
 
 ## When to Use
 
-After `/design-wizard` completes and design is signed off.
+After the design wizard completes and design is signed off.
 
 ## Input
 
