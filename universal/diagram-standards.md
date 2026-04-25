@@ -349,7 +349,7 @@ Diagrams are living documents:
 - Reviewed in PRs
 
 **Update triggers:**
-- `/design-wizard` — Creates initial diagrams
-- `/implement-wizard` — May update sequence diagrams
-- `/pr-wizard --mode=capture` — Updates diagrams with post-merge knowledge
+- Design wizard — Creates initial diagrams
+- Implement wizard — May update sequence diagrams
+- PR wizard, `capture` mode — Updates diagrams with post-merge knowledge
 - Manual edits by developers

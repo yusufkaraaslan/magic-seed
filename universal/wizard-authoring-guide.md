@@ -203,7 +203,7 @@ should I use for this feature?"
 
 ## Slot Usage
 
-Slots are placeholders for project-specific values discovered during `/magic-seed init`.
+Slots are placeholders for project-specific values discovered during magic-seed initialization.
 
 ### Referencing Slots
 
@@ -358,7 +358,7 @@ Before publishing a profile, test the wizard:
 ### Test Execution
 
 1. Create a test project
-2. Run `/magic-seed init`
+2. Initialize magic-seed for it
 3. Run each wizard on a sample feature
 4. Verify output matches expectations
 5. Check that gates work correctly

@@ -14,7 +14,7 @@ A **slot** is a project-specific value that wizards need to know. Examples:
 - Naming conventions
 - Framework version
 
-Slots are discovered during `/magic-seed init` and filled into wizard skeletons.
+Slots are discovered during magic-seed initialization and filled into wizard skeletons.
 
 ---
 

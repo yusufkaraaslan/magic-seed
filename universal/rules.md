@@ -10,9 +10,9 @@
 No implementation may begin without an approved design document.
 
 **Enforcement:**
-- `/design-wizard` MUST run before `/implement-wizard`
-- `/implement-wizard` checks for `DESIGN.md` before starting
-- If DESIGN.md is missing, wizard exits with: "Run `/design-wizard {name}` first"
+- The design wizard MUST run before the implement wizard
+- The implement wizard checks for `DESIGN.md` before starting
+- If `DESIGN.md` is missing, the implement wizard exits with: "Run the design wizard for `{name}` first"
 
 **Exception:** Hotfixes and one-line changes may skip design phase, but must be documented retroactively.
 

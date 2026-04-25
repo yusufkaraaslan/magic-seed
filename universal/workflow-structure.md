@@ -297,7 +297,7 @@ After implement-wizard, before PR.
 ```
 Developer idea
     ↓
-/design-wizard {name}
+Run design wizard for {name}
     ↓
 DESIGN.md + diagrams (class, package, sequence)
     ↓
@@ -305,13 +305,13 @@ TDD.md + EDGE-CASES.md
     ↓
 Issue files (model, controller, view, tests, integration)
     ↓
-/implement-wizard {name} --issue=model
+Run implement wizard for {name}, issue=model
     ↓
 Model implementation + tests
     ↓
 Knowledge record (model.md updated)
     ↓
-/implement-wizard {name} --issue=controller
+Run implement wizard for {name}, issue=controller
     ↓
 Controller implementation + tests
     ↓
@@ -319,7 +319,7 @@ Knowledge record (controller.md updated)
     ↓
 ... (repeat for all issues)
     ↓
-/pr-wizard {name} --mode=pre-pr
+Run PR wizard for {name}, mode=pre-pr
     ↓
 Validation report (PASS/FAIL)
     ↓
@@ -327,13 +327,13 @@ Developer creates PR
     ↓
 Reviewers comment
     ↓
-/pr-wizard {name} --mode=feedback
+Run PR wizard for {name}, mode=feedback
     ↓
 Feedback issues → fixes → knowledge records
     ↓
 PR merged
     ↓
-/pr-wizard {name} --mode=capture
+Run PR wizard for {name}, mode=capture
     ↓
 lessons-learned.md + PATTERNS.md updates
     ↓
