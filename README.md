@@ -117,7 +117,7 @@ docs/features/my-feature/
 Developer: /magic-seed init
 
 AI reads:
-  .ai-workflow/SKILL.md          → "I am a workflow generator"
+  instructions.md                → "I am a workflow generator"
   universal/rules.md              → "These rules apply to all projects"
   profiles/*/README.md            → "Which profile matches this project?"
   
