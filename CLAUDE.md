@@ -86,7 +86,9 @@ When editing wizards, skeletons, rules, or wrappers, manually check:
 3. **Phase gates intact** — Every wizard phase ends with an explicit `[A]/[F]/[R]` gate. Do not remove these.
 4. **File reading order in `instructions.md`** — If you add new universal files, update the "File Reading Order" section in `instructions.md`.
 5. **No slash-command syntax outside `platforms/claude/`** — magic-seed is platform-neutral. Only the Claude wrapper's command-alias table (in `platforms/claude/SKILL.md`) may use slash invocations of the magic-seed prefix or per-wizard names. Everywhere else, refer to wizards by name in prose. Verify by grepping for the relevant slash patterns and excluding `platforms/`; the GitHub clone URL ending in `.git` is a known harmless false positive.
-6. **Wrappers stay thin** — If a `platforms/{tool}/*` file grows beyond the wrapper's expected ~20–80 lines, the additions probably belong in `instructions.md`.
+6. **Wrappers stay thin** — If a `platforms/{tool}/*` file grows beyond the wrapper's expected ~20–80 lines, the additions probably belong in `instructions.md`. Wrappers may include a short "Init must persist plumbing" reminder pointing at `instructions.md` Step 7 — that's the one allowed exception, since the bug it prevents (generate-and-forget init) is wrapper-discoverable but not wrapper-fixable.
+7. **Init persistence** — When changing the init flow, preserve the contract that init produces *all four* artifacts: platform wrapper, universal/profile reachable, rendered wizards, knowledge base scaffold. If you find a wrapper README or SKILL/AGENTS file that lets the agent stop after rendering wizards, it's a bug — the wrapper must point at `instructions.md` Step 7 + Step 8 explicitly.
+8. **Tool ≠ model** — `platforms/{tool}/` directories are keyed on the AI tool (Claude Code, OpenCode, Cursor, Kimi-Code CLI, GitHub Copilot), not the LLM provider. When extending Step 0 in `instructions.md` or adding detection signals, use tool-level signals (`.opencode/`, `.cursor/`, etc.), never model names.
 
 ## Hard Rules to Preserve When Editing
 

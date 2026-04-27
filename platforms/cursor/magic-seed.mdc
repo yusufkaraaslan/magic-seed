@@ -33,3 +33,7 @@ This file exists only to:
 2. Point the agent at `instructions.md` for the full workflow logic.
 
 All workflow logic — detection, discovery, profile loading, wizard generation, knowledge-base structure, review gates — lives in `instructions.md`. Do not duplicate it here.
+
+## Init must persist plumbing, not just generate output
+
+When the developer says "initialize magic-seed for this project", the agent must follow `instructions.md` Step 7 in full. A successful Cursor init produces all four of: this wrapper at `.cursor/rules/magic-seed.mdc`; universal entry point reachable at `.ai-workflow/{instructions.md, universal/, profiles/{detected}/}`; rendered wizards at `.ai-workflow/wizards/*.md`; and knowledge base scaffold at `docs/{project,team,features}/`. Run `instructions.md` Step 8 (Verify Install) before reporting success.

@@ -23,6 +23,36 @@ When the developer expresses one of these intents — whether through a slash co
 
 ## How It Works
 
+### Step 0: Identify the Host AI Tool
+
+Before anything else, identify **which AI CLI / IDE the developer is using to invoke magic-seed**. This determines which platform wrapper from `platforms/{tool}/` must be installed in Step 7.
+
+**Do not infer the tool from the model name.** "Kimi" and "Claude" are LLM providers; "OpenCode", "Claude Code", "Cursor", "Kimi-Code CLI", and "GitHub Copilot" are the *tools* — they each have their own discovery convention and install path. A single LLM (e.g. Kimi) can be used inside multiple tools, and each tool needs its own wrapper.
+
+**Detection signals (check in this order):**
+
+| Signal in project | Likely tool | Wrapper to install |
+|---|---|---|
+| `.opencode/` exists, or developer says "OpenCode" | OpenCode CLI | `platforms/opencode/SKILL.md` → `.opencode/skills/magic-seed/SKILL.md` |
+| `.claude/` exists, or developer says "Claude Code" | Claude Code | `platforms/claude/SKILL.md` → `.claude/skills/magic-seed/SKILL.md` |
+| `.cursor/` exists, or developer says "Cursor" | Cursor | `platforms/cursor/magic-seed.mdc` → `.cursor/rules/magic-seed.mdc` |
+| `.github/copilot-instructions.md` exists, or developer says "Copilot" | GitHub Copilot | `platforms/github-copilot/copilot-instructions.md` → `.github/copilot-instructions.md` |
+| Developer explicitly says "Kimi-Code CLI" (the tool, not the model) | Kimi-Code CLI | `platforms/kimi-code/AGENTS.md` → `AGENTS.md` |
+
+**If none of these exist or are mentioned, ask the developer explicitly:**
+
+> "Which AI tool will be invoking magic-seed in this project?
+> 1. Claude Code (CLI/IDE)
+> 2. OpenCode CLI
+> 3. Cursor IDE
+> 4. GitHub Copilot
+> 5. Kimi-Code CLI
+> 6. Other / multiple — install more than one wrapper"
+
+**If multiple tools are in use, install multiple wrappers** — they coexist without conflict, and the universal `instructions.md` + `universal/` + `profiles/` files are shared by all of them.
+
+Record the chosen tool(s) in the slot catalog as `host-tool` (single) or `host-tools` (list).
+
 ### Step 1: Detect Project Type
 
 Read all `profiles/*/README.md` files. Each profile contains detection hints. Score the current project against each profile.
@@ -77,14 +107,101 @@ Present the generated wizards to the developer:
 
 ### Step 7: Install
 
-Write accepted wizards to `.ai-workflow/wizards/`.
-Create initial knowledge base structure in `docs/`.
+Init is **not just rendering output** — it must persist enough of magic-seed into the project that the *next* AI session can re-enter the workflow without you re-explaining anything. Generate-and-forget breaks the system: the platform wrapper says "Read `instructions.md` before acting on any magic-seed intent," and that file must actually exist locally for that to work.
+
+Persist the following into the user's project (in roughly this order):
+
+#### 7.1 Platform wrapper (per Step 0 host tool)
+
+For each tool identified in Step 0, install the matching wrapper to its canonical path. See `platforms/{tool}/README.md` for the exact install command — it is one of:
+
+| Tool | Source | Destination |
+|---|---|---|
+| OpenCode | `platforms/opencode/SKILL.md` | `.opencode/skills/magic-seed/SKILL.md` |
+| Claude Code | `platforms/claude/SKILL.md` | `.claude/skills/magic-seed/SKILL.md` |
+| Cursor | `platforms/cursor/magic-seed.mdc` | `.cursor/rules/magic-seed.mdc` |
+| GitHub Copilot | `platforms/github-copilot/copilot-instructions.md` | `.github/copilot-instructions.md` (append, do not overwrite if file already exists) |
+| Kimi-Code CLI | `platforms/kimi-code/AGENTS.md` | `AGENTS.md` at repo root (append, do not overwrite — see notes in `platforms/kimi-code/README.md`) |
+
+Prefer **symlinks** over copies if the OS supports them, so `git pull` in `.ai-workflow/` propagates wrapper updates automatically. Fall back to copy when symlinks aren't available.
+
+#### 7.2 Universal entry point + universal/ + detected profile
+
+The wrapper points at `instructions.md`, and `instructions.md` references `universal/rules.md` etc. — these files must be reachable from the project. Two valid layouts:
+
+**Layout A — project-level install (self-contained, recommended for most teams):**
+
+Clone or copy the magic-seed core into `.ai-workflow/` so the project owns its own copy:
+
+```
+.ai-workflow/
+├── instructions.md          ← from magic-seed root
+├── universal/               ← copy of universal/ from magic-seed
+├── profiles/{detected}/     ← at minimum, the detected profile
+├── wizards/                 ← rendered output (Step 5)
+└── rules.md                 ← project-specific overrides (Step 7.4)
+```
+
+**Layout B — global install + symlink (recommended when multiple projects share one magic-seed clone):**
+
+Magic-seed lives once at e.g. `~/tools/magic-seed/`. The project's `.ai-workflow/` symlinks to it, and the rendered wizards + project rules are layered on top:
+
+```bash
+ln -s ~/tools/magic-seed .ai-workflow
+# then write .ai-workflow/wizards/*.md and .ai-workflow/rules.md
+# (these become uncommitted additions to the cloned tree)
+```
+
+Pick whichever the developer prefers. If unsure, use Layout A — it survives moves and doesn't depend on a global path.
+
+#### 7.3 Rendered wizards
+
+Write the wizards generated in Step 5 to `.ai-workflow/wizards/{wizard-name}.md`. These are project-specific renders of the profile skeletons.
+
+#### 7.4 Project-specific rules
+
+If the discovery step turned up project-specific rules that don't belong in the universal or profile layer (e.g. "exactly 5 autoloads" for a specific game), write them to `.ai-workflow/rules.md` with severity tags. These layer on top of `universal/rules.md` and the profile's `rules.md` at runtime.
+
+#### 7.5 Knowledge base scaffolding
+
+Create the initial knowledge base structure per `universal/knowledge-base-spec.md`:
+
+```
+docs/
+├── project/
+│   ├── ARCHITECTURE.md
+│   ├── CONVENTIONS.md
+│   ├── PATTERNS.md
+│   └── DECISIONS.md
+├── team/
+│   ├── onboarding.md
+│   └── workflows.md
+└── features/                ← empty, populated by design-wizard
+```
+
+Populate `project/*.md` from discovery findings (architecture, naming conventions, ADRs surfaced from existing docs). Leave `features/` empty.
+
+---
+
+### Step 8: Verify Install
+
+Before declaring init complete, confirm every artifact landed. The AI must be able to answer "yes" to all of these:
+
+- [ ] **Wrapper installed** — the file at the destination from the table in Step 7.1 exists and (if a symlink) resolves to the magic-seed source.
+- [ ] **`instructions.md` reachable** — either at `.ai-workflow/instructions.md` (Layout A) or via a symlink resolving to magic-seed (Layout B). The wrapper's "Read `instructions.md` before acting" sentence must not be a dangling reference.
+- [ ] **`universal/rules.md` reachable** — at `.ai-workflow/universal/rules.md` or via the symlink.
+- [ ] **Detected profile reachable** — at `.ai-workflow/profiles/{detected}/` or via the symlink. At minimum the four files `README.md`, `discovery.md`, `rules.md`, and `skeletons/` must be present.
+- [ ] **Wizards rendered** — `.ai-workflow/wizards/*.md` exists, no leaked `{slot}` placeholders (Rule 12), phase gates `[A]/[F]/[R]` intact.
+- [ ] **Knowledge base scaffold** — `docs/project/`, `docs/team/`, `docs/features/` exist with the expected files.
+- [ ] **Smoke test** — re-read the wrapper file you just installed and confirm the path it references (`instructions.md`) resolves. If it doesn't, the install is broken.
+
+If any check fails, fix it before reporting "magic-seed initialized" to the developer. Do not present the install as successful when the next session won't be able to load the workflow.
 
 ---
 
 ## File Reading Order
 
-When acting on any magic-seed intent, read files in this order:
+When acting on any magic-seed intent, read files in this order. Paths are relative to the magic-seed root, which after install is reachable in the user's project via either `.ai-workflow/` (Layout A) or a symlink at `.ai-workflow/` (Layout B). For a fresh init *before* install, read directly from the magic-seed checkout the wrapper points at.
 
 ```
 1. universal/rules.md                    (always)
@@ -94,6 +211,7 @@ When acting on any magic-seed intent, read files in this order:
 5. profiles/{detected}/skeletons/*.md    (during generation)
 6. universal/diagram-standards.md        (when generating diagrams)
 7. universal/knowledge-base-spec.md      (when creating KB)
+8. .ai-workflow/rules.md                 (if present — project-specific overrides, layered last)
 ```
 
 ---

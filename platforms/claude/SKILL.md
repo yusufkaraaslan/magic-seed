@@ -39,3 +39,14 @@ This file exists only to:
 2. Translate the slash-command syntax above into the platform-neutral intents that `instructions.md` describes.
 
 All workflow logic — detection, discovery, profile loading, wizard generation, knowledge-base structure, review gates — lives in `instructions.md`. Do not duplicate it here.
+
+## Init must persist plumbing, not just generate output
+
+When the developer runs `/magic-seed init`, the agent must follow `instructions.md` Step 7 in full. A successful Claude Code init produces **all four** of the following, not just the last two:
+
+1. **This wrapper installed:** `.claude/skills/magic-seed/SKILL.md` (symlink or copy of `platforms/claude/SKILL.md`).
+2. **Universal entry point reachable:** `.ai-workflow/instructions.md`, `.ai-workflow/universal/`, and `.ai-workflow/profiles/{detected}/`.
+3. **Rendered wizards:** `.ai-workflow/wizards/*.md` and (if needed) `.ai-workflow/rules.md`.
+4. **Knowledge base scaffold:** `docs/project/`, `docs/team/`, `docs/features/` per `universal/knowledge-base-spec.md`.
+
+Run `instructions.md` Step 8 (Verify Install) before reporting success.
