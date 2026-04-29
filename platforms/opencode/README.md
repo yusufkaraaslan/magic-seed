@@ -43,10 +43,14 @@ ln -s ~/tools/magic-seed .ai-workflow
 
 ## How it works
 
-OpenCode reads `SKILL.md` files under skill directories and uses the YAML frontmatter to decide when each skill applies. magic-seed uses the standard fields:
+OpenCode reads `SKILL.md` files under skill directories and exposes each as a tool the agent can call. The YAML frontmatter `description` is what the agent sees when deciding whether to invoke the skill — but **invocation is pull, not push**: the agent decides whether to call `skill({ name: "magic-seed" })` to load the body. There's no auto-activation purely from a description match.
 
-- `name: magic-seed` — the skill identifier
-- `description` — OpenCode's agent reads this and loads the skill when the developer's request matches
+This means installing `.opencode/skills/magic-seed/SKILL.md` alone is **not enough** to make magic-seed work. Without project-level pressure, the agent may improvise feature work instead of loading the skill. Step 7.6 of `instructions.md` covers this by also writing a magic-seed directive to `AGENTS.md` (which OpenCode reads as default project context every session). When init is done correctly, both artifacts are in place.
+
+magic-seed uses the standard skill frontmatter fields:
+
+- `name: magic-seed` — the skill identifier (becomes tool `skills_magic_seed`)
+- `description` — what the agent sees in the tool list; ours is imperative and lists trigger phrases
 - `license`, `metadata` — informational
 
 When loaded, the skill points OpenCode at `instructions.md` for the full workflow logic.

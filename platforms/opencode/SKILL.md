@@ -1,6 +1,6 @@
 ---
 name: magic-seed
-description: Universal workflow generator. Detects project type, asks the developer about goals, and generates tailored AI-assisted development wizards (design, implement, PR, test, deploy, docs) with living documentation and a knowledge base. Activate when the developer asks to initialize magic-seed, design or implement a feature, run a wizard, validate for PR, capture lessons learned, or search the project knowledge base.
+description: MANDATORY workflow gate for feature work in this project. Load this skill BEFORE doing any feature design, implementation, testing, PR validation, deployment, or documentation work. Magic-seed enforces design-before-code with phase review gates [A]/[F]/[R] — do not improvise feature work without first loading and following the appropriate wizard from .ai-workflow/wizards/. Trigger phrases include "design", "implement", "test", "PR", "validate", "deploy", "ship", and "docs" when used about a feature or issue. Also load when initializing magic-seed for a new project, capturing lessons learned, or searching the knowledge base. Do NOT write feature code without first running the design-wizard and obtaining a signed-off DESIGN.md.
 license: MIT
 metadata:
   audience: developers

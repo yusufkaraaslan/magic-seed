@@ -186,6 +186,63 @@ docs/
 
 Populate `project/*.md` from discovery findings (architecture, naming conventions, ADRs surfaced from existing docs). Leave `features/` empty.
 
+#### 7.6 Project-level directive (AGENTS.md / CLAUDE.md augmentation)
+
+**Why this step exists:** Most AI tools read project-root files (`AGENTS.md`, `CLAUDE.md`) as default session context, *separately* from the platform skill / wrapper file they may also discover. A platform wrapper alone is not enough — for tools where skills are pull-not-push (OpenCode invokes skills via a `skill` tool call the agent decides whether to make), the agent has no project-level pressure to defer to magic-seed and may just improvise on natural-language requests like "design feature X". The fix is to put a directive in the file the tool *always* reads.
+
+**Action:** If `AGENTS.md` or `CLAUDE.md` exists at the project root (or both), append a magic-seed directive section to each. Skip this step for the Kimi-Code CLI install path — there `AGENTS.md` *is* the magic-seed wrapper, the directive is implicit. If neither file exists and the host tool is one that reads them (OpenCode reads `AGENTS.md`, Claude Code reads `CLAUDE.md`), create the file with just the directive.
+
+**Idempotency:** Use a sentinel comment so re-runs don't duplicate. Wrap the directive in:
+
+```markdown
+<!-- magic-seed-directive-start -->
+... directive content ...
+<!-- magic-seed-directive-end -->
+```
+
+On re-init, replace the content between the sentinels rather than appending again.
+
+**Directive content** (paste this verbatim, then customize the rendered wizard table if the project added custom wizards):
+
+```markdown
+<!-- magic-seed-directive-start -->
+## magic-seed Workflow (Mandatory)
+
+This project uses **magic-seed** for feature development. Before writing any code for a feature, you MUST run the design-wizard and obtain a signed-off `docs/features/{name}/DESIGN.md`.
+
+When the developer's request matches one of the intents below, load and follow the corresponding wizard from `.ai-workflow/wizards/`. On platforms where wizards are exposed as a skill/tool (OpenCode `skill` tool, Claude Code skill, etc.), invoke that mechanism to load magic-seed before acting.
+
+| Developer says | Wizard |
+|---|---|
+| "design feature X" / "let's design X" | `.ai-workflow/wizards/design-wizard.md` |
+| "implement X" / "next issue" | `.ai-workflow/wizards/implement-wizard.md` |
+| "test X" / "add tests" | `.ai-workflow/wizards/test-wizard.md` |
+| "validate X for PR" / "PR check" | `.ai-workflow/wizards/pr-wizard.md` |
+| "deploy X" / "build" | `.ai-workflow/wizards/deploy-wizard.md` |
+| "update docs" / "docs for X" | `.ai-workflow/wizards/docs-wizard.md` |
+
+**Hard rules — do not violate:**
+
+- No feature code without a signed-off `DESIGN.md`. If the developer asks to implement a feature with no prior design, run **design-wizard first** even if they didn't ask for it.
+- Every wizard phase ends with `[A]ccept / [F]eedback / [R]eject`. Never auto-accept. Present the gate to the developer.
+- Universal rules in `.ai-workflow/universal/rules.md` are non-negotiable. Profile rules and `.ai-workflow/rules.md` layer on top.
+
+For the full workflow contract, read `.ai-workflow/instructions.md`.
+<!-- magic-seed-directive-end -->
+```
+
+**Where this directive lands per host tool:**
+
+| Host tool (Step 0) | Directive target | Notes |
+|---|---|---|
+| OpenCode CLI | `AGENTS.md` | OpenCode reads `AGENTS.md` as default context. Append/update the sentinel block. |
+| Claude Code | `CLAUDE.md` | Append/update the sentinel block. The Claude SKILL.md command-alias table already gives the agent slash invocations, but the directive in `CLAUDE.md` ensures the agent defers even when the developer uses natural language. |
+| Cursor | `AGENTS.md` *if it exists* | Cursor's `.mdc` rules drive primary behavior; the AGENTS.md directive is belt-and-suspenders for cross-tool consistency. |
+| GitHub Copilot | n/a | The Copilot wrapper *is* `.github/copilot-instructions.md` and is always loaded; no separate AGENTS.md needed. |
+| Kimi-Code CLI | n/a | Skip — `AGENTS.md` is the wrapper itself. |
+
+If multiple host tools were chosen in Step 0, write the directive to every applicable target.
+
 ---
 
 ### Step 8: Verify Install
@@ -198,6 +255,7 @@ Before declaring init complete, confirm every artifact landed. The AI must be ab
 - [ ] **Detected profile reachable** — at `.ai-workflow/profiles/{detected}/` or via the symlink. At minimum the four files `README.md`, `discovery.md`, `rules.md`, and `skeletons/` must be present.
 - [ ] **Wizards rendered** — `.ai-workflow/wizards/*.md` exists, no leaked `{slot}` placeholders (Rule 12), phase gates `[A]/[F]/[R]` intact.
 - [ ] **Knowledge base scaffold** — `docs/project/`, `docs/team/`, `docs/features/` exist with the expected files.
+- [ ] **Project directive present** — for OpenCode, Claude Code, or Cursor host tools, the matching root file (`AGENTS.md` and/or `CLAUDE.md`) contains the magic-seed directive between `<!-- magic-seed-directive-start -->` and `<!-- magic-seed-directive-end -->` sentinels. Skip for Copilot and Kimi-Code (their wrappers serve this role). Without this, the agent has no project-level pressure to defer to wizards on natural-language requests and may improvise feature work — making the install functionally inert even though all files are in place.
 - [ ] **Smoke test** — re-read the wrapper file you just installed and confirm the path it references (`instructions.md`) resolves. If it doesn't, the install is broken.
 
 If any check fails, fix it before reporting "magic-seed initialized" to the developer. Do not present the install as successful when the next session won't be able to load the workflow.
