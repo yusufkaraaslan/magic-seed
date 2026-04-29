@@ -142,17 +142,22 @@ Clone or copy the magic-seed core into `.ai-workflow/` so the project owns its o
 └── rules.md                 ← project-specific overrides (Step 7.4)
 ```
 
-**Layout B — global install + symlink (recommended when multiple projects share one magic-seed clone):**
+**Layout B — global install + symlink (only viable when the magic-seed clone is project-private):**
 
-Magic-seed lives once at e.g. `~/tools/magic-seed/`. The project's `.ai-workflow/` symlinks to it, and the rendered wizards + project rules are layered on top:
+Magic-seed lives once at e.g. `~/tools/magic-seed/`. The project's `.ai-workflow/` symlinks to it:
 
 ```bash
 ln -s ~/tools/magic-seed .ai-workflow
 # then write .ai-workflow/wizards/*.md and .ai-workflow/rules.md
-# (these become uncommitted additions to the cloned tree)
 ```
 
-Pick whichever the developer prefers. If unsure, use Layout A — it survives moves and doesn't depend on a global path.
+⚠️ **Caveat:** the rendered `.ai-workflow/wizards/` and `.ai-workflow/rules.md` are written *into* the global magic-seed clone (since `.ai-workflow/` resolves to that clone). They become uncommitted additions to that clone's working tree, which collides with `git pull` updates and conflates project-specific output with magic-seed core.
+
+This is only safe if **one project owns the magic-seed clone** (e.g. `~/projects/myapp/.magic-seed/` symlinked from `~/projects/myapp/.ai-workflow/`). It does *not* work when multiple projects share `~/tools/magic-seed/` — they'd all write their wizards into the same place.
+
+For shared global clones, prefer **Layout A** instead — copy the relevant subset into the project, accept the drift cost, and `git pull` the global clone separately when wrappers/rules update.
+
+If unsure, use Layout A. It survives moves, doesn't depend on a global path, and keeps project output cleanly separated from magic-seed core.
 
 #### 7.3 Rendered wizards
 
