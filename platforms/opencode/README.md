@@ -2,6 +2,22 @@
 
 Install magic-seed for use with [OpenCode](https://opencode.ai).
 
+## What gets installed
+
+Seven skills, not one:
+
+| Skill | Source | Role |
+|---|---|---|
+| `magic-seed` | `platforms/opencode/SKILL.md` | Orchestrator — init, status, knowledge-base search, ambiguous requests |
+| `design-wizard` | `platforms/opencode/wizard-skills/design-wizard/SKILL.md` | Phase: design (DESIGN.md, TDD.md, diagrams, issues) |
+| `implement-wizard` | `platforms/opencode/wizard-skills/implement-wizard/SKILL.md` | Phase: implement one issue |
+| `pr-wizard` | `platforms/opencode/wizard-skills/pr-wizard/SKILL.md` | Phase: PR validation, feedback, post-merge capture |
+| `test-wizard` | `platforms/opencode/wizard-skills/test-wizard/SKILL.md` | Phase: tests |
+| `deploy-wizard` | `platforms/opencode/wizard-skills/deploy-wizard/SKILL.md` | Phase: build/export/release |
+| `docs-wizard` | `platforms/opencode/wizard-skills/docs-wizard/SKILL.md` | Phase: knowledge-base maintenance |
+
+Each wizard skill has an imperative description naming its trigger phrases (e.g. design-wizard fires on "design feature X", "let's design X", "plan X"). This makes wizards discoverable in OpenCode's skill picker and gives the agent strong signals about which one to invoke for a given request — without these per-wizard skills, only `magic-seed` shows up in the picker and the agent has no project-level pressure to defer to a specific wizard.
+
 ## Install
 
 OpenCode supports both project-level and global skills. Pick the install path that matches your scope.
@@ -14,15 +30,32 @@ From your project root:
 
 ```bash
 git clone https://github.com/yourusername/magic-seed.git .ai-workflow
-mkdir -p .opencode/skills/magic-seed
-ln -s ../../../.ai-workflow/platforms/opencode/SKILL.md .opencode/skills/magic-seed/SKILL.md
+
+# Install all seven skills as symlinks (preferred):
+for skill in magic-seed design-wizard implement-wizard pr-wizard test-wizard deploy-wizard docs-wizard; do
+  mkdir -p ".opencode/skills/$skill"
+  if [ "$skill" = "magic-seed" ]; then
+    ln -s "../../../.ai-workflow/platforms/opencode/SKILL.md" ".opencode/skills/$skill/SKILL.md"
+  else
+    ln -s "../../../.ai-workflow/platforms/opencode/wizard-skills/$skill/SKILL.md" ".opencode/skills/$skill/SKILL.md"
+  fi
+done
 ```
 
-The symlink lets `git pull` in `.ai-workflow/` update the wrapper automatically. If your environment doesn't support symlinks, copy instead:
+Symlinks let `git pull` in `.ai-workflow/` update every wrapper automatically. If your environment doesn't support symlinks, replace `ln -s` with `cp`:
 
 ```bash
-cp .ai-workflow/platforms/opencode/SKILL.md .opencode/skills/magic-seed/SKILL.md
+for skill in magic-seed design-wizard implement-wizard pr-wizard test-wizard deploy-wizard docs-wizard; do
+  mkdir -p ".opencode/skills/$skill"
+  if [ "$skill" = "magic-seed" ]; then
+    cp ".ai-workflow/platforms/opencode/SKILL.md" ".opencode/skills/$skill/SKILL.md"
+  else
+    cp ".ai-workflow/platforms/opencode/wizard-skills/$skill/SKILL.md" ".opencode/skills/$skill/SKILL.md"
+  fi
+done
 ```
+
+**Caveat for copy installs:** when you `git pull` in `.ai-workflow/`, you must re-run the loop above to refresh the copies. OpenCode's server caches skills in memory at startup — after refreshing, restart the server (not just the TUI) for changes to take effect.
 
 ### Global
 

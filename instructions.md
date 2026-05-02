@@ -113,15 +113,17 @@ Persist the following into the user's project (in roughly this order):
 
 #### 7.1 Platform wrapper (per Step 0 host tool)
 
-For each tool identified in Step 0, install the matching wrapper to its canonical path. See `platforms/{tool}/README.md` for the exact install command — it is one of:
+For each tool identified in Step 0, install the matching wrapper(s) to its canonical path. See `platforms/{tool}/README.md` for the exact install command. The summary:
 
 | Tool | Source | Destination |
 |---|---|---|
-| OpenCode | `platforms/opencode/SKILL.md` | `.opencode/skills/magic-seed/SKILL.md` |
+| OpenCode | `platforms/opencode/SKILL.md` (orchestrator) **plus** all six wizard skill bodies in `platforms/opencode/wizard-skills/{wizard}/SKILL.md` | `.opencode/skills/magic-seed/SKILL.md` plus `.opencode/skills/{design,implement,pr,test,deploy,docs}-wizard/SKILL.md` (7 total) |
 | Claude Code | `platforms/claude/SKILL.md` | `.claude/skills/magic-seed/SKILL.md` |
 | Cursor | `platforms/cursor/magic-seed.mdc` | `.cursor/rules/magic-seed.mdc` |
 | GitHub Copilot | `platforms/github-copilot/copilot-instructions.md` | `.github/copilot-instructions.md` (append, do not overwrite if file already exists) |
 | Kimi-Code CLI | `platforms/kimi-code/AGENTS.md` | `AGENTS.md` at repo root (append, do not overwrite — see notes in `platforms/kimi-code/README.md`) |
+
+**Why OpenCode installs seven skills instead of one:** OpenCode skills are shown to the agent (and the developer in the picker) one entry per skill directory. Installing only the orchestrator skill leaves the per-phase wizards invisible — discoverable only if the developer happens to know the right trigger phrase. Installing each wizard as its own skill makes them first-class picker entries with imperative descriptions, mirroring the per-wizard slash commands in the Claude Code wrapper. Each wizard skill body is a thin pointer (~10–25 lines) to the rendered `.ai-workflow/wizards/{wizard}-wizard.md`; the heavy lifting lives in the rendered wizard, not the SKILL.md.
 
 Prefer **symlinks** over copies if the OS supports them, so `git pull` in `.ai-workflow/` propagates wrapper updates automatically. Fall back to copy when symlinks aren't available.
 
@@ -249,7 +251,7 @@ If multiple host tools were chosen in Step 0, write the directive to every appli
 
 Before declaring init complete, confirm every artifact landed. The AI must be able to answer "yes" to all of these:
 
-- [ ] **Wrapper installed** — the file at the destination from the table in Step 7.1 exists and (if a symlink) resolves to the magic-seed source.
+- [ ] **Wrapper(s) installed** — the file(s) at the destination(s) from the table in Step 7.1 exist and (if symlinks) resolve to the magic-seed source. For OpenCode specifically, verify all **seven** skills are present: `.opencode/skills/{magic-seed,design-wizard,implement-wizard,pr-wizard,test-wizard,deploy-wizard,docs-wizard}/SKILL.md`. A picker showing only `magic-seed` means the per-wizard skills weren't installed and the install is incomplete.
 - [ ] **`instructions.md` reachable** — either at `.ai-workflow/instructions.md` (Layout A) or via a symlink resolving to magic-seed (Layout B). The wrapper's "Read `instructions.md` before acting" sentence must not be a dangling reference.
 - [ ] **`universal/rules.md` reachable** — at `.ai-workflow/universal/rules.md` or via the symlink.
 - [ ] **Detected profile reachable** — at `.ai-workflow/profiles/{detected}/` or via the symlink. At minimum the four files `README.md`, `discovery.md`, `rules.md`, and `skeletons/` must be present.

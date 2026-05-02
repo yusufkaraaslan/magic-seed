@@ -1,10 +1,11 @@
 ---
 name: magic-seed
-description: MANDATORY workflow gate for feature work in this project. Load this skill BEFORE doing any feature design, implementation, testing, PR validation, deployment, or documentation work. Magic-seed enforces design-before-code with phase review gates [A]/[F]/[R] — do not improvise feature work without first loading and following the appropriate wizard from .ai-workflow/wizards/. Trigger phrases include "design", "implement", "test", "PR", "validate", "deploy", "ship", and "docs" when used about a feature or issue. Also load when initializing magic-seed for a new project, capturing lessons learned, or searching the knowledge base. Do NOT write feature code without first running the design-wizard and obtaining a signed-off DESIGN.md.
+description: Orchestrator skill for the magic-seed feature-development workflow. Use this skill ONLY for (a) initializing magic-seed in a new project, (b) showing project workflow status across in-flight features, (c) searching the project knowledge base, or (d) when the developer's request is ambiguous about which phase wizard applies. For specific phase work — design, implement, test, PR validation, deploy, docs — prefer the dedicated per-wizard skills (design-wizard, implement-wizard, pr-wizard, test-wizard, deploy-wizard, docs-wizard). Magic-seed enforces design-before-code: no feature code without a signed-off DESIGN.md.
 license: MIT
 metadata:
   audience: developers
   workflow: feature-development
+  role: orchestrator
 ---
 
 # magic-seed (OpenCode wrapper)
