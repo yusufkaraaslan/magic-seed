@@ -63,36 +63,37 @@ To modify a flow's behavior:
 
 ---
 
-## Example: Adding a Phase
+## Example: Adding a Sub-task
 
-Add "Security Review" to design-flow:
+The 2-phase, 2-gate default cadence is deliberate. Most customizations should add a **sub-task** to an existing phase, not a new top-level phase. Adding a phase adds a user-facing gate.
+
+To add "Security Review" to design-flow, insert a sub-task into Phase 1: SPECIFY:
 
 ```markdown
-### Phase 4.5: SECURITY REVIEW
-**Purpose:** Review design for security implications.
+### Phase 1: SPECIFY *(STANDARD gate)*
 
-**Steps:**
-1. Check data flow for sensitive data
-2. Verify authentication requirements
-3. Check authorization boundaries
-4. Review input validation needs
-
-**Artifacts:**
-- Security notes in task-design.md
-
-**Gate:** [A]ccept / [F]eedback / [R]eject
+Sub-tasks (auto-proceed):
+**1.1 UNDERSTAND** — ...
+**1.2 DESIGN** — ...
+**1.3 SPECIFY** — Write task-design.md / task-technical-design.md / task-edge-cases.md
+**1.4 SECURITY REVIEW** — (NEW)
+  - Check data flow for sensitive data
+  - Verify authentication requirements
+  - Check authorization boundaries
+  - Review input validation needs
+  - Append findings to task-design.md security section
 ```
+
+If security review genuinely needs its own user-facing gate (e.g. you want a separate sign-off from a security reviewer), promote it to a third top-level phase — but only if that gate is justified.
 
 ---
 
 ## Example: Custom Validation
 
-Add project-specific validation to implement-flow:
+Add project-specific validation to implement-flow's Phase 1 sub-task 1.4 AUTO-VALIDATE:
 
 ```markdown
-### Phase 4: AUTO-VALIDATE
-
-Additional checks:
+**1.4 AUTO-VALIDATE** — Run profile checks + project test suite. Additional project-specific checks:
 - [ ] No hardcoded API keys
 - [ ] All API calls have error handling
 - [ ] User input is sanitized

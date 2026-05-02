@@ -7,12 +7,19 @@ Run the **deploy-flow** for: $ARGUMENTS
 
 The argument is the task or release scope (or empty for "current main").
 
-Load the `deploy-flow` skill (or read `.ai-workflow/flows/deploy-flow.md` directly) and execute its phases:
+Load the `deploy-flow` skill (or read `.ai-workflow/flows/deploy-flow.md` directly) and execute its **2 phases**. Each phase contains sub-tasks that auto-proceed without intermediate gates. Both gates are CRITICAL because deploy is hard-to-reverse and announcement is publicly irreversible:
 
-1. **PRE-DEPLOY GATE** — Run the full test suite. If any failures, STOP. **No "build despite failing tests" path** — user global rule "never skip any test" applies.
-2. **BUILD** — Use the project's build/export tooling (Godot export presets, npm build, Python wheel, Docker image, etc. — discover from profile + project config).
-3. **SMOKE TEST** — Launch the build artifact, verify basic startup. Don't declare deploy success without this.
-4. **REPORT** — Output the artifact path, version, smoke-test result.
+### Phase 1: PREPARE *(CRITICAL gate)*
+- **1.1 CHECKLIST** — Verify task complete, docs in order, **full test suite passes** (NEVER skip — user global rule applies), no debug code, no secrets in artifacts.
+- **1.2 VERSION** — Determine version bump; update version files + CHANGELOG.md; generate release notes.
+- **1.3 BUILD** — Build with the project's tooling (Godot export presets, npm build, Python wheel, Docker image, etc.); verify artifact size + signatures; smoke test the build artifact (launch it, verify basic startup).
+- → **Gate 1: Ready to deploy?** — last reversible point. Sub-task 2.1 (the actual deploy) executes only after this gate is accepted.
+
+### Phase 2: SHIP *(CRITICAL gate)*
+- **2.1 DEPLOY** *(executes only after Gate 1 is accepted)* — Push artifact to target environment; monitor for errors.
+- **2.2 VERIFY** — Health checks, performance vs baseline, hold for soak window if profile requires. If anything regresses → roll back; do not proceed to 2.3.
+- **2.3 ANNOUNCE** *(executes only after Gate 2 is accepted)* — Send release notes to configured channels.
+- → **Gate 2: All clear?** — announcement is **public**. Roll back instead of accept if metrics regressed.
 
 Hard rules:
 - **Tests must pass before build.** Pre-deploy gate is non-negotiable.

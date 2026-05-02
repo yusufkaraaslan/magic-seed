@@ -162,11 +162,9 @@ enum Commands {
 ```
 
 ### implement-flow.md
-Add implementation patterns:
+Add implementation patterns to Phase 1 sub-task 1.3 IMPLEMENT (per the canonical 2-phase pattern):
 ```markdown
-### Phase 3: IMPLEMENT
-
-Create Rust modules:
+**1.3 IMPLEMENT** — Create Rust modules:
 ```rust
 // src/commands/add.rs
 use clap::Args;

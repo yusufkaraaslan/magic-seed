@@ -9,12 +9,17 @@ The argument is one of:
 - `<scope>` — limit to a topic (e.g. `architecture`, `onboarding`, a specific task)
 - (empty) — full audit of `flow-storage/project/`, `flow-storage/team/`, and `flow-storage/tasks/*/lessons-learned.md`
 
-Load the `docs-flow` skill (or read `.ai-workflow/flows/docs-flow.md` directly) and execute:
+Load the `docs-flow` skill (or read `.ai-workflow/flows/docs-flow.md` directly) and execute its **2 phases**. Each phase contains sub-tasks that auto-proceed without intermediate gates:
 
-1. **SCAN** *(LIGHT)* — Identify stale or missing docs by comparing last-modified vs recent commits, merged PRs, new tasks. Build a list with rationale.
-2. **PROPOSE** *(STANDARD)* — Draft each change as a diff. Cross-check against living-document policy.
-3. **APPLY** *(STANDARD)* — Apply accepted diffs. Verify no broken cross-references.
-4. **COMMIT** *(CRITICAL)* — Stage updated docs (and any AGENTS.md / CLAUDE.md edits if those were in scope). Commit message: `docs: update {scope} — {summary}`. Skip if `--no-commit`.
+### Phase 1: APPLY *(STANDARD gate)*
+- **1.1 SCAN** — Identify stale/missing/broken docs by comparing last-modified vs recent commits, merged PRs, new tasks. Build an audit list with rationale.
+- **1.2 PROPOSE** — Draft each change as a diff. Cross-check against living-document policy.
+- **1.3 APPLY** — Apply diffs. Verify no broken cross-references.
+- → **Gate 1: Doc updates review** — audit + applied diffs together.
+
+### Phase 2: COMMIT *(CRITICAL gate)*
+- **2.1 COMMIT** *(executes only after the gate is accepted)* — Stage updated docs (and any AGENTS.md / CLAUDE.md edits if those were in scope). Commit message: `docs: update {scope} — {summary}`. Skip 2.1 if `--no-commit`.
+- → **Gate 2: Commit review** — presented BEFORE 2.1 executes git commit.
 
 Hard rules:
 - **Living documents** (Rule 2) — update in place. Never create `docs-v2/`, `*-old.md`, or dated copies.

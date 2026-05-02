@@ -32,164 +32,84 @@
 
 ## Phases
 
-### Phase 1: READ
-
-**Purpose:** Understand what needs testing.
-
-**Steps:**
-1. Read task docs:
-   - task-design.md (requirements)
-   - task-technical-design.md (technical details)
-   - task-edge-cases.md (boundary conditions)
-2. Read implementation code
-3. Identify testable units:
-   - Functions/methods
-   - Classes/modules
-   - Integration points
-4. Check existing tests:
-   - What's already tested?
-   - What's missing?
-
-**Artifacts:**
-- Test plan (mental model)
-
-**Gate:** Confirm scope — [A]ccept / [M]odify / [R]eject
+This flow has **2 phases, 2 gates**. Each phase contains multiple sub-tasks that auto-proceed without intermediate gates. test-flow does not git commit — tests are committed via implement-flow or pr-flow alongside the code they cover. See `universal/workflow-structure.md`.
 
 ---
 
-### Phase 2: PLAN
+### Phase 1: WRITE
 
-**Purpose:** Structure the test suite.
+**Purpose:** Read context, plan the test suite, generate stubs, and fill them in as one reviewable package.
 
-**Steps:**
-1. Define test categories:
-   - Unit tests (business logic)
-   - Integration tests (component interaction)
-   - Edge case tests (boundaries, errors)
-   - E2E tests (if applicable)
-2. Map tests to requirements:
-   - Each acceptance criterion → test case(s)
-   - Each edge case → test case
-3. Identify mocks/stubs needed
-4. Plan test data
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Test plan document (temporary)
+**1.1 READ**
+- Read task docs: `task-design.md` (requirements), `task-technical-design.md` (technical details), `task-edge-cases.md` (boundary conditions)
+- Read implementation code
+- Identify testable units: functions/methods, classes/modules, integration points
+- Check existing tests: what's already covered, what's missing
 
-**Gate:** Plan review — [A]ccept / [F]eedback / [R]eject
+**1.2 PLAN**
+- Define test categories: unit (business logic), integration (component interaction), edge case (boundaries, errors), E2E (if applicable)
+- Map each acceptance criterion → test case(s); each edge case → test case
+- Identify mocks/stubs and test data needed
 
----
+**1.3 GENERATE**
+- Create test files following project conventions:
+  ```
+  {{test-dir}}/
+  ├── {{task-name}}_test.{{ext}}
+  └── ... (number and names vary by project)
+  ```
+- Write test stubs: function signatures, Arrange-Act-Assert structure, comments describing intent
+- Import dependencies, set up fixtures/mocks
 
-### Phase 3: GENERATE
+**1.4 IMPLEMENT**
+- Fill in unit tests (happy path, error, boundary)
+- Fill in integration tests (component interaction, data flow)
+- Fill in edge case tests (from `task-edge-cases.md` and discoveries)
+- Use descriptive names: `test_calculate_total_with_discount()`, `test_reject_negative_quantity()`
 
-**Purpose:** Create test file structure and stubs.
+**Artifacts (presented at gate):**
+- Test plan outline (categories + mapping to acceptance criteria)
+- Test files with implementations
+- Mock/fixture setup
 
-**Steps:**
-1. Create test files following project conventions:
-   ```
-   {{test-dir}}/
-   ├── {{task-name}}_test.{{ext}}
-   └── ... (number and names vary by project)
-   ```
-   
-   Examples by language:
-   - Python: `test_user_service.py`
-   - JavaScript: `user.service.test.js`
-   - Go: `user_service_test.go`
-   - Rust: `user_service_test.rs`
-2. Write test stubs:
-   - Test function signatures
-   - Arrange-Act-Assert structure
-   - Comments describing what to test
-3. Import dependencies
-4. Setup fixtures/mocks
-
-**Artifacts:**
-- Test files with stubs
-
-**Gate:** Stub review — [A]ccept / [F]eedback / [R]eject
+**Gate:** Test code review — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE B — STANDARD)*
 
 ---
 
-### Phase 4: IMPLEMENT
+### Phase 2: VERIFY
 
-**Purpose:** Fill in test bodies.
+**Purpose:** Run the suite, capture results, and document findings.
 
-**Steps:**
-1. Implement unit tests:
-   - Happy path scenarios
-   - Error scenarios
-   - Boundary conditions
-2. Implement integration tests:
-   - Component interaction
-   - Data flow
-3. Implement edge case tests:
-   - From task-edge-cases.md
-   - Discovered during implementation
-4. Add descriptive test names:
-   - `test_calculate_total_with_discount()`
-   - `test_reject_negative_quantity()`
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Complete test files
+**2.1 VALIDATE**
+- Run tests using the project's framework (NEVER skip tests — user global rule):
+  ```bash
+  pytest tests/test_{task-name}_*.py    # Python
+  npm test -- test/{task-name}          # JavaScript
+  go test ./...                         # Go
+  ```
+- Capture pass/fail per test + coverage delta vs baseline
+- If failures, do **not** auto-proceed — surface at the Phase 2 gate so developer can [F]eedback to fix code or test
 
-**Gate:** Implementation review — [A]ccept / [F]eedback / [R]eject
+**2.2 DOCUMENT**
+- Append a test summary to `flow-storage/tasks/{task-name}/test/`
+- Update `task-technical-design.md`: testing approach used, coverage achieved, known gaps
+- Update task flow file: mark tests complete, add notes
+- Update `flow-storage/project/PATTERNS.md` if new testing patterns emerged
 
----
+**Artifacts (presented at gate):**
+- Test results (pass/fail breakdown)
+- Coverage report + delta
+- Updated docs (TDD, task flow, PATTERNS.md)
 
-### Phase 5: VALIDATE
+**Gate:** Results review — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE B — STANDARD)*
 
-**Purpose:** Run tests and fix failures.
-
-**Steps:**
-1. Run tests:
-   ```bash
-   # Language-specific command
-   pytest tests/test_{task-name}_*.py
-   # or
-   npm test -- test/{task-name}
-   # or
-   go test ./...
-   ```
-2. Check results:
-   - Pass/fail per test
-   - Coverage percentage
-3. Fix failures:
-   - Debug failing tests
-   - Fix code or test (whichever is wrong)
-   - Re-run until passing
-4. Check coverage:
-   - Meet minimum threshold (if set)
-   - Identify uncovered lines
-
-**Artifacts:**
-- Test results
-- Coverage report
-- Fixed code/tests
-
-**Gate:** Validation review — [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 6: DOCUMENT
-
-**Purpose:** Update docs with test info.
-
-**Steps:**
-1. Update task-technical-design.md:
-   - Testing approach used
-   - Coverage achieved
-   - Known gaps
-2. Update issue file:
-   - Mark tests as complete
-   - Add test notes
-3. Add to PATTERNS.md:
-   - Testing patterns discovered
-
-**Artifacts:**
-- Updated documentation
-
-**Gate:** [A]ccept / [F]eedback / [R]eject
+Note: test-flow does not have a COMMIT phase. Tests are committed by implement-flow (alongside the code) or pr-flow (as part of validation).
 
 ---
 

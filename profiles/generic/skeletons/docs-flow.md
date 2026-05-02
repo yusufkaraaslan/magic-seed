@@ -28,153 +28,92 @@
 
 ## Phases
 
-### Phase 1: AUDIT
+This flow has **2 phases, 2 gates**. Each phase contains multiple sub-tasks that auto-proceed without intermediate gates. See `universal/workflow-structure.md` for the canonical pattern.
 
-**Purpose:** Assess current documentation state.
+---
 
-**Steps:**
-1. List all documentation:
-   - `flow-storage/project/*.md`
-   - `flow-storage/tasks/*/*.md`
-   - `flow-storage/team/*.md`
-   - `README.md`
-   - `CHANGELOG.md`
-   - Any other `.md` files
-2. Check for:
-   - Outdated content (references old versions)
-   - Missing documentation (new tasks without docs)
-   - Broken links
-   - Placeholder text (`{placeholder}`, `TODO`, `FIXME`)
-3. Compare docs to codebase:
-   - Tasks documented vs tasks implemented
-   - APIs documented vs APIs existing
+### Phase 1: APPLY
 
-**Artifacts:**
-- Audit report:
+**Purpose:** Audit existing docs, propose changes, and apply them as one reviewable package.
+
+**Sub-tasks (auto-proceed):**
+
+**1.1 SCAN (audit)**
+- List all documentation:
+  - `flow-storage/project/*.md`
+  - `flow-storage/tasks/*/*.md`
+  - `flow-storage/team/*.md`
+  - `README.md`, `CHANGELOG.md`, any other `.md` files
+- Check each for:
+  - Outdated content (references old versions)
+  - Missing documentation (new tasks without docs)
+  - Broken links
+  - Placeholder text (`{placeholder}`, `TODO`, `FIXME`)
+- Compare docs to codebase:
+  - Tasks documented vs tasks implemented
+  - APIs documented vs APIs existing
+- Build an audit report (rationale per finding)
+
+**1.2 PROPOSE**
+- For each finding, draft the change as a diff (or new file outline)
+- Cross-check against living-document policy (Rule 2): update in place, no archives, no v2 copies
+- Group diffs by target file
+
+**1.3 APPLY**
+- For each accepted diff, modify the doc:
+  - Read current version
+  - Apply update (content, diagrams, links, code examples)
+  - Verify no broken cross-references introduced
+- Create missing task docs:
   ```
-  Documentation Audit
-  
-  Total docs: 25
-  Up to date: 18
-  Outdated: 4
-  Missing: 3
-  Broken links: 2
-  
-  Outdated:
-    - flow-storage/project/ARCHITECTURE.md (references v1.0)
-    - flow-storage/tasks/old-task/design/task-design.md (task removed)
-  
-  Missing:
-    - flow-storage/tasks/new-task/ (no docs)
-    - API docs for /users endpoint
+  flow-storage/tasks/{task-name}/
+  ├── design/task-design.md
+  ├── design/task-technical-design.md
+  └── README.md
   ```
+- Add API documentation, ADRs, navigation links as needed
+- Re-run completeness checks: all tasks documented, all APIs documented, all ADRs present, code examples work, diagrams match code, links work
 
-**Gate:** [A]ccept audit / [M]odify scope / [R]eject
+**Artifacts (presented at gate):**
+- Audit summary (counts: outdated / missing / broken)
+- Diff list (file → change summary)
+- Modified files
+- New files
 
----
-
-### Phase 2: UPDATE
-
-**Purpose:** Refresh outdated documentation.
-
-**Steps:**
-1. For each outdated doc:
-   - Read current version
-   - Read relevant code
-   - Update content
-   - Update diagrams
-   - Update links
-2. Fix broken links
-3. Remove placeholder text
-4. Update code examples to match current code
-
-**Artifacts:**
-- Updated documentation files
-
-**Gate:** [A]ccept / [F]eedback / [R]eject
+**Gate:** Doc updates review — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE B — STANDARD)*
 
 ---
 
-### Phase 3: CREATE
+### Phase 2: COMMIT
 
-**Purpose:** Add missing documentation.
+**Purpose:** Commit all doc changes as one atomic unit.
 
-**Steps:**
-1. For each missing doc:
-   - Determine scope
-   - Read related code
-   - Write documentation
-   - Add diagrams if needed
-2. Create task docs for undocumented tasks:
-   ```
-   flow-storage/tasks/{task-name}/
-   ├── task-design.md
-   ├── task-technical-design.md
-   └── README.md
-   ```
-3. Add API documentation
-4. Add architecture decision records (ADRs)
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- New documentation files
+**2.1 COMMIT** *(executes only after Phase 2 gate is accepted)*
+- Stage updated `flow-storage/` and `docs/` files (and any `AGENTS.md` / `CLAUDE.md` edits if those were part of scope)
+- Compose commit message:
+  ```
+  docs: update {scope} — {one-line summary}
 
-**Gate:** [A]ccept / [F]eedback / [R]eject
+  Files updated: {list}
+  ```
+- Run `git commit`
 
----
+**Artifacts (presented at gate):**
+- Staged file list (`git diff --cached --stat`)
+- Proposed commit message
 
-### Phase 4: ORGANIZE
+**Gate:** Commit review — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE C — CRITICAL)*
 
-**Purpose:** Improve documentation structure.
+**Failure modes to verify before [A]ccept:**
+- Files staged: only docs touched by this run — no code edits sneaking in (docs-flow never touches code)
+- Living-document compliance: did the diffs update files in place, or did they create `*-v2.md` / archive copies? The latter violates Rule 2
+- `task-design.md` untouched (Rule 9 — immutable)
 
-**Steps:**
-1. Check navigation:
-   - Can new developers find what they need?
-   - Are related docs linked?
-2. Add cross-references:
-   - Link related docs
-   - Add "See also" sections
-3. Improve discoverability:
-   - Add table of contents
-   - Add search keywords
-   - Standardize headings
-4. Archive or remove:
-   - Docs for removed tasks
-   - Outdated ADRs
-
-**Artifacts:**
-- Reorganized docs
-- Updated README with navigation
-
-**Gate:** [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 5: VERIFY
-
-**Purpose:** Ensure documentation quality.
-
-**Steps:**
-1. Check completeness:
-   - [ ] All tasks documented
-   - [ ] All APIs documented
-   - [ ] All ADRs present
-2. Check accuracy:
-   - [ ] Code examples work
-   - [ ] Diagrams match code
-   - [ ] Links work
-3. Check readability:
-   - [ ] Clear headings
-   - [ ] Good examples
-   - [ ] No jargon without explanation
-4. Check consistency:
-   - [ ] Same terms used throughout
-   - [ ] Same formatting
-   - [ ] Same structure
-
-**Artifacts:**
-- Verification report
-
-**Gate:** [A]ccept / [F]ix issues / [R]eject
+**Opt-out:** `--no-commit` skips sub-task 2.1.
 
 ---
 

@@ -31,200 +31,105 @@ After the design flow has completed and design is signed off.
 
 ## Phases
 
-### Phase 1: READ
-
-**Purpose:** Gather all context for this specific task flow.
-
-**Steps:**
-1. Read project context:
-   - `flow-storage/project/ARCHITECTURE.md`
-   - `flow-storage/project/CONVENTIONS.md`
-   - `flow-storage/project/PATTERNS.md`
-2. Read the issue file:
-   - Extract acceptance criteria
-   - Extract files to create
-   - Extract dependencies
-3. Read design docs:
-   - `task-design.md` (relevant sections)
-   - `task-technical-design.md` (relevant sections)
-   - `task-edge-cases.md` (relevant cases)
-4. Read completed prior task flows:
-   - Check which task flows are `status: complete`
-   - Read their implementation notes
-5. Find reference implementations:
-   - Search for similar tasks in codebase
-   - Read 1-2 examples
-
-**Artifacts:**
-- Context summary
-
-**Gate:** Confirm context loaded — [A]ccept / [M]odify scope / [R]eject
+This flow has **2 phases, 2 gates**. Each phase contains multiple sub-tasks that auto-proceed without intermediate gates. See `universal/workflow-structure.md` for the canonical pattern.
 
 ---
 
-### Phase 2: PLAN
+### Phase 1: BUILD
 
-**Purpose:** Analyze requirements and plan implementation.
+**Purpose:** Load context, plan, write code, validate, and sync docs as one reviewable package.
 
-**Steps:**
-1. Analyze each acceptance criterion:
-   - What code is needed?
-   - What patterns apply?
-   - What edge cases exist?
-2. Map to existing patterns:
-   - Check `PATTERNS.md` for reusable patterns
-   - Check reference implementations
-3. Structure the implementation:
-   - Files to create/modify
-   - Order of implementation
-   - Test approach
-4. Create implementation plan document (temporary)
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Implementation plan
+**1.1 READ**
+- Read `flow-storage/project/{ARCHITECTURE,CONVENTIONS,PATTERNS}.md`
+- Read the task flow file: extract acceptance criteria, files to create/modify, dependencies
+- Read design docs: relevant sections of `task-design.md`, `task-technical-design.md`, `task-edge-cases.md`
+- Read completed prior task flows (status: complete) and their implementation notes
+- Find 1-2 reference implementations in codebase
+- **Hard refusal** if no `task-design.md` or it is not signed off — point developer at design-flow
 
-**Gate:** Plan review — [A]ccept / [F]eedback / [R]eject
+**1.2 PLAN**
+- Analyze each acceptance criterion: code needed, patterns to apply, edge cases
+- Map to existing patterns in `PATTERNS.md` and reference implementations
+- Structure: files to create/modify, order of implementation, test approach
 
----
+**1.3 IMPLEMENT**
+- Write code incrementally: domain/model layer → business logic → integration/API layer
+- Follow naming from `CONVENTIONS.md`, patterns from `PATTERNS.md`, architecture from `ARCHITECTURE.md`
+- Handle edge cases from `task-edge-cases.md`
+- Cite reference implementations only when non-obvious
 
-### Phase 3: IMPLEMENT
+**1.4 AUTO-VALIDATE**
+- Run architecture/style checks specified in profile `rules.md`
+- Run the project's test suite (NEVER skip tests — user global rule)
+- Check integration points against task-design.md signal flow
+- Check for syntax errors, naming convention violations, TODO/FIXME, hardcoded values, duplicated code, missing error handling
+- Verify all acceptance criteria addressed
+- If validation fails, do **not** auto-proceed — surface failures at the Phase 1 gate so developer can [F]eedback to fix
 
-**Purpose:** Write the code.
+**1.5 DOC-SYNC**
+- Update `task-technical-design.md` with deviations from `task-design.md` (Rule 9 — DESIGN stays immutable; deviations live in TDD)
+- Update `task-edge-cases.md` with new discoveries
+- Update `flow-storage/project/PATTERNS.md` if a new reusable pattern emerged
 
-**Steps:**
-1. Create files incrementally:
-   - Start with domain/model layer
-   - Add business logic
-   - Add integration/API layer
-2. Follow conventions:
-   - Naming from `CONVENTIONS.md`
-   - Patterns from `PATTERNS.md`
-   - Architecture from `ARCHITECTURE.md`
-3. Handle edge cases from `task-edge-cases.md`
-4. Add documentation/comments
-5. Cite reference implementations
-
-**Artifacts:**
-- Source code files
-- Updated issue file (in_progress)
-
-**Gate:** Implementation review — [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 4: AUTO-VALIDATE
-
-**Purpose:** Run automated checks.
-
-**Steps:**
-1. Check for syntax errors
-2. Check naming conventions
-3. Check for TODO/FIXME comments
-4. Verify all acceptance criteria are addressed
-5. Check for common issues:
-   - Missing error handling
-   - Hardcoded values
-   - Duplicated code
-6. Run tests if test framework is available
-
-**Artifacts:**
+**Artifacts (presented at gate):**
+- Files changed (created + modified)
+- Test results + coverage delta
 - Validation report
+- Doc updates (task-technical-design.md, task-edge-cases.md, PATTERNS.md)
 
-**Gate:** Validation review — [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 5: DOC-SYNC
-
-**Purpose:** Update living documentation.
-
-**Steps:**
-1. Update task-technical-design.md with deviations:
-   - What changed from original design
-   - Why it changed
-2. Update task-edge-cases.md with new discoveries
-3. Update PATTERNS.md if new pattern discovered
-4. Add implementation notes to issue file
-
-**Artifacts:**
-- Updated task-technical-design.md
-- Updated task-edge-cases.md
-- Updated PATTERNS.md
-- Updated issue file
-
-**Gate:** Doc update review — [A]ccept / [F]eedback / [R]eject
+**Gate:** Implementation review — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE B — STANDARD)*
 
 ---
 
-### Phase 6: DEVELOPER REVIEW
+### Phase 2: COMMIT
 
-**Purpose:** Present complete implementation for developer approval.
+**Purpose:** Transform the task flow file into a knowledge record and commit the work to git as one atomic unit.
 
-**Steps:**
-1. Show files changed:
-   ```
-   Files Created:
-     - {{source-dir}}/features/auth/UserService.{{ext}}
-     - {{source-dir}}/features/auth/PasswordValidator.{{ext}}
-   
-   Files Modified:
-     - {{source-dir}}/features/auth/index.{{ext}}
-   ```
-2. Show test results (if available)
-3. Show validation report
-4. Highlight key decisions
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Complete implementation
+**2.1 UPDATE TASK FLOW**
+- Update task flow frontmatter:
+  ```yaml
+  status: complete
+  accepted-date: {date}
+  ```
+- Append implementation notes: what was implemented, patterns used, deviations from design, testing approach
+- Add code references (file paths, key functions/classes)
 
-**Gate:** [A]ccept / [F]eedback / [R]eject
+**2.2 COMMIT** *(executes only after Phase 2 gate is accepted)*
+- Stage only the files this task flow produced
+- Compose commit message (conventional commits):
+  ```
+  feat({task-name}): {task-flow-type} — brief description
 
----
+  - Change 1
+  - Change 2
 
-### Phase 7: UPDATE ISSUE
+  Refs: {task-flow-name}
+  ```
+- Run `git commit`
 
-**Purpose:** Transform issue to knowledge record.
+**Artifacts (presented at gate):**
+- Knowledge record (the updated task flow file)
+- Staged file list (`git diff --cached --stat`)
+- Proposed commit message
 
-**Steps:**
-1. Update issue frontmatter:
-   ```yaml
-   status: complete
-   accepted-date: 2026-04-23
-   ```
-2. Add implementation notes:
-   - What was implemented
-   - Patterns used
-   - Deviations from design
-   - Testing approach
-3. Add code references:
-   - File paths and line numbers
-   - Key functions/classes
+**Gate:** Commit review — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE C — CRITICAL)*
 
-**Artifacts:**
-- Knowledge record (updated issue file)
+⚠️ Commit lands in history; amending later is friction.
 
----
+**Failure modes to verify before [A]ccept:**
+- Files staged: any unrelated stray edits sneaking in?
+- Commit message: scope/type accurate? Description focuses on *why* not *what*?
+- Co-author trailer present if required by project policy?
+- Hooks won't fail (e.g. linter clean, no test failures)?
+- Pre-existing failing tests not silently bypassed?
 
-### Phase 8: COMMIT
-
-**Purpose:** Commit the work.
-
-**Steps:**
-1. Stage changes
-2. Write commit message:
-   ```
-   feat({task-name}): {issue-type} — brief description
-   
-   - Change 1
-   - Change 2
-   
-   Refs: #{issue-number}
-   ```
-3. Commit
-4. Report completion
-
-**Artifacts:**
-- Committed code
+**Opt-out:** `--no-commit` skips sub-task 2.2 (gate still presents).
 
 ---
 
@@ -256,7 +161,7 @@ Next: 02-auth-service.md
 ## Customization
 
 Users can customize:
-- Add validation steps in Phase 4
-- Change commit message format in Phase 8
+- Add validation steps inside Phase 1 sub-task 1.4 AUTO-VALIDATE
+- Change commit message format in Phase 2 sub-task 2.2 COMMIT
 - Add deployment step after commit
 - Add notification step (Slack, email)

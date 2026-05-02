@@ -31,174 +31,80 @@ After the design flow completes and design is signed off.
 
 ## Phases
 
-### Phase 1: READ
+This profile follows the canonical **2-phase, 2-gate** structure from `universal/workflow-structure.md` (and `profiles/generic/skeletons/implement-flow.md`). Unity-specific guidance below.
 
-**Purpose:** Gather context for this issue.
+### Phase 1: BUILD *(STANDARD gate)*
 
-**Steps:**
-1. Load project context
-2. Read issue file (acceptance criteria, files to create)
-3. Read design docs (relevant sections)
-4. Read completed prior task flows
-5. Find reference implementations in codebase
+**Sub-tasks (auto-proceed):**
 
-**Gate:** Confirm context — [A]ccept / [M]odify / [R]eject
+**1.1 READ** — Load project context, task flow file (acceptance criteria, files to create), design docs (relevant sections), completed prior task flows, reference implementations in codebase.
 
----
+**1.2 PLAN** — Map acceptance criteria to **Unity patterns**:
+- MonoBehaviour lifecycle
+- Component composition
+- ScriptableObject usage
+- Assets needed (scripts, prefabs, ScriptableObject assets)
+- Tests (EditMode for logic, PlayMode for integration)
 
-### Phase 2: PLAN
+**1.3 IMPLEMENT** — Write Unity code following project conventions:
+```csharp
+// Model (pure C#)
+public class FeatureModel { ... }
 
-**Purpose:** Plan Unity-specific implementation.
+// Controller (MonoBehaviour)
+public class FeatureController : MonoBehaviour { ... }
 
-**Steps:**
-1. Analyze acceptance criteria
-2. Map to Unity patterns:
-   - MonoBehaviour lifecycle
-   - Component composition
-   - ScriptableObject usage
-3. Identify assets needed:
-   - Scripts to create
-   - Prefabs to create/modify
-   - ScriptableObject assets
-4. Plan tests (EditMode for logic, PlayMode for integration)
+// View (MonoBehaviour)
+public class FeatureView : MonoBehaviour { ... }
 
-**Gate:** Plan review — [A]ccept / [F]eedback / [R]eject
+// Data (ScriptableObject)
+[CreateAssetMenu(...)]
+public class FeatureData : ScriptableObject { ... }
+```
+- Implement lifecycle: `Awake()` (internal init) → `OnEnable()` (subscribe) → `Start()` (external init) → `OnDisable()` (unsubscribe) → `OnDestroy()` (cleanup)
+- Use `[SerializeField]` for inspector visibility, `RequireComponent` where appropriate, `Header`/`Tooltip` attributes
+- Follow profile rules: no `UnityEngine` in pure C# layers, Views use `Init()` not `[Inject]`, proper event cleanup
 
----
+**1.4 AUTO-VALIDATE** — Run Unity tests (EditMode + PlayMode). Unity-specific checks:
+- [ ] No `using UnityEngine;` in Model/Domain files
+- [ ] Views use `[SerializeField]` not public fields
+- [ ] Lifecycle methods implemented
+- [ ] Events unsubscribed in OnDisable/OnDestroy
+- [ ] No GameObject.Find in Update
+- [ ] Object pooling considered
+- [ ] Naming conventions followed
+- If failures, surface at the gate; do not auto-proceed.
 
-### Phase 3: IMPLEMENT
+**1.5 DOC-SYNC** — Update task-technical-design.md with deviations; update task-edge-cases.md with discoveries; update PATTERNS.md if new pattern found.
 
-**Purpose:** Write Unity code.
-
-**Steps:**
-1. Create scripts following Unity conventions:
-   ```csharp
-   // Model (pure C#)
-   public class FeatureModel { ... }
-   
-   // Controller (MonoBehaviour)
-   public class FeatureController : MonoBehaviour { ... }
-   
-   // View (MonoBehaviour)
-   public class FeatureView : MonoBehaviour { ... }
-   
-   // Data (ScriptableObject)
-   [CreateAssetMenu(...)]
-   public class FeatureData : ScriptableObject { ... }
-   ```
-2. Implement lifecycle:
-   - `Awake()` — internal initialization
-   - `OnEnable()` — event subscription
-   - `Start()` — external initialization
-   - `OnDisable()` — event unsubscription
-   - `OnDestroy()` — cleanup
-3. Handle Unity specifics:
-   - `[SerializeField]` for inspector visibility
-   - `RequireComponent` where appropriate
-   - `Header` and `Tooltip` attributes
-4. Follow profile rules:
-   - No UnityEngine in pure C# layers
-   - Views use Init() not [Inject]
-   - Proper event cleanup
-
-**Artifacts:**
-- Source files
-- Updated issue (in_progress)
-
-**Gate:** Implementation review — [A]ccept / [F]eedback / [R]eject
+→ **Gate 1: Implementation review** — files changed + Unity validation results + doc updates + component hierarchy (if applicable).
 
 ---
 
-### Phase 4: AUTO-VALIDATE
+### Phase 2: COMMIT *(CRITICAL gate)*
 
-**Purpose:** Run Unity-specific checks.
+**Sub-tasks (auto-proceed):**
 
-**Steps:**
-1. Check architecture:
-   - [ ] No `using UnityEngine;` in Model/Domain files
-   - [ ] Views use `[SerializeField]` not public fields
-   - [ ] Lifecycle methods implemented
-2. Check Unity patterns:
-   - [ ] Events unsubscribed in OnDisable/OnDestroy
-   - [ ] No GameObject.Find in Update
-   - [ ] Object pooling considered
-3. Check code style:
-   - [ ] Naming conventions
-   - [ ] Comments for public APIs
-4. Run tests if available
+**2.1 UPDATE TASK FLOW** — Transform task flow file to knowledge record:
+```yaml
+status: complete
+accepted-date: {date}
+```
+Append: scripts created, prefabs created, components used, deviations from design.
 
-**Artifacts:**
-- Validation report
+**2.2 COMMIT** *(executes only after the gate is accepted)* — Stage scripts and assets; commit per conventional commits:
+```
+feat({task-name}): {task-flow-type}
 
-**Gate:** Validation review — [A]ccept / [F]eedback / [R]eject
+- Add FeatureModel, FeatureController, FeatureView
+- Add FeatureData ScriptableObject
+- Implement lifecycle and event handling
 
----
+Refs: {task-flow-name}
+```
+Skip 2.2 if `--no-commit`.
 
-### Phase 5: DOC-SYNC
-
-**Purpose:** Update living docs.
-
-**Steps:**
-1. Update task-technical-design.md with deviations
-2. Update task-edge-cases.md with discoveries
-3. Update PATTERNS.md if new pattern found
-4. Add implementation notes to issue
-
-**Gate:** Doc update review — [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 6: DEVELOPER REVIEW
-
-**Purpose:** Present for approval.
-
-**Steps:**
-1. Show files created/modified
-2. Show component hierarchy (if applicable)
-3. Show validation results
-4. Highlight key decisions
-
-**Gate:** [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 7: UPDATE ISSUE
-
-**Purpose:** Transform to knowledge record.
-
-**Steps:**
-1. Update frontmatter:
-   ```yaml
-   status: complete
-   accepted-date: 2026-04-23
-   ```
-2. Add implementation notes:
-   - Scripts created
-   - Prefabs created
-   - Components used
-   - Deviations from design
-
-**Artifacts:**
-- Knowledge record
-
----
-
-### Phase 8: COMMIT
-
-**Purpose:** Commit the work.
-
-**Steps:**
-1. Stage scripts and assets
-2. Commit:
-   ```
-   feat({task-name}): {issue-type}
-   
-   - Add FeatureModel, FeatureController, FeatureView
-   - Add FeatureData ScriptableObject
-   - Implement lifecycle and event handling
-   
-   Refs: #{issue-number}
-   ```
+→ **Gate 2: Commit review** — presented BEFORE 2.2 executes git commit.
 
 ---
 

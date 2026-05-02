@@ -13,57 +13,44 @@
 
 ## Phases
 
-### Phase 1: AUDIT
+This profile follows the canonical **2-phase, 2-gate** structure from `universal/workflow-structure.md` (and `profiles/generic/skeletons/docs-flow.md`). Unity-specific doc concerns below.
 
-Check Unity-specific docs:
-- Component documentation
-- Scene setup guides
-- Prefab documentation
-- ScriptableObject catalogs
-- Input system docs
+### Phase 1: APPLY *(STANDARD gate)*
+- **1.1 SCAN** — Audit Unity-specific docs:
+  - Component documentation
+  - Scene setup guides
+  - Prefab documentation
+  - ScriptableObject catalogs
+  - Input system docs
+- **1.2 PROPOSE** — Draft updates:
+  - Component diagrams
+  - Scene hierarchy docs
+  - Prefab variant explanations
+  - Inspector configuration guides
+  - New component guides / setup tutorials / troubleshooting (if missing)
+- **1.3 APPLY** — Apply diffs in place (Rule 2 — never archive). Reorganize structure as needed:
+  ```
+  flow-storage/project/
+  ├── ARCHITECTURE.md
+  ├── CONVENTIONS.md
+  ├── PATTERNS.md
+  └── DECISIONS.md
+  flow-storage/team/
+  ├── scene-setup.md
+  ├── prefab-guide.md
+  ├── scriptableobjects.md
+  └── input-system.md
+  ```
+  Verify completeness:
+  - [ ] All components documented
+  - [ ] Scene setup reproducible
+  - [ ] Prefab variants explained
+  - [ ] Code examples work
+- → **Gate 1: Doc updates review** — audit + applied diffs together.
 
-### Phase 2: UPDATE
-
-Update:
-- Component diagrams
-- Scene hierarchy docs
-- Prefab variant explanations
-- Inspector configuration guides
-
-### Phase 3: CREATE
-
-Add missing docs:
-- New component guides
-- Setup tutorials
-- Troubleshooting guides
-
-### Phase 4: ORGANIZE
-
-Structure:
-```
-docs/
-├── project/
-│   ├── ARCHITECTURE.md
-│   ├── CONVENTIONS.md
-│   ├── PATTERNS.md
-│   └── DECISIONS.md
-├── unity/
-│   ├── scene-setup.md
-│   ├── prefab-guide.md
-│   ├── scriptableobjects.md
-│   └── input-system.md
-├── tasks/
-│   └── {task-name}/
-└── team/
-```
-
-### Phase 5: VERIFY
-
-Check:
-- [ ] All components documented
-- [ ] Scene setup reproducible
-- [ ] Prefab variants explained
-- [ ] Code examples work
+### Phase 2: COMMIT *(CRITICAL gate)*
+- **2.1 COMMIT** *(executes only after the gate is accepted)* — Stage updated docs; commit `docs: update {scope} — {summary}`. Skip 2.1 if `--no-commit`.
+- → **Gate 2: Commit review** — presented BEFORE 2.1 executes git commit.
 
 ---
 

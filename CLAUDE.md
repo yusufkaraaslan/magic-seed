@@ -33,7 +33,7 @@ Four layers, strictly ordered (more universal → more specific):
 
 - `instructions.md` — Repo-root entry point. The platform-neutral version of the workflow that every wrapper references. Drop this and the system has no orchestration.
 - `universal/rules.md` — 15 numbered rules with severity (`error` / `warning` / `info`). Rules 1, 2, 4, 6, 8, 9 are blocking. **When adding a rule, follow the existing numbered structure** and assign a severity in the "Enforcement" section at the bottom.
-- `universal/workflow-structure.md` — Defines the 6 flow types and their phase architecture (e.g., design has UNDERSTAND → DESIGN → SPECIFY → REVIEW → PLAN). Every phase ends with an `[A]ccept / [F]eedback / [R]eject` gate.
+- `universal/workflow-structure.md` — Defines the 6 flow types and their phase architecture. **Every flow uses the 2-phase, 2-gate pattern** by default. Each phase contains multiple sub-tasks (1.1, 1.2, ...) that auto-proceed without intermediate gates; only the parent phase presents an `[A]ccept / [F]eedback / [R]eject` gate (Rule 6 still satisfied). Example: design-flow is `Phase 1: SPECIFY` (sub-tasks UNDERSTAND, DESIGN diagrams, write spec docs) → gate → `Phase 2: COMMIT` (sub-tasks PLAN decompose, FINALIZE sign-off, git commit) → gate. Deploy-flow keeps both gates as CRITICAL (deploy is hard-to-reverse). PR flow is modal (3 modes × 2 phases each = 6 phases / 6 gates).
 - `universal/diagram-standards.md` — PlantUML is the default; Mermaid and D2 are alternatives.
 - `universal/knowledge-base-spec.md` — Three-tier KB: task-level (`flow-storage/tasks/{task-name}/`), project-level (`flow-storage/project/`), team-level (`flow-storage/team/`).
 - `universal/slot-catalog-template.md`, `universal/flow-authoring-guide.md` — Templates and authoring conventions for new profiles/flows.
@@ -83,7 +83,7 @@ When editing flows, skeletons, rules, or wrappers, manually check:
 
 1. **No leaked placeholders** — Per Rule 12, no `{[a-z][a-z0-9_-]*}` patterns should remain in non-template files. Template files (skeletons, `*-TEMPLATE.md`) are exempt.
 2. **Slot names match across profile** — Slot names referenced in `skeletons/*.md` must be defined/discovered in the profile's `discovery.md`.
-3. **Phase gates intact** — Every flow phase ends with an explicit `[A]/[F]/[R]` gate. Do not remove these.
+3. **Phase gates intact** — Every top-level flow phase ends with an explicit `[A]/[F]/[R]` gate. Sub-tasks within a phase auto-proceed and do NOT have their own user-facing gates — that's the whole point of the 2-phase pattern. If you find yourself adding a gate after a sub-task, promote it to a top-level phase or accept that the parent phase's gate covers it.
 4. **File reading order in `instructions.md`** — If you add new universal files, update the "File Reading Order" section in `instructions.md`.
 5. **No slash-command syntax outside `platforms/claude/`** — ai-flow-anything is platform-neutral. Only the Claude wrapper's command-alias table (in `platforms/claude/SKILL.md`) may use slash invocations of the ai-flow-anything prefix or per-flow names. Everywhere else, refer to flows by name in prose. Verify by grepping for the relevant slash patterns and excluding `platforms/`; the GitHub clone URL ending in `.git` is a known harmless false positive.
 6. **Wrappers stay thin** — If a `platforms/{tool}/*` file grows beyond the wrapper's expected ~20–80 lines, the additions probably belong in `instructions.md`. Wrappers may include a short "Init must persist plumbing" reminder pointing at `instructions.md` Step 7 — that's the one allowed exception, since the bug it prevents (generate-and-forget init) is wrapper-discoverable but not wrapper-fixable.
@@ -96,7 +96,7 @@ When editing flows, skeletons, rules, or wrappers, manually check:
 
 These are load-bearing for the whole system; don't soften them without discussing:
 
-- **No auto-approval** (Rule 6) — The AI never decides a phase is complete. Always `[A]/[F]/[R]`.
+- **No auto-approval** (Rule 6) — The AI never decides a top-level phase is complete. Always `[A]/[F]/[R]` at every phase boundary. Sub-tasks within a phase auto-proceed; only the parent phase has a user-facing gate.
 - **task-design.md is immutable after sign-off** (Rule 9) — Deviations go in task-technical-design.md, never edit a signed-off task-design.md.
 - **Diagrams are mandatory** (Rule 4) — Every task gets at least a class + package diagram.
 - **Living documents, no archives** (Rule 2) — Update in place. Never create `docs-v2/` or dated copies.

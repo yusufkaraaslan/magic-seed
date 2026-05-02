@@ -69,15 +69,27 @@ Walkthrough of a typical execution.
 
 ## Writing Phases
 
+Every flow uses the **2-phase, 2-gate** default pattern (see `universal/workflow-structure.md`). Each phase contains multiple sub-tasks (numbered 1.1, 1.2, ...) that auto-proceed without intermediate gates. Only the parent phase has a user-facing gate.
+
 ### Phase Purpose
 
 Start each phase with a clear purpose statement:
 
 ```markdown
-### Phase 3: IMPLEMENT
+### Phase 1: BUILD *(STANDARD gate)*
 
-**Purpose:** Write the source code for this issue, following project 
-conventions and reference implementations.
+**Purpose:** Write the source code, validate, and sync docs as one
+reviewable package.
+
+**Sub-tasks (auto-proceed):**
+
+**1.1 READ** — Load context, task flow file, design docs.
+**1.2 PLAN** — Map acceptance criteria to existing patterns.
+**1.3 IMPLEMENT** — Write the source code per project conventions.
+**1.4 AUTO-VALIDATE** — Run the project test suite.
+**1.5 DOC-SYNC** — Update task-technical-design.md with deviations.
+
+→ **Gate 1: Implementation review** — files changed + validation results + doc updates.
 ```
 
 ### Phase Steps
@@ -405,46 +417,37 @@ Before committing code or creating a PR.
 
 ## Phases
 
-### Phase 1: READ
-**Purpose:** Understand what changed.
+(Example custom flow following the canonical 2-phase, 2-gate pattern.)
 
-**Steps:**
-1. Show git diff or changed files
-2. Read relevant conventions
-3. Identify which files need review
+### Phase 1: REVIEW *(STANDARD gate)*
+**Purpose:** Read the diff, run all checks, and produce a single review report.
 
-**Artifacts:**
+**Sub-tasks (auto-proceed):**
+
+**1.1 READ** — Show git diff or changed files; read relevant conventions; identify files needing review.
+
+**1.2 REVIEW** — Check naming conventions, code style, common issues, test coverage, documentation updates.
+
+**Artifacts (presented at gate):**
 - Review scope summary
-
-**Gate:** Confirm scope — [A]ccept / [M]odify scope / [R]eject
-
-### Phase 2: REVIEW
-**Purpose:** Check code against conventions.
-
-**Steps:**
-1. Check naming conventions
-2. Check code style
-3. Check for common issues
-4. Check test coverage
-5. Verify documentation updates
-
-**Artifacts:**
 - Review report with findings
 
-**Gate:** Present findings — [A]ccept / [F]eedback / [R]eject
+**Gate:** Findings review — [A]ccept / [F]eedback / [R]eject
 
-### Phase 3: FIX
-**Purpose:** Apply suggested fixes.
+### Phase 2: FIX *(STANDARD gate)*
+**Purpose:** Apply approved fixes and re-validate.
 
-**Steps:**
-1. Present fix suggestions with before/after
-2. Developer chooses which to apply
-3. Apply approved fixes
-4. Re-run checks
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
+**2.1 PROPOSE** — Present fix suggestions with before/after; developer chooses which to apply.
+
+**2.2 APPLY** — Apply approved fixes; re-run checks.
+
+**Artifacts (presented at gate):**
 - Fixed code
 - Updated review report
+
+**Gate:** Final approval — [A]ccept / [F]eedback / [R]eject
 
 **Gate:** Confirm fixes — [A]ccept / [F]eedback / [R]eject
 ```

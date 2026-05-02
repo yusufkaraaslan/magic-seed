@@ -63,48 +63,46 @@ AI: Install complete!
 ```
 Developer: "Design a task called shield-powerup"
 
-AI: Phase 1: UNDERSTAND
-    Loading SpaceDefender architecture...
-    Found similar tasks: SpeedBoost, DoubleShot
-    Reading reference implementations...
+AI: Phase 1: SPECIFY
+    [1.1 UNDERSTAND] Loading SpaceDefender architecture...
+                     Found similar tasks: SpeedBoost, DoubleShot
+                     Reading reference implementations...
 
-AI: Phase 2: DESIGN (Visual-First)
-    
-    Class Diagram v1:
-    [ShieldPowerUp] ---extends---> [PowerUpBase]
-    [ShieldPowerUp] ---uses---> [ShieldController]
-    [ShieldController] ---uses---> [PlayerModel]
-    
-    Developer: Add ShieldView component
-    
-    AI: Class Diagram v2:
-    [ShieldPowerUp] ---extends---> [PowerUpBase]
-    [ShieldPowerUp] ---uses---> [ShieldController]
-    [ShieldController] ---uses---> [PlayerModel]
-    [ShieldController] ---uses---> [ShieldView]
-    
+    [1.2 DESIGN]     Class Diagram v1:
+                     [ShieldPowerUp] ---extends---> [PowerUpBase]
+                     [ShieldPowerUp] ---uses---> [ShieldController]
+                     [ShieldController] ---uses---> [PlayerModel]
+
+                     Developer: Add ShieldView component
+
+                     Class Diagram v2 (rendered to .svg):
+                     [ShieldPowerUp] ---extends---> [PowerUpBase]
+                     [ShieldPowerUp] ---uses---> [ShieldController]
+                     [ShieldController] ---uses---> [PlayerModel, ShieldView]
+
+    [1.3 SPECIFY]    Creating task-design.md...
+                     Creating task-technical-design.md...
+                     Creating task-edge-cases.md...
+
+→ Gate 1: Design package review — diagrams + spec docs together
     Developer: Accept
 
-AI: Phase 3: SPECIFY
-    Creating task-design.md...
-    Creating task-technical-design.md...
-    Creating task-edge-cases.md...
-    
+AI: Phase 2: COMMIT
+    [2.1 PLAN]       Task flows:
+                     1. shield-data-model.md — Shield data
+                     2. shield-controller.md — Shield logic
+                     3. shield-view.md — Shield visual
+                     4. shield-tests.md — Unit + PlayMode tests
+                     5. shield-integration.md — Scene setup, prefab
+
+    [2.2 FINALIZE]   Signing off task-design.md (immutable)...
+
+→ Gate 2: Plan + final approval — presented BEFORE git commit
     Developer: Accept
 
-AI: Phase 4: PLAN
-    Issues:
-    1. model.md — Shield data model
-    2. controller.md — Shield logic
-    3. view.md — Shield visual
-    4. tests.md — Unit + PlayMode tests
-    5. integration.md — Scene setup, prefab
-    
-    Developer: Accept
-
-AI: Phase 5: FINALIZE
-    Design locked!
-    Handing off to implement-flow...
+    [2.3 COMMIT]     git commit -m "design(shield-powerup): sign off
+                     task-design.md and 5 task flows"
+                     Handing off to implement-flow...
 ```
 
 ---
@@ -114,41 +112,37 @@ AI: Phase 5: FINALIZE
 ```
 Developer: "Implement the next task flow for shield-powerup"
 
-AI: Resuming from first pending issue...
-    Issue: model.md
-    
-AI: Phase 1: READ
-    Loading context...
-    Reading ShieldPowerUp design...
-    Reference: SpeedBoost implementation
+AI: Resuming from first pending task flow...
+    Task flow: task-flow-shield-data-model.md
 
-AI: Phase 2: PLAN
-    Files to create:
-    - Assets/Scripts/Models/ShieldModel.cs
-    - Assets/Scripts/Controllers/ShieldController.cs
-    
+AI: Phase 1: BUILD
+    [1.1 READ]         Loading context...
+                       Reading ShieldPowerUp design...
+                       Reference: SpeedBoost implementation
+    [1.2 PLAN]         Files to create:
+                       - Assets/Scripts/Models/ShieldModel.cs
+                       - Assets/Scripts/Controllers/ShieldController.cs
+    [1.3 IMPLEMENT]    Creating ShieldModel.cs...
+                       Creating ShieldController.cs...
+    [1.4 AUTO-VALIDATE] ✓ No UnityEngine in Model
+                       ✓ Controller has lifecycle methods
+                       ✓ Events unsubscribed in OnDisable
+                       ✓ EditMode tests pass (12/12)
+    [1.5 DOC-SYNC]     Updated task-technical-design.md with deviation
+                       (added IShieldController interface)
+
+→ Gate 1: Implementation review — files changed + validation + doc updates
     Developer: Accept
 
-AI: Phase 3: IMPLEMENT
-    Creating ShieldModel.cs...
-    Creating ShieldController.cs...
-    
+AI: Phase 2: COMMIT
+    [2.1 UPDATE TASK FLOW] task-flow-shield-data-model.md → status: complete
+
+→ Gate 2: Commit review — presented BEFORE git commit
     Developer: Accept
 
-AI: Phase 4: AUTO-VALIDATE
-    ✓ No UnityEngine in Model
-    ✓ Controller has lifecycle methods
-    ✓ Events unsubscribed in OnDisable
-    
-    Developer: Accept
+    [2.2 COMMIT]       git commit -m "feat(shield-powerup): shield data model"
 
-AI: Phase 7: UPDATE ISSUE
-    model.md → status: complete
-    
-AI: Committing...
-    feat(shield-powerup): model implementation
-    
-AI: Next issue: controller.md
+AI: Next task flow: task-flow-shield-controller.md
     
 [Repeat for all task flows...]
 ```

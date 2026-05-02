@@ -33,176 +33,130 @@
 
 ## Phases
 
-### Phase 1: CHECKLIST
-
-**Purpose:** Verify all prerequisites.
-
-**Steps:**
-1. Verify task complete:
-   - [ ] All task flows closed
-   - [ ] PR merged
-   - [ ] Tests passing
-2. Verify documentation:
-   - [ ] task-design.md signed off
-   - [ ] task-technical-design.md complete
-   - [ ] Lessons learned captured
-3. Verify build:
-   - [ ] No build errors
-   - [ ] Dependencies resolved
-4. Verify version:
-   - [ ] Version number determined
-   - [ ] Changelog updated
-
-**Artifacts:**
-- Checklist report
-
-**Gate:** [A]ccept / [F]ix issues / [R]eject
+This flow has **2 phases, 2 CRITICAL gates** — both gates are CRITICAL because each represents a hard-to-reverse decision (going live; declaring success). Sub-tasks within each phase auto-proceed; the gates are deliberately preserved at the two highest-stakes transitions. See `universal/workflow-structure.md`.
 
 ---
 
-### Phase 2: VERSION
+### Phase 1: PREPARE
 
-**Purpose:** Bump version and update changelogs.
+**Purpose:** Verify the build is ready to ship. This phase produces nothing externally visible — the gate is the last reversible point.
 
-**Steps:**
-1. Determine version bump:
-   - Major (breaking changes)
-   - Minor (new tasks)
-   - Patch (bug fixes)
-2. Update version files:
-   - `package.json` (npm)
-   - `pyproject.toml` (Python)
-   - `Cargo.toml` (Rust)
-   - `version` file (generic)
-3. Update `CHANGELOG.md`:
-   ```markdown
-   ## [1.2.0] - 2026-04-23
-   
-   ### Added
-   - Task: {task-name}
-   
-   ### Changed
-   - {other changes}
-   
-   ### Fixed
-   - {bug fixes}
-   ```
-4. Update release notes
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Updated version files
-- Updated CHANGELOG.md
+**1.1 CHECKLIST**
+- Verify task complete: all task flows closed, PR merged, tests passing
+- Verify documentation: `task-design.md` signed off, `task-technical-design.md` complete, lessons learned captured
+- Verify build: no build errors, dependencies resolved
+- Verify safety: no debug code in build, no secrets in artifacts
 
-**Gate:** [A]ccept / [F]eedback / [R]eject
+**1.2 VERSION**
+- Determine version bump: major (breaking) / minor (new tasks) / patch (bug fixes)
+- Update version files: `package.json`, `pyproject.toml`, `Cargo.toml`, `version` file (whichever applies)
+- Update `CHANGELOG.md`:
+  ```markdown
+  ## [1.2.0] - {date}
 
----
+  ### Added
+  - Task: {task-name}
 
-### Phase 3: BUILD
+  ### Changed
+  - {other changes}
 
-**Purpose:** Generate build artifacts.
+  ### Fixed
+  - {bug fixes}
+  ```
+- Generate release notes
 
-**Steps:**
-1. Run build command (examples for various build systems):
-   ```bash
-   # JavaScript/TypeScript
-   npm run build
-   # Python
-   python setup.py build
-   # Rust
-   cargo build --release
-   # Make
-   make build
-   ```
-2. Verify build succeeds
-3. Check build artifacts
-4. Run smoke tests on build
+**1.3 BUILD**
+- Run build command (per profile):
+  ```bash
+  npm run build              # JavaScript/TypeScript
+  python setup.py build      # Python
+  cargo build --release      # Rust
+  make build                 # Make
+  ```
+- Verify build succeeds
+- Check artifact size, format, signatures
+- Run smoke tests on build artifact
 
-**Artifacts:**
-- Build artifacts
-- Build log
+**Artifacts (presented at gate):**
+- Checklist report (pass/fail per item)
+- Updated version files + CHANGELOG.md
+- Release notes
+- Build artifacts (size, signature, smoke test result)
 
-**Gate:** [A]ccept / [F]ix issues / [R]eject
+**Gate:** Ready to deploy? — [A]ccept / [F]eedback / [R]eject  
+*(GATE TYPE C — CRITICAL)*
+
+⚠️ This is the **last reversible point**. Sub-task 2.1 (the actual deploy) executes only after this gate is accepted.
+
+**Failure modes to verify before [A]ccept:**
+- All checklist items pass?
+- Version number correct (no accidental bump direction)?
+- Build artifact sane (size / format / contents)?
+- Rollback plan documented?
 
 ---
 
-### Phase 4: DEPLOY
+### Phase 2: SHIP
 
-**Purpose:** Deploy to target environment.
+**Purpose:** Deploy, verify health, and announce. Each sub-task is irreversible in escalating ways — DEPLOY is irreversible-with-rollback; ANNOUNCE is publicly irreversible.
 
-**Steps:**
-1. Choose environment:
-   - Staging
-   - Production
-   - Other
-2. Run deployment:
-   ```bash
-   # Examples
-   npm run deploy:staging
-   # or
-   docker-compose up -d
-   # or
-   kubectl apply -f k8s/
-   # or
-   rsync -avz dist/ server:/var/www/
-   ```
-3. Monitor deployment
-4. Check for errors
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Deployment confirmation
-- Logs
+**2.1 DEPLOY** *(executes only after Phase 1 gate is accepted)*
+- Choose environment: staging / production / other
+- Run deployment:
+  ```bash
+  npm run deploy:staging
+  # or
+  docker-compose up -d
+  # or
+  kubectl apply -f k8s/
+  # or
+  rsync -avz dist/ server:/var/www/
+  ```
+- Monitor deployment, check for errors
 
-**Gate:** [A]ccept / [R]ollback / [R]eject
+**2.2 VERIFY**
+- Health checks: application responds, database connections work, APIs return 200
+- Task verification: new task works in production, existing features still work
+- Performance check: response times acceptable, no memory leaks
+- Monitoring: error rates normal, no alerts triggered
+- Hold for soak window if profile rules require one
+- If anything regresses → roll back per the rollback procedure below; do not proceed to 2.3
 
----
+**2.3 ANNOUNCE** *(executes only after Phase 2 gate is accepted)*
+- Compose announcement:
+  ```
+  Release {version} is live!
 
-### Phase 5: VERIFY
+  What's new:
+  - {task-name}: {brief description}
 
-**Purpose:** Confirm deployment success.
+  Full changelog: {link}
+  ```
+- Send to team channels (Slack, Discord, email)
+- Update status page (if applicable)
+- Commit changelog updates separately
 
-**Steps:**
-1. Health checks:
-   - Application responds
-   - Database connections work
-   - APIs return 200
-2. Task verification:
-   - New task works in production
-   - Existing features still work
-3. Performance check:
-   - Response times acceptable
-   - No memory leaks
-4. Monitoring:
-   - Error rates normal
-   - No alerts triggered
+**Artifacts (presented at gate):**
+- Deployment confirmation + logs
+- Health check results
+- Performance metrics vs baseline
+- Soak window status (if applicable)
+- Draft announcement text
 
-**Artifacts:**
-- Verification report
+**Gate:** All clear? — [A]ccept / [F]eedback / [R]ollback  
+*(GATE TYPE C — CRITICAL)*
 
-**Gate:** [A]ccept / [I]ssue found / [R]ollback
+⚠️ Announcement is **public**. Roll back instead of [A]ccept if metrics regressed.
 
----
-
-### Phase 6: ANNOUNCE
-
-**Purpose:** Notify team/users.
-
-**Steps:**
-1. Write announcement:
-   ```
-   Release {version} is live!
-   
-   What's new:
-   - {task-name}: {brief description}
-   
-   Full changelog: {link}
-   ```
-2. Send to team channels (Slack, Discord, email)
-3. Update status page (if applicable)
-
-**Artifacts:**
-- Announcement sent
-
-**Gate:** Complete
+**Failure modes to verify before [A]ccept:**
+- Health checks all green for the soak window?
+- Error rate within tolerance vs baseline?
+- Anyone reporting issues out-of-band?
+- Release notes accurate and link to changelog?
 
 ---
 

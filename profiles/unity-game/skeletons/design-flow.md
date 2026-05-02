@@ -46,156 +46,69 @@ flow-storage/tasks/{task-name}/
 
 ## Phases
 
-### Phase 1: UNDERSTAND
+This profile follows the canonical **2-phase, 2-gate** structure from `universal/workflow-structure.md` (and `profiles/generic/skeletons/design-flow.md`). Unity-specific details are in the sub-tasks.
 
-**Purpose:** Load context and understand the task.
+### Phase 1: SPECIFY *(STANDARD gate)*
 
-**Steps:**
-1. Read `flow-storage/project/ARCHITECTURE.md`
-2. Read `flow-storage/project/CONVENTIONS.md`
-3. Read `flow-storage/project/PATTERNS.md`
-4. Explore codebase:
-   - Search for similar tasks
-   - Read reference implementations
-   - Understand component structure
-5. Check existing features in `flow-storage/tasks/`
+**Sub-tasks (auto-proceed):**
 
-**Gate:** Confirm understanding — [A]ccept / [F]eedback / [R]eject
+**1.1 UNDERSTAND**
+- Read `flow-storage/project/ARCHITECTURE.md`, `CONVENTIONS.md`, `PATTERNS.md`
+- Explore codebase: similar tasks, reference implementations, component structure
+- Check existing tasks in `flow-storage/tasks/`
 
----
+**1.2 DESIGN (Visual-First)**
+- Ask developer: "Describe this task in 1-2 sentences"
+- Generate class diagram: MonoBehaviour components, ScriptableObject data, pure C# models/services, relationships
+- Generate component diagram: GameObjects in scene hierarchy, component composition, prefab structure
+- Render every `.puml` to `.svg`
 
-### Phase 2: DESIGN (Visual-First)
+**1.3 SPECIFY** — Create docs with **Unity specifics**:
+- `task-design.md`: task overview, user stories, component architecture (with diagram refs), data flow, Unity integration (scenes, prefabs, ScriptableObjects), input handling, visual/audio specs, edge cases (high-level)
+- `task-technical-design.md`: script breakdown (MonoBehaviour, ScriptableObject, pure C#), component responsibilities, lifecycle (Awake/Start/OnEnable/OnDestroy), data persistence, testing strategy (EditMode/PlayMode)
+- `task-edge-cases.md`: scene loading/unloading, object pooling, null reference risks, performance concerns
+- Sequence diagrams for complex flows (rendered)
 
-**Purpose:** Create component architecture using diagrams.
-
-**Steps:**
-1. Ask developer: "Describe this task in 1-2 sentences"
-2. Generate class diagram showing:
-   - MonoBehaviour components
-   - ScriptableObject data
-   - Pure C# models/services
-   - Relationships (inheritance, composition)
-3. Present to developer, iterate
-4. Generate component diagram showing:
-   - GameObjects in scene hierarchy
-   - Component composition
-   - Prefab structure
-5. Present, iterate until approved
-
-**Artifacts:**
-- `diagrams/01-class-diagram.puml`
-- `diagrams/02-component-diagram.puml`
-
-**Gate:** Diagram approval — [A]ccept / [F]eedback / [R]eject
+→ **Gate 1: Design package review** — diagrams + spec docs together.
 
 ---
 
-### Phase 3: SPECIFY
+### Phase 2: COMMIT *(CRITICAL gate)*
 
-**Purpose:** Generate detailed specs from diagrams.
+**Sub-tasks (auto-proceed):**
 
-**Steps:**
-1. Create `task-design.md`:
-   - Task overview
-   - User stories
-   - Component architecture (with diagram references)
-   - Data flow
-   - Unity integration (scenes, prefabs, ScriptableObjects)
-   - Input handling
-   - Visual/audio specifications
-   - Edge cases (high-level)
-2. Create `task-technical-design.md`:
-   - Script breakdown (MonoBehaviour, ScriptableObject, pure C#)
-   - Component responsibilities
-   - Lifecycle (Awake, Start, OnEnable, OnDestroy)
-   - Data persistence
-   - Testing strategy (EditMode/PlayMode)
-3. Create `task-edge-cases.md`:
-   - Scene loading/unloading
-   - Object pooling
-   - Null reference risks
-   - Performance concerns
-4. Generate sequence diagrams for complex flows
+**2.1 PLAN** — Decompose into implementation task flows (kebab-case names describing the WORK, not architectural layers):
+  - Examples: `player-health-system.md`, `enemy-ai-behavior.md`, `inventory-ui-panel.md`, `save-load-system.md`, `vfx-particle-controller.md`
+  - Sample plan presentation:
+    ```
+    Proposed task flows for "Shield Power-Up":
 
-**Artifacts:**
-- task-design.md
-- task-technical-design.md
-- task-edge-cases.md
-- Sequence diagrams (if needed)
+    1. shield-data-model.md          # ScriptableObject + stats
+    2. shield-controller.md          # Activation/deactivation logic
+    3. shield-visual-effect.md       # Particle system + animations
+    4. shield-integration.md         # Scene setup, prefab configuration
 
-**Gate:** Specification review — [A]ccept / [F]eedback / [R]eject
+    Suggested: Add tests.md? [Y]/[N]
+    ```
+  - Create task flow files with frontmatter:
+    ```yaml
+    ---
+    task-flow: shield-data-model
+    task: "shield-power-up"
+    status: pending
+    depends-on: []
+    accepted-date: null
+    tags: ["unity", "scriptable-object", "data"]
+    ---
+    ```
+  - Define acceptance criteria per task flow
+  - Generate `diagrams/04-task-flow-dependencies.puml` (rendered)
 
----
+**2.2 FINALIZE** — Sign off task-design.md (immutable per Rule 9).
 
-### Phase 4: PLAN
+**2.3 COMMIT** *(executes only after the gate is accepted)* — Stage `flow-storage/tasks/{task-name}/`; commit `design({task-name}): sign off task-design.md and {N} task flows`. Skip 2.3 if `--no-commit`.
 
-**Purpose:** Create implementation task flows based on task analysis.
-
-**Steps:**
-1. **AI analyzes task** and proposes issue breakdown:
-   - Names describe the WORK (kebab-case), not architectural layers
-   - Examples:
-     - `player-health-system.md`
-     - `enemy-ai-behavior.md`
-     - `inventory-ui-panel.md`
-     - `save-load-system.md`
-     - `vfx-particle-controller.md`
-   
-2. **Present proposal** to developer with rationale:
-   ```
-   Proposed task flows for "Shield Power-Up":
-   
-   1. shield-data-model.md          # ScriptableObject + stats
-   2. shield-controller.md          # Activation/deactivation logic
-   3. shield-visual-effect.md       # Particle system + animations
-   4. shield-integration.md         # Scene setup, prefab configuration
-   
-   Suggested: Add tests.md? [Y]/[N]
-   
-   [A]ccept / [M]odify / [R]edefine
-   ```
-
-3. **Developer adjusts:**
-   - Add: "Also need shield-sound-effect.md"
-   - Remove: "Skip integration for now"
-   - Rename: "call it shield-pickup-behavior.md"
-
-4. **Create task flow files** with frontmatter:
-   ```yaml
-   ---
-   issue: shield-data-model
-   task: "shield-power-up"
-   status: pending
-   depends-on: []
-   accepted-date: null
-   tags: ["unity", "scriptable-object", "data"]
-   ---
-   ```
-
-5. **Define acceptance criteria** per issue
-
-6. **Create issue dependency diagram**
-
-7. **Present complete plan**
-
-**Artifacts:**
-- Dynamically named task flow files
-- `diagrams/04-task-flow-dependencies.puml`
-
-**Gate:** Plan review — [A]ccept / [F]eedback / [R]eject
-
----
-
-### Phase 5: FINALIZE
-
-**Purpose:** Lock design and hand off.
-
-**Steps:**
-1. Lock task-design.md (immutable after sign-off)
-2. Present complete package
-3. Explain handoff to implement-flow
-
-**Gate:** Final approval — [A]ccept / [F]eedback / [R]eject
+→ **Gate 2: Plan + final approval** — presented BEFORE 2.3 executes git commit.
 
 ---
 

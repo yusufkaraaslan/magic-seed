@@ -22,36 +22,29 @@ flow-storage/tasks/{task-name}/
 
 ## Phases
 
-### Phase 1: UNDERSTAND
-Load context, explore codebase.
+This profile follows the canonical **2-phase, 2-gate** structure from `universal/workflow-structure.md` (and `profiles/generic/skeletons/design-flow.md`). Web-frontend specifics are in the sub-tasks.
 
-### Phase 2: DESIGN (Visual-First)
-Generate component hierarchy and state flow diagrams.
+### Phase 1: SPECIFY *(STANDARD gate)*
+- **1.1 UNDERSTAND** — Load context, explore codebase (components/, hooks/, routes/, stores/).
+- **1.2 DESIGN (Visual-First)** — Generate component hierarchy + state flow diagrams (class + package + sequence as needed). Render every `.puml` to `.svg`.
+- **1.3 SPECIFY** — Create docs with **web-frontend specifics**:
+  - Component architecture
+  - State management
+  - API integration
+  - Routing
+  - Styling approach
+  - Accessibility
+- → **Gate 1: Design package review** — diagrams + spec docs together.
 
-### Phase 3: SPECIFY
-Create docs with frontend specifics:
-- Component architecture
-- State management
-- API integration
-- Routing
-- Styling approach
-- Accessibility
-
-### Phase 4: PLAN
-**Purpose:** Create implementation task flows based on task analysis.
-
-**Process:**
-1. AI analyzes task and proposes task flows (kebab-case names):
-   - Examples: `user-auth-hook.md`, `login-form-component.md`, `api-error-handler.md`
-2. Present to developer with rationale
-3. Developer approves/modifies/redefines
-4. Create task flow files with frontmatter + tags
-5. Create issue dependency diagram
-
-**Suggested:** Offer to add tests.md as optional issue
-
-### Phase 5: FINALIZE
-Lock design.
+### Phase 2: COMMIT *(CRITICAL gate)*
+- **2.1 PLAN** — Decompose into implementation task flows (kebab-case names):
+  - Examples: `user-auth-hook.md`, `login-form-component.md`, `api-error-handler.md`
+  - Create files with frontmatter + tags
+  - Generate task-flow dependency diagram
+  - Suggested: offer to add `tests.md` as optional task flow
+- **2.2 FINALIZE** — Sign off task-design.md (immutable per Rule 9).
+- **2.3 COMMIT** *(executes only after the gate is accepted)* — Stage `flow-storage/tasks/{task-name}/`; commit `design({task-name}): sign off task-design.md and {N} task flows`. Skip 2.3 if `--no-commit`.
+- → **Gate 2: Plan + final approval** — presented BEFORE 2.3 executes git commit.
 
 ## Frontend Patterns
 

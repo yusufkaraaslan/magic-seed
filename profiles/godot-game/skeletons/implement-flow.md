@@ -7,48 +7,38 @@ After design-flow completes.
 
 ## Phases
 
-### Phase 1: READ
-Load context, read issue, design docs.
+This profile follows the canonical **2-phase, 2-gate** structure from `universal/workflow-structure.md` (and `profiles/generic/skeletons/implement-flow.md`). Godot-specific guidance below.
 
-### Phase 2: PLAN
-Plan GDScript implementation:
-- Script structure
-- Node hierarchy
-- Signal connections
+### Phase 1: BUILD *(STANDARD gate)*
+- **1.1 READ** — Load context, task flow file, design docs, completed prior task flows.
+- **1.2 PLAN** — GDScript implementation: script structure, node hierarchy, signal connections.
+- **1.3 IMPLEMENT** — Create GDScript files following project conventions:
+  ```gdscript
+  extends Node
+  class_name FeatureController
 
-### Phase 3: IMPLEMENT
-Create GDScript files:
-```gdscript
-extends Node
-class_name FeatureController
+  @export var model: FeatureModel
+  @onready var view = $FeatureView
 
-@export var model: FeatureModel
-@onready var view = $FeatureView
+  func _ready():
+      model.updated.connect(_on_model_updated)
 
-func _ready():
-    model.updated.connect(_on_model_updated)
+  func _on_model_updated():
+      view.update_display(model.data)
+  ```
+- **1.4 AUTO-VALIDATE** — Run gdUnit4/GUT tests. Godot-specific checks:
+  - [ ] Type hints used
+  - [ ] Signals connected/disconnected (no leaks)
+  - [ ] Node paths valid
+  - [ ] `_ready()` initialization correct
+  - If failures, surface at the gate; do not auto-proceed.
+- **1.5 DOC-SYNC** — Update task-technical-design.md with deviations; update PATTERNS.md if new patterns emerged.
+- → **Gate 1: Implementation review** — files changed + Godot validation results + doc updates.
 
-func _on_model_updated():
-    view.update_display(model.data)
-```
-
-### Phase 4: AUTO-VALIDATE
-- [ ] Type hints used
-- [ ] Signals connected/disconnected
-- [ ] Node paths valid
-- [ ] _ready() initialization
-
-### Phase 5: DOC-SYNC
-Update docs.
-
-### Phase 6: DEVELOPER REVIEW
-Present for approval.
-
-### Phase 7: UPDATE ISSUE
-Transform to knowledge record.
-
-### Phase 8: COMMIT
-Commit the work.
+### Phase 2: COMMIT *(CRITICAL gate)*
+- **2.1 UPDATE TASK FLOW** — Transform task flow file to knowledge record (status: complete, accepted-date, notes).
+- **2.2 COMMIT** *(executes only after the gate is accepted)* — Stage only this task flow's files; commit per conventional commits. Skip 2.2 if `--no-commit`.
+- → **Gate 2: Commit review** — presented BEFORE 2.2 executes git commit.
 
 ## Resume Logic
 Check issue status and resume.

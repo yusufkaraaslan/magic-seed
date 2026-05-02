@@ -7,8 +7,7 @@ After implement-flow or standalone.
 
 ## Phases
 
-### Phase 1-6
-Same as generic test-flow but with Godot specifics.
+This profile uses the canonical **2-phase, 2-gate** test-flow from `profiles/generic/skeletons/test-flow.md` (Phase 1: WRITE → Phase 2: VERIFY). Godot-specific test patterns (gdUnit4 / GUT) below.
 
 ## Test Examples
 

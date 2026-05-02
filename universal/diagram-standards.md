@@ -194,7 +194,7 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 ### Issue Dependency Diagram
 
-**Required for:** Every task (generated in Phase 5)
+**Required for:** Every task (generated in design-flow Phase 2 sub-task 2.1 PLAN)
 
 **Shows:**
 - Issues as nodes
@@ -209,7 +209,7 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 ## Visual-First Design Mode
 
-In design-flow Phase 2, diagrams come BEFORE text.
+In design-flow Phase 1 sub-task 1.2 (DESIGN), diagrams come BEFORE text.
 
 ### Process
 
@@ -300,7 +300,7 @@ AI: Generating task-design.md and task-technical-design.md from approved diagram
 
 ### Flow responsibility
 
-A flow that produces diagrams (design-flow Phase 2, implement-flow Phase 5 doc-sync, pr-flow capture mode) is **not done with that phase until rendering succeeds**. If the local toolchain doesn't have the renderer:
+A flow that produces diagrams (design-flow Phase 1 sub-task 1.2, implement-flow Phase 1 sub-task 1.5 DOC-SYNC, pr-flow capture mode Phase 1) is **not done with that phase until rendering succeeds**. If the local toolchain doesn't have the renderer:
 
 1. Stop the phase. Do not present an [A]ccept gate with unrendered diagrams.
 2. Tell the developer exactly what to install for their platform (commands below).

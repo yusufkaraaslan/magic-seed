@@ -27,19 +27,19 @@
 
 ## Phases
 
-### Phase 1: READ
+This profile follows the canonical **2-phase, 2-gate** structure from `universal/workflow-structure.md` (and `profiles/generic/skeletons/test-flow.md`). Unity-specific testing details below.
 
-Read task docs, implementation, and edge cases.
+### Phase 1: WRITE *(STANDARD gate)*
 
-### Phase 2: PLAN
+**Sub-tasks (auto-proceed):**
 
-Plan test structure:
-- EditMode: Models, services, utilities
-- PlayMode: MonoBehaviour integration, scene loading
+**1.1 READ** — Read task docs, implementation, and edge cases.
 
-### Phase 3: GENERATE
+**1.2 PLAN** — Test structure:
+- **EditMode**: Models, services, utilities (pure C#, no Unity runtime)
+- **PlayMode**: MonoBehaviour integration, scene loading (Unity runtime required)
 
-Create test files:
+**1.3 GENERATE** — Create test file structure:
 ```
 Assets/Tests/
 ├── EditMode/
@@ -48,11 +48,9 @@ Assets/Tests/
     └── FeatureIntegrationTests.cs
 ```
 
-### Phase 4: IMPLEMENT
+**1.4 IMPLEMENT** — Write tests:
 
-Write tests:
-
-**EditMode Example:**
+EditMode example:
 ```csharp
 [Test]
 public void TakeDamage_ReducesHealth()
@@ -61,51 +59,49 @@ public void TakeDamage_ReducesHealth()
     model.TakeDamage(30);
     Assert.AreEqual(70, model.Health);
 }
-
-[Test]
-public void TakeDamage_DoesNotGoBelowZero()
-{
-    var model = new PlayerModel { Health = 10 };
-    model.TakeDamage(30);
-    Assert.AreEqual(0, model.Health);
-}
 ```
 
-**PlayMode Example:**
+PlayMode example:
 ```csharp
 [UnityTest]
 public IEnumerator HealthComponent_UpdatesUI()
 {
     var health = new GameObject().AddComponent<HealthComponent>();
     var ui = new GameObject().AddComponent<HealthUI>();
-    
+
     health.OnHealthChanged += ui.UpdateHealth;
     health.TakeDamage(20);
-    
+
     yield return null; // Wait for frame
-    
+
     Assert.AreEqual("80", ui.HealthText.text);
-    
+
     Object.Destroy(health.gameObject);
     Object.Destroy(ui.gameObject);
 }
 ```
 
-### Phase 5: VALIDATE
+→ **Gate 1: Test code review** — outline + stubs + filled tests together. No tests run yet.
 
-Run tests:
+### Phase 2: VERIFY *(STANDARD gate)*
+
+**Sub-tasks (auto-proceed):**
+
+**2.1 VALIDATE** — Run Unity tests (NEVER skip):
 ```bash
-# Via Unity Test Runner
-# Or command line:
+# Via Unity Test Runner, or command line:
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
   -runTests \
   -testPlatform EditMode \
   -testResults results.xml
 ```
+If failures, surface at the gate; do not paper over.
 
-### Phase 6: DOCUMENT
+**2.2 DOCUMENT** — Update task-technical-design.md with test info; append summary to `flow-storage/tasks/{task-name}/test/`; update PATTERNS.md if new test patterns emerged.
 
-Update task-technical-design.md with test info.
+→ **Gate 2: Results review** — test results, coverage delta, new edge cases.
+
+Note: test-flow does NOT git commit. Tests are committed by implement-flow (alongside the code) or pr-flow (as part of validation).
 
 ---
 

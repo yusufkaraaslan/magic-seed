@@ -24,65 +24,100 @@ Profiles may add custom flow types (e.g., `security-flow`, `perf-flow`).
 
 ## Phase Architecture
 
-Every flow is composed of **phases**. Phases are sequential, each ending with a review gate.
+Every flow is composed of **phases**. Phases are sequential, each ending with a review gate (Rule 6).
+
+**Phases vs sub-tasks.** Each phase typically contains multiple sub-tasks (numbered 1.1, 1.2, 1.3, ...). Sub-tasks **auto-proceed** as the agent works — no gate between them. Only the *parent phase* presents a gate when its sub-tasks are complete. This keeps Rule 6 satisfied (every phase ends with a gate) while limiting user-facing interruptions to the small number of meaningful checkpoints per flow.
+
+The default cadence is **2 phases = 2 gates per flow**. Some flows (notably deploy-flow) keep additional phases when each represents a distinct, hard-to-reverse decision.
 
 ### Design Flow Phases
 
 ```
-Phase 1: UNDERSTAND
-  → Load project context (universal/, profiles/{detected}/, flow-storage/project/*)
-  → Read existing docs and architecture
-  → Explore codebase for related features
-  [GATE TYPE A — LIGHT]
-  Agent reports loaded files + key facts, auto-proceeds.
+Phase 1: SPECIFY
+  Sub-tasks (auto-proceed):
+    1.1 UNDERSTAND
+        → Load project context (universal/, profiles/{detected}/,
+          flow-storage/project/*)
+        → Read existing docs and architecture
+        → Explore codebase for related work
+    1.2 DESIGN (Visual-First)
+        → Generate class diagram, package diagram, sequence diagrams
+          per universal/diagram-standards.md
+        → Render every diagram source to .svg (or .png fallback) —
+          both source and image are committed. An unrendered .puml
+          is not a deliverable (Rule 4 — diagrams mandatory means
+          *visible* diagrams).
+        → If the local toolchain has no renderer (no `plantuml`,
+          no Java+jar, no Docker), STOP. Tell the developer the
+          install command for their OS (see diagram-standards.md
+          "Local Rendering"). Resume after install + render succeeds.
+          Do not present the gate with unrendered diagrams.
+    1.3 SPECIFY
+        → Write task-design.md, task-technical-design.md,
+          task-edge-cases.md
+        → Cross-reference diagrams from sub-task 1.2
 
-Phase 2: DESIGN (Visual-First)
-  → Generate class diagram, package diagram, sequence diagrams as needed
-  → Per universal/diagram-standards.md
-  → Render every diagram source to .svg (or .png fallback) — both source
-    and image are committed. An unrendered .puml is not a deliverable
-    (Rule 4 — diagrams mandatory means *visible* diagrams).
-  → If the local toolchain has no renderer (no `plantuml`, no Java+jar,
-    no Docker), STOP the phase. Tell the developer the install command
-    for their OS (see diagram-standards.md "Local Rendering"). Resume
-    after install + render succeeds. Do not present the gate with
-    unrendered diagrams.
   [GATE TYPE B — STANDARD]
+  Design package review: developer sees the diagrams + the three
+  spec docs together and forms one opinion.
 
-Phase 3: SPECIFY
-  → Write task-design.md, task-technical-design.md, task-edge-cases.md
-  → Cross-reference diagrams from Phase 2
-  [GATE TYPE B — STANDARD]
+Phase 2: COMMIT
+  Sub-tasks (auto-proceed):
+    2.1 PLAN
+        → Decompose task into implementation task flows
+        → Each task flow gets frontmatter (task-flow, task, status,
+          depends-on, accepted-date)
+        → Each task flow declares Files to Create / Files to Modify
+        → Build task flow dependency graph
+        → Internal validation BEFORE the gate (formerly the CRITICAL
+          PLAN gate — now an automatic check). Surface any of these
+          to the developer at the Phase 2 gate so [F]eedback can
+          revise:
+            - Temporal contradiction: a task flow marked "Files to
+              Modify" against a file no prior task flow has "Files
+              to Create". Reorder or merge.
+            - Type/symbol references: every type, enum, or class
+              named in a Files list must be defined in this task's
+              design or already in the codebase.
+            - Coverage: scan task-design.md sections — is every
+              public method, signal, and resource covered by exactly
+              one task flow?
+            - Independence: any task flow listed as parallel-with
+              another that actually shares a file? Mark dependent
+              or merge.
+            - Scope creep: any task flow larger than a one-day
+              implementation? Split it.
+    2.2 FINALIZE
+        → Sign off task-design.md (status: v1.0 — Signed Off,
+          Immutable: Yes)
+        → Confirm all task flow files written, dep graph diagram
+          generated
+    2.3 COMMIT
+        → Stage flow-storage/tasks/{task-name}/ entirely
+          (design/task-design.md, design/task-technical-design.md,
+          design/task-edge-cases.md, design/diagrams/*.puml + *.svg/*.png,
+          implement/flow-plan/task-flow-*.md)
+        → Compose commit message:
+            design({task-name}): sign off task-design.md and {N} task flows
 
-Phase 4: PLAN
-  → Decompose task into implementation task flows
-  → Each issue gets frontmatter (task-flow, task, status, depends-on, accepted-date)
-  → Each issue declares Files to Create / Files to Modify
-  → Build issue dependency graph
+            {one-line summary of task scope}
+
+            Task flows created: {list, comma-separated}
+            Diagrams: class, package, sequence (and any others)
+        → Run git commit AFTER the gate is accepted
+
   [GATE TYPE C — CRITICAL]
-  Failure modes to verify before [A]ccept:
-    - Temporal contradiction: an issue marked "Files to Modify" against a
-      file no prior issue has "Files to Create". Reorder or merge.
-    - Type/symbol references: every type, enum, or class named in a
-      Files to Create / Files to Modify list must be defined either in
-      this task's design or already in the codebase. Hunt for
-      undefined references (e.g. a parameter `foo: BarType` where
-      BarType is mentioned nowhere).
-    - Coverage: scan task-design.md sections — is every public method,
-      signal, and resource covered by exactly one issue?
-    - Independence: any issue listed as parallel-with another that
-      actually shares a file? Mark dependent or merge.
-    - Scope creep: any issue larger than a one-day implementation?
-      Split it.
+  Plan + final approval: presented BEFORE sub-task 2.3 executes git commit.
+  ⚠️ Accepting locks task-design.md immutable per Rule 9 AND lands the
+  commit in history. This is the only gate where the developer reviews
+  the decomposition AND the final commit set together.
 
-Phase 5: FINALIZE
-  → Sign off task-design.md (status: v1.0 — Signed Off, Immutable: Yes)
-  → Confirm all task flow files written, dep graph diagram generated
-  [GATE TYPE C — CRITICAL]
-  ⚠️ Once accepted, task-design.md becomes IMMUTABLE per Rule 9.
   Failure modes to verify before [A]ccept:
-    - Anything you'd want to change in task-design.md? Now is the only
-      time. Post-sign-off changes go in task-technical-design.md only, never task-design.md.
+    - PLAN integrity (any of the internal check failures from
+      sub-task 2.1 still unresolved?)
+    - Anything you'd want to change in task-design.md? Now is the
+      only time. Post-sign-off changes go in task-technical-design.md
+      only, never task-design.md.
     - Diagrams cross-referenced correctly from task-design.md?
     - All diagrams rendered: every `.puml` (or `.d2` / `.mmd`) has a
       sibling `.svg` or `.png` in the same diagrams/ directory.
@@ -91,94 +126,77 @@ Phase 5: FINALIZE
               || echo "MISSING IMAGE: $f"
             done`
       Any "MISSING IMAGE" output means render before signing off.
-    - All task flows from Phase 4 actually written to disk?
-    - References section points to real Docs/* files?
-
-Phase 6: COMMIT
-  → Stage flow-storage/tasks/{task-name}/ entirely (task-design.md, task-technical-design.md,
-    task-edge-cases.md, diagrams/*.puml + *.svg/*.png, flow-plan/task-flow-*.md)
-  → Compose commit message:
-      design({task-name}): sign off task-design.md and {N} task flows
-      
-      {one-line summary of task scope}
-      
-      Issues created: {issue list, comma-separated}
-      Diagrams: class, package, sequence (and any others)
-  → Run git commit
-  [GATE TYPE C — CRITICAL]
-  ⚠️ task-design.md "Immutable: Yes" claim is meaningful only if locked
-  in git history. An uncommitted "immutable" file is editable by
-  anyone — convention only.
-  Failure modes to verify before [A]ccept:
-    - Files staged: only flow-storage/tasks/{task-name}/ contents — no stray
-      edits from other tasks or from .ai-workflow/. Run
-      `git diff --cached --stat` and verify the file list.
-    - Commit message: task name correct? Issue count matches
+    - All task flows from sub-task 2.1 actually written to disk?
+    - Files staged: only flow-storage/tasks/{task-name}/ contents — no
+      stray edits from other tasks or from .ai-workflow/. Run
+      `git diff --cached --stat` and verify.
+    - Commit message: task name correct? Task flow count matches
       what's in flow-plan/? Summary captures the *why* not the *what*?
     - Hooks won't fail (no linter complaint, no missing files).
-    - If --no-commit flag passed, skip this phase entirely (the
-      developer wants to bundle multiple flow runs into one commit).
 
   Opt-out: developer can pass --no-commit when invoking the flow
-  to skip Phase 6. Use when bundling design with adjacent work into
-  a single commit (e.g., design + plane.so issue creation in one go).
+  to skip the git commit sub-task. The gate still presents (the
+  developer still confirms PLAN + FINALIZE), but sub-task 2.3 is
+  skipped. Use when bundling design with adjacent work into a
+  single commit.
 ```
 
 ### Implement Flow Phases
 
 ```
-Phase 1: READ
-  → Load architecture context (rules, profile, project docs)
-  → Read issue file (acceptance criteria, files to create/modify, deps)
-  → Read task-design.md and task-technical-design.md sections relevant to this issue
-  → Find reference implementations in codebase
-  [GATE TYPE A — LIGHT]
-  Agent reports issue loaded + key acceptance criteria + reference files
-  found, auto-proceeds. Hard refusal if no task-design.md or task-design.md not
-  signed off — point developer at design-flow.
+Phase 1: BUILD
+  Sub-tasks (auto-proceed):
+    1.1 READ
+        → Load architecture context (rules, profile, project docs)
+        → Read task flow file (acceptance criteria, files to
+          create/modify, deps)
+        → Read task-design.md and task-technical-design.md sections
+          relevant to this task flow
+        → Find reference implementations in codebase
+        → Hard refusal if no task-design.md or task-design.md not
+          signed off — point developer at design-flow.
+    1.2 PLAN
+        → Analyze acceptance criteria against existing patterns
+        → Structure the implementation (file order, function shape)
+        → Surface ambiguities or design gaps
+    1.3 IMPLEMENT
+        → Write code incrementally per profile conventions
+        → Apply universal rules and project rules
+        → Cite reference implementations in comments only when
+          non-obvious
+    1.4 AUTO-VALIDATE
+        → Run architecture/style checks specified in profile rules.md
+        → Run the project's test suite (NEVER skip tests — user
+          global rule)
+        → Check integration points against task-design.md signal flow
+        → If validation fails, do NOT auto-proceed. Surface failures
+          and present them at the Phase 1 gate so developer can
+          [F]eedback to fix or accept-with-known-failures.
+    1.5 DOC-SYNC
+        → Update task-technical-design.md with any deviations from
+          task-design.md (Rule 9 — DESIGN stays immutable; deviations
+          live in task-technical-design.md)
+        → Update task-edge-cases.md with discoveries
+        → Update flow-storage/project/PATTERNS.md with new reusable
+          patterns
 
-Phase 2: PLAN
-  → Analyze acceptance criteria against existing patterns
-  → Structure the implementation (file order, function shape)
-  → Surface ambiguities or design gaps
   [GATE TYPE B — STANDARD]
+  Implementation review: developer sees files changed, validation
+  results, doc updates together.
 
-Phase 3: IMPLEMENT
-  → Write code incrementally per profile conventions
-  → Apply universal rules and project rules
-  → Cite reference implementations in comments only when non-obvious
-  [GATE TYPE B — STANDARD]
+Phase 2: COMMIT
+  Sub-tasks (auto-proceed):
+    2.1 UPDATE TASK FLOW
+        → Transform task flow file to knowledge record (status:
+          complete, accepted-date set, implementation notes appended)
+    2.2 COMMIT
+        → Stage only the files this task flow produced
+        → Compose commit message (conventional commits: feat/fix/docs/test)
+        → Reference task flow name
+        → Run git commit AFTER the gate is accepted
 
-Phase 4: AUTO-VALIDATE
-  → Run architecture/style checks specified in profile rules.md
-  → Run the project's test suite (NEVER skip tests — user global rule)
-  → Check integration points against task-design.md signal flow
-  [GATE TYPE B — STANDARD]
-  If validation fails, surface failures clearly and offer Fix/Defer/Skip
-  per failure (Skip only with developer override).
-
-Phase 5: DOC-SYNC
-  → Update task-technical-design.md with any deviations from task-design.md (Rule 9 — DESIGN
-    stays immutable; deviations live in task-technical-design.md)
-  → Update task-edge-cases.md with discoveries
-  → Update flow-storage/project/PATTERNS.md with new reusable patterns
-  [GATE TYPE B — STANDARD]
-
-Phase 6: DEVELOPER REVIEW
-  → Present complete implementation: files changed, tests run, coverage
-  [GATE TYPE B — STANDARD]
-
-Phase 7: UPDATE ISSUE
-  → Transform issue file to knowledge record (status: complete,
-    accepted-date set, implementation notes appended)
-  [GATE TYPE A — LIGHT]
-  Agent reports issue file updates and proceeds.
-
-Phase 8: COMMIT
-  → Stage only the files this issue produced
-  → Compose commit message (conventional commits: feat/fix/docs/test)
-  → Reference issue number
   [GATE TYPE C — CRITICAL]
+  Commit review: presented BEFORE sub-task 2.2 executes git commit.
   ⚠️ Commit lands in history; amending later is friction.
   Failure modes to verify before [A]ccept:
     - Files staged: any unrelated stray edits sneaking in? Run
@@ -188,38 +206,44 @@ Phase 8: COMMIT
     - Co-author trailer present if required by project policy?
     - Hooks won't fail (e.g. linter clean, no test failures)?
     - Pre-existing failing tests not silently bypassed?
+
+  Opt-out: --no-commit skips sub-task 2.2 (gate still presents).
 ```
 
 ### Docs Flow Phases
 
 ```
-Phase 1: SCAN
-  → Identify which docs are stale or missing (compare last
-    modified vs recent commits / merged PRs / new tasks)
-  → Build a list of docs to update with rationale
-  [GATE TYPE A — LIGHT]
-  Agent reports the scan + proposed update list, auto-proceeds.
+Phase 1: APPLY
+  Sub-tasks (auto-proceed):
+    1.1 SCAN
+        → Identify which docs are stale or missing (compare last
+          modified vs recent commits / merged PRs / new tasks)
+        → Build a list of docs to update with rationale
+    1.2 PROPOSE
+        → For each doc to update, draft the change as a diff
+        → Cross-check against living-document policy (Rule 2):
+          update in place, no archives, no v2 copies
+    1.3 APPLY
+        → Apply each diff to its doc
+        → Verify no broken cross-references introduced
 
-Phase 2: PROPOSE
-  → For each doc to update, draft the change as a diff
-  → Cross-check against living-document policy (Rule 2):
-    update in place, no archives, no v2 copies
   [GATE TYPE B — STANDARD]
+  Doc updates review: developer sees the scan, proposed diffs,
+  and applied changes together.
 
-Phase 3: APPLY
-  → Apply each accepted diff to its doc
-  → Verify no broken cross-references introduced
-  [GATE TYPE B — STANDARD]
+Phase 2: COMMIT
+  Sub-tasks (auto-proceed):
+    2.1 COMMIT
+        → Stage updated docs/ files (and any AGENTS.md / CLAUDE.md
+          edits if those were part of scope)
+        → Compose commit message:
+            docs: update {scope} — {one-line summary}
 
-Phase 4: COMMIT
-  → Stage updated docs/ files (and any AGENTS.md / CLAUDE.md
-    edits if those were part of scope)
-  → Compose commit message:
-      docs: update {scope} — {one-line summary}
-      
-      Files updated: {list}
-  → Run git commit
+            Files updated: {list}
+        → Run git commit AFTER the gate is accepted
+
   [GATE TYPE C — CRITICAL]
+  Commit review: presented BEFORE git commit executes.
   Failure modes to verify before [A]ccept:
     - Files staged: only docs touched by this run — no code edits
       sneaking in (docs-flow never touches code).
@@ -227,58 +251,194 @@ Phase 4: COMMIT
       place, or did they create *-v2.md / archive copies? The
       latter violates Rule 2.
     - task-design.md untouched (Rule 9 — immutable).
-  Opt-out: --no-commit to defer.
+
+  Opt-out: --no-commit skips sub-task 2.1 (gate still presents).
+```
+
+### Test Flow Phases
+
+```
+Phase 1: WRITE
+  Sub-tasks (auto-proceed):
+    1.1 READ
+        → Load task design + technical design + existing test patterns
+        → Read profile rules for the project's test framework
+    1.2 PLAN
+        → Map test scenarios to acceptance criteria
+        → Identify edge cases from task-edge-cases.md
+        → Build a test outline (unit / integration / e2e split)
+    1.3 GENERATE
+        → Generate test stubs from the plan
+    1.4 IMPLEMENT
+        → Fill in test bodies, fixtures, and helpers
+        → Apply project test conventions
+
+  [GATE TYPE B — STANDARD]
+  Test code review: developer sees outline + stubs + filled tests
+  together. No changes land yet.
+
+Phase 2: VERIFY
+  Sub-tasks (auto-proceed):
+    2.1 VALIDATE
+        → Run the test suite (NEVER skip tests — user global rule)
+        → Capture coverage delta vs baseline
+        → If failures, do NOT auto-proceed. Surface at Phase 2 gate.
+    2.2 DOCUMENT
+        → Append a test summary to flow-storage/tasks/{task-name}/test/
+        → Update task-edge-cases.md if new edges were uncovered
+
+  [GATE TYPE B — STANDARD]
+  Results review: developer sees pass/fail, coverage delta, and
+  any new edge cases. test-flow does not git commit (tests get
+  committed via implement-flow or pr-flow alongside the code
+  they cover).
+```
+
+### Deploy Flow Phases
+
+```
+Note: deploy-flow keeps two CRITICAL gates. Each represents a
+distinct hard-to-reverse decision (going live; declaring success).
+Bundling them would lose meaningful safety.
+
+Phase 1: PREPARE
+  Sub-tasks (auto-proceed):
+    1.1 CHECKLIST
+        → Run pre-deploy checklist from profile rules.md
+        → Verify: tests pass, lint clean, version bumped, changelog
+          updated, no debug code in build, secrets not in artifacts
+    1.2 VERSION
+        → Tag release (semver per project convention)
+        → Generate release notes
+    1.3 BUILD
+        → Build artifacts (binary / image / bundle / etc.)
+        → Verify artifact size + signatures
+
+  [GATE TYPE C — CRITICAL]
+  Ready to deploy? Presented BEFORE sub-task 2.1 (the actual
+  deploy) executes. ⚠️ This is the last reversible point.
+  Failure modes to verify before [A]ccept:
+    - All checklist items pass?
+    - Version number correct (no accidental bump direction)?
+    - Build artifact sane (size / format / contents)?
+    - Rollback plan documented?
+
+Phase 2: SHIP
+  Sub-tasks (auto-proceed):
+    2.1 DEPLOY
+        → Push artifact to target environment
+        → Run smoke tests
+    2.2 VERIFY
+        → Health checks against live endpoints
+        → Compare metrics against baseline (latency, error rate)
+        → Hold for soak window if profile rules require one
+    2.3 ANNOUNCE
+        → Post release notes to configured channels
+        → Update changelog in repo (commit separately)
+
+  [GATE TYPE C — CRITICAL]
+  All clear? Presented after VERIFY before ANNOUNCE goes out.
+  ⚠️ Announcement is public. Roll back instead if metrics regressed.
+  Failure modes to verify before [A]ccept:
+    - Health checks all green for the soak window?
+    - Error rate within tolerance vs baseline?
+    - Anyone reporting issues out-of-band?
+    - Release notes accurate and link to changelog?
 ```
 
 ### PR Flow Modes
 
+PR flow is **modal** — the developer picks a mode and the flow runs the 2-phase pattern within that mode. Each mode has its own Phase 1 (work) + Phase 2 (commit / report) split.
+
 ```
 Mode: pre-pr (default)
-  Step 1: Issue completeness check
-  Step 2: Documentation check
-  Step 3: Code quality validation
-  Step 4: Cross-issue integration check
-  Step 5: Test execution
-  Step 6: Registration/integration check
-  Step 7: Report PASS/FAIL
+  Phase 1: VALIDATE
+    Sub-tasks (auto-proceed):
+      1.1 Task flow completeness check
+      1.2 Documentation check
+      1.3 Code quality validation
+      1.4 Cross-task-flow integration check
+      1.5 Test execution
+      1.6 Registration/integration check
+    [GATE TYPE B — STANDARD]
+    Validation review: developer sees PASS/FAIL across all checks.
+
+  Phase 2: REPORT
+    Sub-tasks (auto-proceed):
+      2.1 Generate the PR description from task flows + commits
+      2.2 Open the PR (or print the description if --dry-run)
+    [GATE TYPE C — CRITICAL]
+    PR submission review: presented BEFORE the PR is opened.
+    ⚠️ PR is publicly visible to reviewers once opened.
+    Failure modes to verify before [A]ccept:
+      - All Phase 1 validation checks PASS?
+      - PR description captures the *why* and links task flows?
+      - Branch is up to date with the target?
+    Opt-out: --dry-run prints description without opening.
 
 Mode: feedback
-  Step 1: Initialize session
-  Step 2: Per-comment loop
-    → Developer pastes PR comment
-    → AI analyzes (file, line, category, severity)
-    → AI creates feedback issue file
-    → AI suggests fix
-    → Developer: [Y] apply / [N] skip / [M] manual
-    → Update issue to knowledge record
-  Step 3: Summary + commit
+  Phase 1: PROCESS
+    Sub-tasks (auto-proceed):
+      1.1 Initialize session
+      1.2 Per-comment loop
+          → Developer pastes PR comment
+          → AI analyzes (file, line, category, severity)
+          → AI creates feedback task flow file
+          → AI suggests fix
+          → Developer: [Y] apply / [N] skip / [M] manual
+          → Update task flow to knowledge record
+    [GATE TYPE B — STANDARD]
+    Feedback review: developer sees all processed comments + the
+    fixes applied / skipped / queued.
+
+  Phase 2: COMMIT
+    Sub-tasks (auto-proceed):
+      2.1 Stage feedback task flow files + any code fixes applied
+      2.2 Compose commit message + run git commit AFTER the gate
+    [GATE TYPE C — CRITICAL]
+    Commit review: presented BEFORE git commit.
+    Failure modes:
+      - All feedback task flows have a clear fix / skip / manual
+        decision recorded?
+      - Code fixes correspond 1:1 to feedback task flows?
+    Opt-out: --no-commit skips sub-task 2.2.
 
 Mode: capture
-  Step 1: Read all task flow files
-  Step 2: Generate lessons learned
-  Step 3: Propose knowledge base updates
-  Step 4: Update task catalog
-  Step 5: Update living documents (PATTERNS.md, DECISIONS.md,
-          flow-storage/tasks/{task-name}/lessons-learned.md)
-  Step 6: Capture metrics
-  Step 7: Completion summary
-  Step 8: COMMIT [GATE TYPE C — CRITICAL]
-    → Stage updated flow-storage/project/PATTERNS.md, flow-storage/project/DECISIONS.md,
-      flow-storage/tasks/{task-name}/lessons-learned.md, and any other living
-      documents touched
-    → Compose commit message:
-        docs(capture): {task-name} lessons learned and patterns
-        
-        Patterns added: {list}
-        ADRs added: {list}
-    → Run git commit
+  Phase 1: ANALYZE
+    Sub-tasks (auto-proceed):
+      1.1 Read all task flow files
+      1.2 Generate lessons learned
+      1.3 Propose knowledge base updates
+      1.4 Update task catalog
+      1.5 Update living documents (PATTERNS.md, DECISIONS.md,
+          flow-storage/tasks/{task-name}/docs/lessons-learned.md)
+      1.6 Capture metrics
+    [GATE TYPE B — STANDARD]
+    Capture review: developer sees the proposed lessons,
+    PATTERNS/DECISIONS updates, and metrics together.
+
+  Phase 2: COMMIT
+    Sub-tasks (auto-proceed):
+      2.1 Stage updated flow-storage/project/PATTERNS.md,
+          flow-storage/project/DECISIONS.md,
+          flow-storage/tasks/{task-name}/docs/lessons-learned.md,
+          and any other living documents touched
+      2.2 Compose commit message:
+            docs(capture): {task-name} lessons learned and patterns
+
+            Patterns added: {list}
+            ADRs added: {list}
+          Run git commit AFTER the gate is accepted
+    [GATE TYPE C — CRITICAL]
+    Commit review: presented BEFORE git commit.
     Failure modes to verify before [A]ccept:
       - Files staged: only the docs touched by capture — no stray
         edits to task code or task-design.md (which is immutable).
       - PATTERNS.md/DECISIONS.md edits use established sections
         (no random new sections that break the doc structure).
       - Commit message lists every pattern/ADR added.
-    Opt-out: --no-commit to defer; capture artifacts stay uncommitted.
+    Opt-out: --no-commit skips sub-task 2.2; capture artifacts
+    stay uncommitted.
 ```
 
 ---
@@ -309,7 +469,7 @@ Proceeding to Phase {N+1}: {Next Name}.
 
 ### Gate type B — STANDARD ([A]/[F]/[R])
 
-Use for phases that produce **reviewable artifacts** the developer can scan in 30 seconds and form an opinion on (Phase 2 DESIGN diagrams, Phase 3 SPECIFY prose, Phase 2 PLAN of implement-flow). The current default behavior.
+Use for phases that produce **reviewable artifacts** the developer can scan in 30 seconds and form an opinion on (design-flow Phase 1 SPECIFY package, implement-flow Phase 1 BUILD, test-flow Phase 1 WRITE, docs-flow Phase 1 APPLY). The default for any phase that doesn't lock something irreversible.
 
 ```
 Phase {N}: {Name} complete.
@@ -328,7 +488,7 @@ Your choice:
 
 ### Gate type C — CRITICAL ([A]/[F]/[R] + review checklist)
 
-Use for phases that produce **permanent or hard-to-fix artifacts**: Phase 4 PLAN of design-flow (issue decomposition baked into immutable task-design.md), Phase 5 FINALIZE of design-flow (immutability lock), Phase 8 COMMIT of implement-flow (commit lands in history). The standard `[A]/[F]/[R]` choice but the prompt explicitly names the failure modes the developer should look for. Prevents reflex-yes by giving the eye specific things to check.
+Use for phases that produce **permanent or hard-to-fix artifacts**: design-flow Phase 2 COMMIT (locks task-design.md immutable AND lands the commit), implement-flow Phase 2 COMMIT (commit lands in history), deploy-flow Phase 1 PREPARE (last reversible point) AND Phase 2 SHIP (announcement is publicly irreversible), pr-flow Phase 2 (any mode — opens PR / lands commit). The standard `[A]/[F]/[R]` choice but the prompt explicitly names the failure modes the developer should look for. Prevents reflex-yes by giving the eye specific things to check.
 
 ```
 Phase {N}: {Name} complete.
@@ -440,24 +600,20 @@ After implement-flow, before PR.
 
 ## Phases
 
-### Phase 1: SCAN
-- Search for SQL injection risks
-- Check for exposed secrets
-- Validate input sanitization
-- Check auth middleware coverage
-[GATE: Present findings]
+(Following the canonical 2-phase, 2-gate pattern.)
 
-### Phase 2: ASSESS
-- Categorize findings by severity
-- Map to OWASP Top 10
-- Check against project security requirements
-[GATE: Present assessment]
+### Phase 1: AUDIT *(STANDARD gate)*
+Sub-tasks (auto-proceed):
+- 1.1 SCAN — search for SQL injection risks, exposed secrets, missing input validation, auth middleware gaps
+- 1.2 ASSESS — categorize findings by severity, map to OWASP Top 10, check project security requirements
+- 1.3 REPORT — generate security report, suggest fixes with code examples
+[GATE 1: Findings + report review]
 
-### Phase 3: REPORT
-- Generate security report
-- Suggest fixes with code examples
-- Create security task flow files if needed
-[GATE: [A]/[F]/[R]]
+### Phase 2: COMMIT *(CRITICAL gate)*
+Sub-tasks (auto-proceed):
+- 2.1 Create security task flow files (if developer wants fixes addressed)
+- 2.2 COMMIT — stage report + task flows; commit `security: audit + report`
+[GATE 2: Commit review — presented BEFORE git commit]
 ```
 
 ---

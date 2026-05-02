@@ -90,68 +90,56 @@ Before major releases or after security incidents.
 
 ## Phases
 
-### Phase 1: SCAN
-**Purpose:** Find potential vulnerabilities.
+(Following the canonical 2-phase, 2-gate pattern.)
 
-**Steps:**
-1. Search for hardcoded secrets (API keys, passwords)
-2. Check for SQL injection risks
-3. Verify input validation
-4. Check authentication coverage
-5. Review authorization logic
+### Phase 1: AUDIT *(STANDARD gate)*
+**Purpose:** Scan, categorize, and remediate findings as one reviewable package.
 
-**Artifacts:**
-- `docs/security/audit-{date}.md`
+**Sub-tasks (auto-proceed):**
 
-**Gate:** Confirm scan complete — [A]ccept / [R]e-scan
+**1.1 SCAN** — Find potential vulnerabilities:
+- Search for hardcoded secrets (API keys, passwords)
+- Check for SQL injection risks
+- Verify input validation
+- Check authentication coverage
+- Review authorization logic
 
-### Phase 2: ASSESS
-**Purpose:** Categorize findings by severity.
+**1.2 ASSESS** — Categorize each finding by severity:
+- Critical: Data exposure, RCE
+- High: Auth bypass, injection
+- Medium: XSS, CSRF
+- Low: Info disclosure
+Map to OWASP Top 10 and compliance requirements (GDPR, SOC2).
 
-**Steps:**
-1. Categorize each finding:
-   - Critical: Data exposure, RCE
-   - High: Auth bypass, injection
-   - Medium: XSS, CSRF
-   - Low: Info disclosure
-2. Map to OWASP Top 10
-3. Check compliance requirements (GDPR, SOC2)
+**1.3 REMEDIATE** — Generate + apply fixes:
+- Generate fix for each finding (present with before/after)
+- Apply approved fixes
+- Re-scan to verify
 
-**Artifacts:**
+**Artifacts (presented at gate):**
+- `flow-storage/project/security/audit-{date}.md`
 - Risk assessment matrix
+- Fixed code (diffs)
+- `flow-storage/project/security/remediation-{date}.md`
 
-**Gate:** [A]ccept / [F]eedback / [R]eject
+**Gate:** Audit + remediation review — [A]ccept / [F]eedback / [R]eject
 
-### Phase 3: REMEDIATE
-**Purpose:** Fix or mitigate findings.
+### Phase 2: COMMIT *(CRITICAL gate)*
+**Purpose:** Document the final security posture and commit.
 
-**Steps:**
-1. Generate fix for each finding
-2. Present fix with before/after
-3. Developer approves each fix
-4. Apply approved fixes
-5. Re-scan to verify
+**Sub-tasks (auto-proceed):**
 
-**Artifacts:**
-- Fixed code
-- `docs/security/remediation-{date}.md`
+**2.1 DOCUMENT** — Update security documentation, record decisions (won't fix, accepted risk), update threat model, schedule next audit.
 
-**Gate:** [A]ccept / [F]eedback / [R]eject
+**2.2 COMMIT** *(executes only after the gate is accepted)* — Stage updated security docs + fixed code; commit `security: audit + remediation {date}`.
 
-### Phase 4: DOCUMENT
-**Purpose:** Record security posture.
-
-**Steps:**
-1. Update security documentation
-2. Record decisions (won't fix, accepted risk)
-3. Update threat model
-4. Schedule next audit
-
-**Artifacts:**
+**Artifacts (presented at gate):**
 - Updated security docs
-- `docs/security/audit-log.md`
+- `flow-storage/project/security/audit-log.md`
+- Staged file list
+- Proposed commit message
 
-**Gate:** [A]ccept / [R]eject
+**Gate:** Commit review — [A]ccept / [F]eedback / [R]eject
 ```
 
 ---
