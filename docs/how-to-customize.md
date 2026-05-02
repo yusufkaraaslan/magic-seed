@@ -177,7 +177,7 @@ Document how your team works in `flow-storage/team/workflows.md`:
 
 ## Hotfix Process
 1. Create branch from `main`
-2. Fix issue
+2. Fix task flow
 3. Test manually
 4. Create PR with `hotfix:` prefix
 5. Fast-track review

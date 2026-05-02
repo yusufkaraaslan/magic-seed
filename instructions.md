@@ -146,7 +146,7 @@ Clone or copy the ai-flow-anything core into `.ai-workflow/` so the project owns
 
 **Layout B — global install + symlink (only viable when the ai-flow-anything clone is project-private):**
 
-Magic-seed lives once at e.g. `~/tools/ai-flow-anything/`. The project's `.ai-workflow/` symlinks to it:
+ai-flow-anything lives once at e.g. `~/tools/ai-flow-anything/`. The project's `.ai-workflow/` symlinks to it:
 
 ```bash
 ln -s ~/tools/ai-flow-anything .ai-workflow
@@ -217,7 +217,7 @@ When the developer's request matches one of the intents below, load and follow t
 | Developer says | Flow |
 |---|---|
 | "design task X" / "let's design X" | `.ai-workflow/flows/design-flow.md` |
-| "implement X" / "next issue" | `.ai-workflow/flows/implement-flow.md` |
+| "implement X" / "next task flow" | `.ai-workflow/flows/implement-flow.md` |
 | "test X" / "add tests" | `.ai-workflow/flows/test-flow.md` |
 | "validate X for PR" / "PR check" | `.ai-workflow/flows/pr-flow.md` |
 | "deploy X" / "build" | `.ai-workflow/flows/deploy-flow.md` |

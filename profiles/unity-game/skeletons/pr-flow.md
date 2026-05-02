@@ -17,7 +17,7 @@
 
 ## Mode: pre-pr
 
-### Step 1: Issue Completeness
+### Step 1: Task Flow Completeness
 
 Check all task flows have `status: complete` and `accepted-date`.
 
@@ -51,7 +51,7 @@ Check all task flows have `status: complete` and `accepted-date`.
 - [ ] PlayMode tests for integration
 - [ ] No test failures
 
-### Step 4: Cross-Issue Integration
+### Step 4: Cross-Task-Flow Integration
 
 - [ ] Components reference each other correctly
 - [ ] Scene references are valid

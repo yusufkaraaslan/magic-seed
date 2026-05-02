@@ -192,16 +192,16 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
-### Issue Dependency Diagram
+### Task Flow Dependency Diagram
 
 **Required for:** Every task (generated in design-flow Phase 2 sub-task 2.1 PLAN)
 
 **Shows:**
-- Issues as nodes
+- Task flows as nodes
 - Dependencies as edges
 - Critical path
 
-**Naming:** `NN-issue-dependencies.puml`
+**Naming:** `NN-task-flow-dependencies.puml`
 
 **Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 

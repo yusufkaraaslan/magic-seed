@@ -156,7 +156,7 @@ Developer: "Validate shield-powerup for PR"
 
 AI: Mode: pre-pr
     
-    Step 1: Issues complete ✓
+    Step 1: Task flows complete ✓
     Step 2: Documentation ✓
     Step 3: Architecture ✓
     Step 4: Performance ✓

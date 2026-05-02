@@ -99,7 +99,7 @@ Write steps as natural language instructions. The AI interprets them.
 **Good:**
 ```markdown
 **Steps:**
-1. Read the issue file to extract acceptance criteria
+1. Read the task flow file to extract acceptance criteria
 2. Find 1-2 reference implementations of similar tasks
 3. Read the reference implementations to understand patterns
 4. Create the new files following the same patterns
@@ -109,7 +109,7 @@ Write steps as natural language instructions. The AI interprets them.
 **Bad:**
 ```markdown
 **Steps:**
-1. grep "AC" issue.md
+1. grep "AC" task-flow.md
 2. ls src/features/
 3. cat reference1.{{ext}}
 4. cp template.{{ext}} new.{{ext}}
@@ -149,13 +149,13 @@ The full protocol for each gate type lives in `universal/workflow-structure.md` 
 | Phase loads files / discovers context, produces no permanent artifact | LIGHT | Saves a click; nothing to review. |
 | Phase produces a reviewable document or diagram the developer can scan in <30s | STANDARD | Brief artifact summary is enough. |
 | Phase produces something **permanent** (commit, immutable doc, signed-off design) | CRITICAL | Force the eye to specific failure modes; prevents reflex-yes. |
-| Phase decomposes work into many sub-pieces (e.g., issue planning) | CRITICAL | Decomposition errors compound through implementation. |
+| Phase decomposes work into many sub-pieces (e.g., task flow planning) | CRITICAL | Decomposition errors compound through implementation. |
 
 **Heuristic:** if you'd be annoyed to discover a problem 30 minutes after accepting this phase, use CRITICAL and write the checklist. If the cost of "oops" is a one-line fix, STANDARD is fine. If there's nothing to review, LIGHT.
 
 ### Writing CRITICAL gate checklists
 
-A good checklist names the specific failure modes that have actually bitten this phase before, in concrete terms. Bad: "verify quality." Good: "An issue marked 'Files to Modify' against a file no prior issue 'Files to Create' — temporal contradiction. Reorder or merge."
+A good checklist names the specific failure modes that have actually bitten this phase before, in concrete terms. Bad: "verify quality." Good: "A task flow marked 'Files to Modify' against a file no prior task flow 'Files to Create' — temporal contradiction. Reorder or merge."
 
 Three to five items max. Long checklists become rubber-stamps just like soft gates.
 
@@ -312,7 +312,7 @@ Support resuming across sessions:
 
 Before starting, check for existing progress:
 1. Read all task flow files in `flow-storage/tasks/{task-name}/implement/flow-plan/`
-2. Find first issue with `status: pending` or `status: in_progress`
+2. Find first task flow with `status: pending` or `status: in_progress`
 3. If found, ask developer: "Resume from {task-flow-name}?"
 4. If developer confirms, skip completed task flows
 

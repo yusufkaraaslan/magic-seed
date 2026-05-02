@@ -10,13 +10,13 @@ metadata:
 
 # implement-flow (OpenCode wrapper)
 
-This skill runs the **implementation phase** for one issue of a task. The full flow lives in `.ai-workflow/flows/implement-flow.md`. Read it and execute.
+This skill runs the **implementation phase** for one task flow of a task. The full flow lives in `.ai-workflow/flows/implement-flow.md`. Read it and execute.
 
 ## When to invoke
 
 - "Implement the next task flow for {task-name}"
 - "Implement {task-name}"
-- "Work on issue {number} for {task-name}"
+- "Work on task flow {number} for {task-name}"
 - "Continue implementing {task-name}"
 
 ## Hard preconditions
@@ -25,13 +25,13 @@ Before doing anything:
 
 1. **task-design.md must exist** at `flow-storage/tasks/{task-name}/design/task-design.md`
 2. **task-design.md must be signed off** (status `v1.0 — Signed Off`, immutable per Rule 9)
-3. **An issue file must exist** at `flow-storage/tasks/{task-name}/implement/flow-plan/{NN}-{name}.md` with `status: ready`
+3. **An task flow file must exist** at `flow-storage/tasks/{task-name}/implement/flow-plan/{NN}-{name}.md` with `status: ready`
 
 If any precondition fails, **STOP** and either:
 
 - Tell the developer to run **design-flow** first (no task-design.md), OR
 - Tell them to complete a [F]eedback iteration on the design (DESIGN not signed off), OR
-- Ask which issue to work on (no `status: ready` issue)
+- Ask which task flow to work on (no `status: ready` task flow)
 
 ## What this flow does
 

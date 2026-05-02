@@ -34,7 +34,7 @@ This profile **always matches** with low confidence (1/5). It serves as the fall
 | Flow | Description |
 |--------|-------------|
 | **design-flow** | Task design with diagrams (class, package, sequence) |
-| **implement-flow** | Issue-by-issue implementation |
+| **implement-flow** | Task-flow-by-task-flow implementation |
 | **pr-flow** | PR validation, feedback handling, knowledge capture |
 | **test-flow** | Test planning and execution |
 | **deploy-flow** | Release and deployment |

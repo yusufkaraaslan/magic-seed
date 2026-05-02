@@ -6,7 +6,7 @@
 
 ### pre-pr
 Check:
-- [ ] Issues complete
+- [ ] Task flows complete
 - [ ] task-design.md signed off
 - [ ] Platform code isolated
 - [ ] Accessibility labels

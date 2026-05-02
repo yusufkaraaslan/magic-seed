@@ -27,7 +27,7 @@ When the developer uses one of these slash commands, treat it as the correspondi
 | `/deploy-flow <task>` | Run the deploy flow against `<task>` |
 | `/docs-flow <task>` | Run the docs flow against `<task>` |
 
-If the developer expresses one of these intents in natural language ("design a task called auth", "implement the next issue") instead of a slash command, treat it the same way.
+If the developer expresses one of these intents in natural language ("design a task called auth", "implement the next task flow") instead of a slash command, treat it the same way.
 
 ---
 

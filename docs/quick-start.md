@@ -60,13 +60,13 @@ The AI will:
 Ask your AI: "Implement the next task flow for my-task."
 
 The AI will:
-1. Read the first issue
+1. Read the first task flow
 2. Plan implementation
 3. Write code
 4. Run validation
 5. Present for your review
 
-**Approve each issue before proceeding to the next.**
+**Approve each task flow before proceeding to the next.**
 
 ---
 

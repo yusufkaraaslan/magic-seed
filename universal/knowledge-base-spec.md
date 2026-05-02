@@ -139,7 +139,7 @@ During implementation, these deviations were necessary:
 **Implementation:** Rate limiting, queue overflow handling
 ```
 
-#### Issues (Knowledge Records)
+#### Task Flows (Knowledge Records)
 
 **Purpose:** Track implementation work and capture knowledge.
 
@@ -163,9 +163,9 @@ tags: ["backend", "data-model", "session"]
 5. Deviations from Design
 6. Tests Written
 
-**Transformation:** When issue is complete, it becomes a knowledge record.
+**Transformation:** When the task flow is complete, it becomes a knowledge record.
 
-#### Feedback Issues
+#### Feedback Task Flows
 
 **Purpose:** Capture PR feedback as structured knowledge.
 
@@ -379,7 +379,7 @@ Searches:
 - All task-design.md files
 - PATTERNS.md
 - DECISIONS.md
-- Issues (knowledge records)
+- Task flows (knowledge records)
 - Lessons learned
 
 ### Backups
@@ -393,7 +393,7 @@ Knowledge base is version-controlled (in `docs/`). No separate backup needed.
 ### Completeness
 
 - [ ] Every task has a knowledge base directory
-- [ ] Every issue is transformed to knowledge record
+- [ ] Every task flow is transformed to a knowledge record
 - [ ] Every PR feedback is captured
 - [ ] Patterns catalog is updated after each task
 - [ ] ADRs are created for major decisions

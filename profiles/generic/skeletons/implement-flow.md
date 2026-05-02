@@ -25,7 +25,7 @@ After the design flow has completed and design is signed off.
 ## Prerequisites
 
 - Design flow completed and signed off
-- At least one issue file exists
+- At least one task flow file exists
 
 ---
 
@@ -103,7 +103,7 @@ This flow has **2 phases, 2 gates**. Each phase contains multiple sub-tasks that
 - Stage only the files this task flow produced
 - Compose commit message (conventional commits):
   ```
-  feat({task-name}): {task-flow-type} — brief description
+  feat({task-name}): {task-flow-name} — brief description
 
   - Change 1
   - Change 2
@@ -138,7 +138,7 @@ This flow has **2 phases, 2 gates**. Each phase contains multiple sub-tasks that
 Before starting, check for existing progress:
 
 1. Read all task flow files in `flow-storage/tasks/{task-name}/implement/flow-plan/`
-2. Find first issue with `status: pending` or `status: in_progress`
+2. Find first task flow with `status: pending` or `status: in_progress`
 3. If found, ask: "Resume from {task-flow-name}?"
 4. If yes, skip completed task flows
 

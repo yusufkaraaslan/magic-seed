@@ -43,7 +43,7 @@ Works with any Unity version and any frameworks:
 | Flow | Description |
 |--------|-------------|
 | **design-flow** | Task design with Unity-specific diagrams and component architecture |
-| **implement-flow** | Per-issue implementation with C# patterns and Unity lifecycle |
+| **implement-flow** | Per-task-flow implementation with C# patterns and Unity lifecycle |
 | **pr-flow** | PR validation with Unity-specific checks (scene references, prefab integrity) |
 | **test-flow** | Unity Test Framework (EditMode/PlayMode) integration |
 | **deploy-flow** | Unity build pipeline and store submission |

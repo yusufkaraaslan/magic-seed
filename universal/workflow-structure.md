@@ -538,9 +538,9 @@ If **Accept** (or auto-proceed for LIGHT gates):
 Flows support resuming across sessions.
 
 **Detection:**
-- Check issue frontmatter for `status`
+- Check task flow frontmatter for `status`
 - Read all task flow files in `flow-storage/tasks/{task-name}/implement/flow-plan/`
-- Find first issue with `status: pending` or `status: in_progress`
+- Find first task flow with `status: pending` or `status: in_progress`
 
 **Resume message:**
 ```
@@ -631,13 +631,13 @@ task-technical-design.md + task-edge-cases.md
     ↓
 Task flow files (model, controller, view, tests, integration)
     ↓
-Run implement flow for {name}, issue=model
+Run implement flow for {name}, task-flow=model
     ↓
 Model implementation + tests
     ↓
 Knowledge record (model.md updated)
     ↓
-Run implement flow for {name}, issue=controller
+Run implement flow for {name}, task-flow=controller
     ↓
 Controller implementation + tests
     ↓

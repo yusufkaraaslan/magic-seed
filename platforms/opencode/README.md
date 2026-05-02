@@ -25,7 +25,7 @@ Each flow skill has an imperative description naming its trigger phrases. The ag
 | Command | Source | Invocation |
 |---|---|---|
 | `/design <task>` | `platforms/opencode/commands/design.md` | Run design-flow for a task |
-| `/implement <task> [issue]` | `platforms/opencode/commands/implement.md` | Implement one task flow from a designed task |
+| `/implement <task> [task-flow]` | `platforms/opencode/commands/implement.md` | Implement one task flow from a designed task |
 | `/test [task]` | `platforms/opencode/commands/test.md` | Run or add tests |
 | `/pr <task> [mode]` | `platforms/opencode/commands/pr.md` | Pre-PR validation, feedback, or capture |
 | `/deploy [task]` | `platforms/opencode/commands/deploy.md` | Build verification + smoke test |

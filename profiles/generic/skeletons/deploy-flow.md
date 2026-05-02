@@ -172,7 +172,7 @@ If verification fails:
 2. **Investigation:**
    - Check logs
    - Identify root cause
-   - Fix issue
+   - Fix task flow
 
 3. **Retry:**
    - Re-deploy after fix

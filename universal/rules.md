@@ -26,7 +26,7 @@ All documentation in `docs/` is living — updated at every workflow step, never
 - task-design.md is locked after sign-off (immutable), but deviations are recorded in task-technical-design.md
 - task-technical-design.md evolves during implementation
 - task-edge-cases.md grows as new edge cases are discovered
-- Issues transform into knowledge records after completion
+- Task flows transform into knowledge records after completion
 - Feedback task flows become permanent knowledge records
 
 **Anti-pattern:** Creating `docs-v2/`, `docs-archive/`, or dated copies. Update in place.
@@ -101,16 +101,16 @@ The AI never decides a phase is "good enough" without developer input.
 
 ## Rule 7: Atomic Commits
 
-Each issue (from implement-flow) becomes one commit.
+Each task flow (from implement-flow) becomes one commit.
 
 **Format:**
 ```
-feat({task-name}): {issue-type} — brief description
+feat({task-name}): {task-flow-name} — brief description
 
 - Detailed change 1
 - Detailed change 2
 
-Refs: #{issue-number}
+Refs: {task-flow-name}
 ```
 
 **Example:**
@@ -126,7 +126,7 @@ Refs: #124
 
 ---
 
-## Rule 8: Issue Frontmatter Schema
+## Rule 8: Task Flow Frontmatter Schema
 
 All generated task flow files must use this frontmatter:
 
@@ -141,10 +141,10 @@ accepted-date: null       # set when developer accepts implementation
 ```
 
 **Fields:**
-- `issue` — Short identifier (kebab-case, e.g., user-session, auth-service, login-form)
+`task-flow` — Short identifier (kebab-case, e.g., user-session, auth-service, login-form)
 - `task-name` — Full task name (kebab-case or PascalCase)
 - `status` — Current state
-- `depends-on` — List of issue names this depends on
+- `depends-on` — List of task flow names this depends on
 - `accepted-date` — Date of developer acceptance (ISO 8601)
 
 ---
@@ -208,7 +208,7 @@ The AI must show what it's doing, not just do it.
 ```
 Phase 1: READ complete
 
-Issue: controller.md
+Task flow: controller.md
   Requirements: 4 acceptance criteria extracted
   Files to create: 5 identified
 

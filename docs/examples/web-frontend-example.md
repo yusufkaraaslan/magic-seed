@@ -79,7 +79,7 @@ AI: Creating task flows...
 ```
 Developer: "Implement the next task flow for task-categories"
 
-AI: Issue: model.md
+AI: Task flow: model.md
     Creating types...
     ```typescript
     interface TaskCategory {

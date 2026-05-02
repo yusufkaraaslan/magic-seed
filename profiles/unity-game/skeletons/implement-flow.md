@@ -94,7 +94,7 @@ Append: scripts created, prefabs created, components used, deviations from desig
 
 **2.2 COMMIT** *(executes only after the gate is accepted)* — Stage scripts and assets; commit per conventional commits:
 ```
-feat({task-name}): {task-flow-type}
+feat({task-name}): {task-flow-name}
 
 - Add FeatureModel, FeatureController, FeatureView
 - Add FeatureData ScriptableObject
@@ -211,7 +211,7 @@ public class ObjectPool : MonoBehaviour
 Check for existing progress:
 1. Read all task flow files
 2. Find first pending/in_progress
-3. Ask: "Resume from {issue}?"
+3. Ask: "Resume from {task-flow-name}?"
 
 ---
 

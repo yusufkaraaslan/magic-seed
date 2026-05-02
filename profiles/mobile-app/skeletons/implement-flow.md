@@ -47,4 +47,4 @@ This profile follows the canonical **2-phase, 2-gate** structure from `universal
 - → **Gate 2: Commit review** — presented BEFORE 2.2 executes git commit.
 
 ## Resume Logic
-Check issue status.
+Check task flow status.

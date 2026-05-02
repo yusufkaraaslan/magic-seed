@@ -1,6 +1,6 @@
 ---
 name: ai-flow-anything
-description: Orchestrator skill for the ai-flow-anything task-development workflow. Use this skill ONLY for (a) initializing ai-flow-anything in a new project, (b) showing project workflow status across in-flight tasks, (c) searching the project knowledge base, or (d) when the developer's request is ambiguous about which phase flow applies. For specific phase work — design, implement, test, PR validation, deploy, docs — prefer the dedicated per-flow skills (design-flow, implement-flow, pr-flow, test-flow, deploy-flow, docs-flow). Magic-seed enforces design-before-code: no task code without a signed-off task-design.md.
+description: Orchestrator skill for the ai-flow-anything task-development workflow. Use this skill ONLY for (a) initializing ai-flow-anything in a new project, (b) showing project workflow status across in-flight tasks, (c) searching the project knowledge base, or (d) when the developer's request is ambiguous about which phase flow applies. For specific phase work — design, implement, test, PR validation, deploy, docs — prefer the dedicated per-flow skills (design-flow, implement-flow, pr-flow, test-flow, deploy-flow, docs-flow). ai-flow-anything enforces design-before-code: no task code without a signed-off task-design.md.
 license: MIT
 metadata:
   audience: developers
