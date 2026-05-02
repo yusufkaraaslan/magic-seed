@@ -24,13 +24,13 @@ Whenever the developer expresses any of:
 
 ## What this wizard does
 
-Five phases, each ending with `[A]ccept / [F]eedback / [R]eject`:
+Five phases, each with an explicit gate type (LIGHT auto-proceed, STANDARD `[A]/[F]/[R]`, or CRITICAL `[A]/[F]/[R]` + checklist). See `.ai-workflow/universal/workflow-structure.md` "Phase Gate Protocol" for the full spec.
 
-1. **UNDERSTAND** — Load project context (`.ai-workflow/universal/`, `.ai-workflow/profiles/{detected}/`, `docs/project/*`)
-2. **DESIGN** — Produce diagrams (class, package, sequence at minimum) per `.ai-workflow/universal/diagram-standards.md`
-3. **SPECIFY** — Write `docs/features/{name}/{DESIGN,TDD,EDGE-CASES}.md`
-4. **PLAN** — Decompose into implementation issues in `docs/features/{name}/issues/`
-5. **FINALIZE** — Sign off DESIGN.md (Rule 9: immutable after sign-off)
+1. **UNDERSTAND** *(LIGHT — auto-proceed)* — Load project context. No gate; agent reports loaded files and proceeds.
+2. **DESIGN** *(STANDARD)* — Produce diagrams (class, package, sequence at minimum) per `.ai-workflow/universal/diagram-standards.md`.
+3. **SPECIFY** *(STANDARD)* — Write `docs/features/{name}/{DESIGN,TDD,EDGE-CASES}.md`.
+4. **PLAN** *(CRITICAL — checklist gate)* — Decompose into implementation issues in `docs/features/{name}/issues/`. Before [A]ccept, verify: temporal contradictions in deps, undefined types, coverage gaps, parallel issues sharing files, oversized issues.
+5. **FINALIZE** *(CRITICAL — immutability gate)* — Sign off DESIGN.md (Rule 9: immutable after sign-off). Last chance to change DESIGN.md prose; post sign-off, deviations go in TDD.md only.
 
 ## Hard rules
 

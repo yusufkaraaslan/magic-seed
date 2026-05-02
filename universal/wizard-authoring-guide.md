@@ -53,7 +53,7 @@ What must be true before this wizard can run.
 **Artifacts:**
 - File path and description
 
-**Gate:** [A]ccept / [F]eedback / [R]eject
+**Gate:** [A]ccept / [F]eedback / [R]eject  *(or LIGHT auto-proceed, or CRITICAL with checklist — see "Choosing a gate type" below)*
 
 ### Phase 2: {Name}
 ...
@@ -118,20 +118,34 @@ List all files created or modified in this phase:
 
 ### Phase Gate
 
-Every phase must end with a review gate:
+Every phase ends with a gate, but **not every gate is the same**. Use the right type for each phase to avoid rubber-stamping fatigue.
 
 ```markdown
-**Gate:**
-
-Present to developer:
-- Summary of what was done
-- Key decisions made
-- Files created/modified
-- Any warnings or issues
-
-Ask:
-"Review and choose: [A]ccept / [F]eedback / [R]eject"
+**Gate:** {LIGHT | STANDARD | CRITICAL}
 ```
+
+The full protocol for each gate type lives in `universal/workflow-structure.md` under "Phase Gate Protocol." Summary:
+
+- **LIGHT** — Agent reports loaded context and proceeds. No `[A]/[F]/[R]` choice. The developer can interrupt at any time but isn't asked.
+- **STANDARD** — `[A]/[F]/[R]` with a summary of artifacts produced.
+- **CRITICAL** — `[A]/[F]/[R]` plus a phase-specific *failure-mode checklist* the developer should mentally tick before accepting. Reduces reflex-yes when the artifact is permanent or hard to undo.
+
+### Choosing a gate type
+
+| Situation | Gate type | Why |
+|---|---|---|
+| Phase loads files / discovers context, produces no permanent artifact | LIGHT | Saves a click; nothing to review. |
+| Phase produces a reviewable document or diagram the developer can scan in <30s | STANDARD | Brief artifact summary is enough. |
+| Phase produces something **permanent** (commit, immutable doc, signed-off design) | CRITICAL | Force the eye to specific failure modes; prevents reflex-yes. |
+| Phase decomposes work into many sub-pieces (e.g., issue planning) | CRITICAL | Decomposition errors compound through implementation. |
+
+**Heuristic:** if you'd be annoyed to discover a problem 30 minutes after accepting this phase, use CRITICAL and write the checklist. If the cost of "oops" is a one-line fix, STANDARD is fine. If there's nothing to review, LIGHT.
+
+### Writing CRITICAL gate checklists
+
+A good checklist names the specific failure modes that have actually bitten this phase before, in concrete terms. Bad: "verify quality." Good: "An issue marked 'Files to Modify' against a file no prior issue 'Files to Create' — temporal contradiction. Reorder or merge."
+
+Three to five items max. Long checklists become rubber-stamps just like soft gates.
 
 ---
 

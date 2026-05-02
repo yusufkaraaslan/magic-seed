@@ -30,92 +30,120 @@ Every wizard is composed of **phases**. Phases are sequential, each ending with 
 
 ```
 Phase 1: UNDERSTAND
-  → Load project context
-  → Read existing docs
-  → Explore codebase
-  → Discover related features
-  [GATE: Developer confirms understanding]
+  → Load project context (universal/, profiles/{detected}/, docs/project/*)
+  → Read existing docs and architecture
+  → Explore codebase for related features
+  [GATE TYPE A — LIGHT]
+  Agent reports loaded files + key facts, auto-proceeds.
 
 Phase 2: DESIGN (Visual-First)
-  → Generate rough class diagram from developer description
-  → Present diagram, iterate with developer
-  → Once approved, generate text documentation
-  → Create DESIGN.md
-  [GATE: DESIGN.md review — [A]/[F]/[R]]
+  → Generate class diagram, package diagram, sequence diagrams as needed
+  → Per universal/diagram-standards.md
+  [GATE TYPE B — STANDARD]
 
 Phase 3: SPECIFY
-  → Generate TDD.md from class diagram
-  → Generate EDGE-CASES.md
-  → Generate sequence/state diagrams for complex flows
-  → Generate issue files (dynamically named based on feature analysis)
-  [GATE: Specification review — [A]/[F]/[R]]
+  → Write DESIGN.md, TDD.md, EDGE-CASES.md
+  → Cross-reference diagrams from Phase 2
+  [GATE TYPE B — STANDARD]
 
-Phase 4: REVIEW
-  → Present complete design package
-  → Show diagrams alongside text
-  → Developer reviews all artifacts
-  [GATE: Final design approval — [A]/[F]/[R]]
+Phase 4: PLAN
+  → Decompose feature into implementation issues
+  → Each issue gets frontmatter (issue, feature, status, depends-on, accepted-date)
+  → Each issue declares Files to Create / Files to Modify
+  → Build issue dependency graph
+  [GATE TYPE C — CRITICAL]
+  Failure modes to verify before [A]ccept:
+    - Temporal contradiction: an issue marked "Files to Modify" against a
+      file no prior issue has "Files to Create". Reorder or merge.
+    - Type/symbol references: every type, enum, or class named in a
+      Files to Create / Files to Modify list must be defined either in
+      this feature's design or already in the codebase. Hunt for
+      undefined references (e.g. a parameter `foo: BarType` where
+      BarType is mentioned nowhere).
+    - Coverage: scan DESIGN.md sections — is every public method,
+      signal, and resource covered by exactly one issue?
+    - Independence: any issue listed as parallel-with another that
+      actually shares a file? Mark dependent or merge.
+    - Scope creep: any issue larger than a one-day implementation?
+      Split it.
 
-Phase 5: PLAN
-  → Create issue dependency diagram
-  → Lock DESIGN.md (immutable)
-  → Hand off to implement-wizard
+Phase 5: FINALIZE
+  → Sign off DESIGN.md (status: v1.0 — Signed Off, Immutable: Yes)
+  → Confirm all issue files written, dep graph diagram generated
+  [GATE TYPE C — CRITICAL]
+  ⚠️ Once accepted, DESIGN.md becomes IMMUTABLE per Rule 9.
+  Failure modes to verify before [A]ccept:
+    - Anything you'd want to change in DESIGN.md? Now is the only
+      time. Post-sign-off changes go in TDD.md only, never DESIGN.md.
+    - Diagrams cross-referenced correctly from DESIGN.md?
+    - All issues from Phase 4 actually written to disk?
+    - References section points to real Docs/* files?
 ```
 
 ### Implement Wizard Phases
 
 ```
 Phase 1: READ
-  → Load architecture context
-  → Read issue file (acceptance criteria, files to create)
-  → Read design docs (relevant sections)
-  → Read completed prior implementations
+  → Load architecture context (rules, profile, project docs)
+  → Read issue file (acceptance criteria, files to create/modify, deps)
+  → Read DESIGN.md and TDD.md sections relevant to this issue
   → Find reference implementations in codebase
-  [GATE: Confirm context loaded]
+  [GATE TYPE A — LIGHT]
+  Agent reports issue loaded + key acceptance criteria + reference files
+  found, auto-proceeds. Hard refusal if no DESIGN.md or DESIGN.md not
+  signed off — point developer at design-wizard.
 
 Phase 2: PLAN
-  → Analyze requirements
-  → Map to existing patterns
-  → Structure implementation
-  → Create implementation plan document
-  [GATE: Plan review — [A]/[F]/[R]]
+  → Analyze acceptance criteria against existing patterns
+  → Structure the implementation (file order, function shape)
+  → Surface ambiguities or design gaps
+  [GATE TYPE B — STANDARD]
 
 Phase 3: IMPLEMENT
-  → Write code incrementally
-  → Follow profile conventions
-  → Apply universal rules
-  → Cite reference implementations
-  [GATE: Implementation review — [A]/[F]/[R]]
+  → Write code incrementally per profile conventions
+  → Apply universal rules and project rules
+  → Cite reference implementations in comments only when non-obvious
+  [GATE TYPE B — STANDARD]
 
 Phase 4: AUTO-VALIDATE
-  → Run architecture checks
-  → Run style checks
-  → Run tests
-  → Check integration points
-  [GATE: Validation report — [A]/[F]/[R]]
+  → Run architecture/style checks specified in profile rules.md
+  → Run the project's test suite (NEVER skip tests — user global rule)
+  → Check integration points against DESIGN.md signal flow
+  [GATE TYPE B — STANDARD]
+  If validation fails, surface failures clearly and offer Fix/Defer/Skip
+  per failure (Skip only with developer override).
 
 Phase 5: DOC-SYNC
-  → Update TDD.md with deviations
+  → Update TDD.md with any deviations from DESIGN.md (Rule 9 — DESIGN
+    stays immutable; deviations live in TDD)
   → Update EDGE-CASES.md with discoveries
-  → Update PATTERNS.md with new patterns
-  [GATE: Doc update review — [A]/[F]/[R]]
+  → Update docs/project/PATTERNS.md with new reusable patterns
+  [GATE TYPE B — STANDARD]
 
 Phase 6: DEVELOPER REVIEW
-  → Present complete implementation
-  → Show files changed, tests run, coverage
-  → Developer reviews
-  [GATE: [A]ccept / [F]eedback / [R]eject]
+  → Present complete implementation: files changed, tests run, coverage
+  [GATE TYPE B — STANDARD]
 
 Phase 7: UPDATE ISSUE
-  → Transform issue to knowledge record
-  → Add implementation notes
-  → Record deviations and decisions
-  → Set status: complete, accepted-date
+  → Transform issue file to knowledge record (status: complete,
+    accepted-date set, implementation notes appended)
+  [GATE TYPE A — LIGHT]
+  Agent reports issue file updates and proceeds.
 
 Phase 8: COMMIT
-  → Commit per issue
-  → Write descriptive commit message
+  → Stage only the files this issue produced
+  → Compose commit message (conventional commits: feat/fix/docs/test)
   → Reference issue number
+  [GATE TYPE C — CRITICAL]
+  ⚠️ Commit lands in history; amending later is friction.
+  Failure modes to verify before [A]ccept:
+    - Files staged: any unrelated stray edits sneaking in? Run
+      `git diff --cached` mentally and verify each entry belongs.
+    - Commit message: scope/type accurate? Description focuses on
+      *why* not *what*?
+    - Co-author trailer present if required by project policy?
+    - Hooks won't fail (e.g. linter clean, no test failures)?
+    - Pre-existing failing tests not silently bypassed?
 ```
 
 ### PR Wizard Modes
@@ -155,25 +183,38 @@ Mode: capture
 
 ## Phase Gate Protocol
 
-Every phase ends with the same review protocol:
+Not every phase needs the same level of review. A "I just read the project files" phase doesn't deserve the same ceremony as "I'm about to lock DESIGN.md immutable forever." Three gate types exist; each wizard phase declares which one it uses.
 
-### Present
+### Gate type A — LIGHT (auto-proceed with summary)
 
-Show the developer:
-- What was done in this phase
-- Key decisions made
-- Files created/modified
-- Any warnings or issues
-
-### Ask
+Use for **context-loading** phases that don't produce reviewable artifacts (Phase 1 UNDERSTAND, Phase 1 READ in implement-wizard, etc.). The agent reports what it loaded and proceeds without asking. The developer can interrupt at any time, but no blocking gate. Saves a click per wizard run for a phase where the answer is almost always "yes."
 
 ```
 Phase {N}: {Name} complete.
 
-Summary:
-  - {key accomplishment 1}
-  - {key accomplishment 2}
-  - {key accomplishment 3}
+Loaded:
+  - {file/source 1}
+  - {file/source 2}
+  - {file/source 3}
+
+Key facts found:
+  - {fact 1}
+  - {fact 2}
+
+Proceeding to Phase {N+1}: {Next Name}.
+(Interrupt now if anything above is wrong.)
+```
+
+### Gate type B — STANDARD ([A]/[F]/[R])
+
+Use for phases that produce **reviewable artifacts** the developer can scan in 30 seconds and form an opinion on (Phase 2 DESIGN diagrams, Phase 3 SPECIFY prose, Phase 2 PLAN of implement-wizard). The current default behavior.
+
+```
+Phase {N}: {Name} complete.
+
+Produced:
+  - {artifact 1 with one-line summary}
+  - {artifact 2 with one-line summary}
 
 Review and choose:
   [A]ccept — Proceed to next phase
@@ -183,7 +224,34 @@ Review and choose:
 Your choice:
 ```
 
-### Handle Feedback
+### Gate type C — CRITICAL ([A]/[F]/[R] + review checklist)
+
+Use for phases that produce **permanent or hard-to-fix artifacts**: Phase 4 PLAN of design-wizard (issue decomposition baked into immutable DESIGN.md), Phase 5 FINALIZE of design-wizard (immutability lock), Phase 8 COMMIT of implement-wizard (commit lands in history). The standard `[A]/[F]/[R]` choice but the prompt explicitly names the failure modes the developer should look for. Prevents reflex-yes by giving the eye specific things to check.
+
+```
+Phase {N}: {Name} complete.
+
+Produced:
+  - {artifact 1}
+  - {artifact 2}
+
+⚠️  Before accepting, verify:
+  - {failure mode 1 specific to this phase}
+  - {failure mode 2}
+  - {failure mode 3}
+
+These are the things that bite later if you accept silently. Phase-specific
+checklists are listed under each phase below.
+
+Review and choose:
+  [A]ccept — Proceed (this artifact may be hard to undo)
+  [F]eedback — Provide feedback, I'll revise
+  [R]eject — Start this phase over
+
+Your choice:
+```
+
+### Handle Feedback / Reject (all gate types)
 
 If **Feedback**:
 1. Developer provides specific feedback
@@ -196,7 +264,7 @@ If **Reject**:
 2. Restart from specified point
 3. Previous work is not lost (saved in temp state)
 
-If **Accept**:
+If **Accept** (or auto-proceed for LIGHT gates):
 1. Mark phase complete
 2. Save artifacts
 3. Proceed to next phase
