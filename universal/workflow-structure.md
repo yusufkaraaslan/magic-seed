@@ -93,6 +93,35 @@ Phase 5: FINALIZE
       Any "MISSING IMAGE" output means render before signing off.
     - All issues from Phase 4 actually written to disk?
     - References section points to real Docs/* files?
+
+Phase 6: COMMIT
+  → Stage docs/features/{name}/ entirely (DESIGN.md, TDD.md,
+    EDGE-CASES.md, diagrams/*.puml + *.svg/*.png, issues/*.md)
+  → Compose commit message:
+      design({feature-name}): sign off DESIGN.md and {N} issues
+      
+      {one-line summary of feature scope}
+      
+      Issues created: {issue list, comma-separated}
+      Diagrams: class, package, sequence (and any others)
+  → Run git commit
+  [GATE TYPE C — CRITICAL]
+  ⚠️ DESIGN.md "Immutable: Yes" claim is meaningful only if locked
+  in git history. An uncommitted "immutable" file is editable by
+  anyone — convention only.
+  Failure modes to verify before [A]ccept:
+    - Files staged: only docs/features/{name}/ contents — no stray
+      edits from other features or from .ai-workflow/. Run
+      `git diff --cached --stat` and verify the file list.
+    - Commit message: feature name correct? Issue count matches
+      what's in issues/? Summary captures the *why* not the *what*?
+    - Hooks won't fail (no linter complaint, no missing files).
+    - If --no-commit flag passed, skip this phase entirely (the
+      developer wants to bundle multiple wizard runs into one commit).
+
+  Opt-out: developer can pass --no-commit when invoking the wizard
+  to skip Phase 6. Use when bundling design with adjacent work into
+  a single commit (e.g., design + plane.so issue creation in one go).
 ```
 
 ### Implement Wizard Phases
@@ -161,6 +190,46 @@ Phase 8: COMMIT
     - Pre-existing failing tests not silently bypassed?
 ```
 
+### Docs Wizard Phases
+
+```
+Phase 1: SCAN
+  → Identify which docs are stale or missing (compare last
+    modified vs recent commits / merged PRs / new features)
+  → Build a list of docs to update with rationale
+  [GATE TYPE A — LIGHT]
+  Agent reports the scan + proposed update list, auto-proceeds.
+
+Phase 2: PROPOSE
+  → For each doc to update, draft the change as a diff
+  → Cross-check against living-document policy (Rule 2):
+    update in place, no archives, no v2 copies
+  [GATE TYPE B — STANDARD]
+
+Phase 3: APPLY
+  → Apply each accepted diff to its doc
+  → Verify no broken cross-references introduced
+  [GATE TYPE B — STANDARD]
+
+Phase 4: COMMIT
+  → Stage updated docs/ files (and any AGENTS.md / CLAUDE.md
+    edits if those were part of scope)
+  → Compose commit message:
+      docs: update {scope} — {one-line summary}
+      
+      Files updated: {list}
+  → Run git commit
+  [GATE TYPE C — CRITICAL]
+  Failure modes to verify before [A]ccept:
+    - Files staged: only docs touched by this run — no code edits
+      sneaking in (docs-wizard never touches code).
+    - Living-document compliance: did the diffs update files in
+      place, or did they create *-v2.md / archive copies? The
+      latter violates Rule 2.
+    - DESIGN.md untouched (Rule 9 — immutable).
+  Opt-out: --no-commit to defer.
+```
+
 ### PR Wizard Modes
 
 ```
@@ -189,9 +258,27 @@ Mode: capture
   Step 2: Generate lessons learned
   Step 3: Propose knowledge base updates
   Step 4: Update feature catalog
-  Step 5: Update living documents
+  Step 5: Update living documents (PATTERNS.md, DECISIONS.md,
+          docs/features/{name}/lessons-learned.md)
   Step 6: Capture metrics
   Step 7: Completion summary
+  Step 8: COMMIT [GATE TYPE C — CRITICAL]
+    → Stage updated docs/project/PATTERNS.md, docs/project/DECISIONS.md,
+      docs/features/{name}/lessons-learned.md, and any other living
+      documents touched
+    → Compose commit message:
+        docs(capture): {feature} lessons learned and patterns
+        
+        Patterns added: {list}
+        ADRs added: {list}
+    → Run git commit
+    Failure modes to verify before [A]ccept:
+      - Files staged: only the docs touched by capture — no stray
+        edits to feature code or DESIGN.md (which is immutable).
+      - PATTERNS.md/DECISIONS.md edits use established sections
+        (no random new sections that break the doc structure).
+      - Commit message lists every pattern/ADR added.
+    Opt-out: --no-commit to defer; capture artifacts stay uncommitted.
 ```
 
 ---

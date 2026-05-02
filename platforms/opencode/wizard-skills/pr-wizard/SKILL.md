@@ -36,4 +36,8 @@ Pulls from `.ai-workflow/universal/rules.md`, the profile's `rules.md`, and `.ai
 
 Never present a PR as "ready" with failing tests. The user's global rule "never skip any test" applies.
 
+## Capture mode commits
+
+When run in `capture` mode (post-merge knowledge capture), the final step is a CRITICAL-gate commit that stages `docs/project/PATTERNS.md`, `docs/project/DECISIONS.md`, and `docs/features/{name}/lessons-learned.md`. Message: `docs(capture): {feature} lessons learned and patterns`. Without this commit, lessons-learned sits in the working tree and gets lost on the next `git checkout` or merge. Opt-out via `--no-commit` to defer.
+
 For full instructions read `.ai-workflow/wizards/pr-wizard.md`.

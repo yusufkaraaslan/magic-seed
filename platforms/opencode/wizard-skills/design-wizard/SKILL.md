@@ -24,13 +24,14 @@ Whenever the developer expresses any of:
 
 ## What this wizard does
 
-Five phases, each with an explicit gate type (LIGHT auto-proceed, STANDARD `[A]/[F]/[R]`, or CRITICAL `[A]/[F]/[R]` + checklist). See `.ai-workflow/universal/workflow-structure.md` "Phase Gate Protocol" for the full spec.
+Six phases, each with an explicit gate type (LIGHT auto-proceed, STANDARD `[A]/[F]/[R]`, or CRITICAL `[A]/[F]/[R]` + checklist). See `.ai-workflow/universal/workflow-structure.md` "Phase Gate Protocol" for the full spec.
 
 1. **UNDERSTAND** *(LIGHT — auto-proceed)* — Load project context. No gate; agent reports loaded files and proceeds.
 2. **DESIGN** *(STANDARD)* — Produce diagrams (class, package, sequence at minimum) per `.ai-workflow/universal/diagram-standards.md`. **Render every diagram source to `.svg` (or `.png` fallback) and commit the image alongside the source.** A `.puml` without a matching image is not a deliverable. If no renderer is installed locally, stop the phase and instruct the developer to install one (commands in diagram-standards.md "Local Rendering"); do not present the gate with unrendered sources.
 3. **SPECIFY** *(STANDARD)* — Write `docs/features/{name}/{DESIGN,TDD,EDGE-CASES}.md`.
 4. **PLAN** *(CRITICAL — checklist gate)* — Decompose into implementation issues in `docs/features/{name}/issues/`. Before [A]ccept, verify: temporal contradictions in deps, undefined types, coverage gaps, parallel issues sharing files, oversized issues.
 5. **FINALIZE** *(CRITICAL — immutability gate)* — Sign off DESIGN.md (Rule 9: immutable after sign-off). Last chance to change DESIGN.md prose; post sign-off, deviations go in TDD.md only.
+6. **COMMIT** *(CRITICAL — commit gate)* — Stage `docs/features/{name}/` and run `git commit` with message `design({name}): sign off DESIGN.md and {N} issues`. Without this commit, the "Immutable: Yes" claim in DESIGN.md is convention-only — anyone can still edit the file. Locking it in git history is what makes the immutability load-bearing. Opt-out: developer can pass `--no-commit` to skip this phase when bundling with adjacent work.
 
 ## Hard rules
 

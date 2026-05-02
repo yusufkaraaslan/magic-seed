@@ -33,4 +33,8 @@ This skill maintains the project knowledge base. Full flow at `.ai-workflow/wiza
 - **Living documents** (Rule 2) — update in place, never archive.
 - **DESIGN.md is immutable after sign-off** (Rule 9) — deviations go in TDD.md, this wizard never edits a signed-off DESIGN.md.
 
+## Final phase commits
+
+The wizard's last phase is a CRITICAL-gate commit (`docs: update {scope} — {summary}`). Without this, doc edits sit uncommitted and silently revert on the next branch switch. Opt-out via `--no-commit` if bundling with code changes that come later.
+
 For full instructions read `.ai-workflow/wizards/docs-wizard.md`.
