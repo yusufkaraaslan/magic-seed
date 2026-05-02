@@ -1,14 +1,14 @@
 # Quick Start
 
-Get magic-seed running in 5 minutes.
+Get ai-flow-anything running in 5 minutes.
 
 ---
 
-## Step 1: Clone magic-seed
+## Step 1: Clone ai-flow-anything
 
 ```bash
 cd your-project
-git clone https://github.com/yourusername/magic-seed.git .ai-workflow
+git clone https://github.com/yourusername/ai-flow-anything.git .ai-workflow
 ```
 
 Or download and extract to `.ai-workflow/`.
@@ -25,31 +25,31 @@ Follow the install guide for the platform you use:
 - OpenCode → [`platforms/opencode/README.md`](../platforms/opencode/README.md)
 - Kimi Code CLI → [`platforms/kimi-code/README.md`](../platforms/kimi-code/README.md)
 
-The wrapper teaches your AI how to recognize magic-seed intents on your platform.
+The wrapper teaches your AI how to recognize ai-flow-anything intents on your platform.
 
 ---
 
 ## Step 3: Initialize
 
-Ask your AI to initialize magic-seed for the project (use the platform's invocation style — slash command on platforms that support them, natural language anywhere). The AI will:
+Ask your AI to initialize ai-flow-anything for the project (use the platform's invocation style — slash command on platforms that support them, natural language anywhere). The AI will:
 
 1. Detect your project type
 2. Ask a few questions
-3. Generate wizards
-4. Install them to `.ai-workflow/wizards/`
+3. Generate flows
+4. Install them to `.ai-workflow/flows/`
 
 ---
 
-## Step 4: Design Your First Feature
+## Step 4: Design Your First Task
 
-Ask your AI: "Design a feature called my-feature."
+Ask your AI: "Design a task called my-task."
 
 The AI will:
 1. Load your project context
-2. Ask about the feature
+2. Ask about the task
 3. Generate diagrams (class, package)
-4. Create DESIGN.md, TDD.md, EDGE-CASES.md
-5. Create implementation issues
+4. Create task-design.md, task-technical-design.md, task-edge-cases.md
+5. Create implementation task flows
 
 **Review and approve each phase.**
 
@@ -57,7 +57,7 @@ The AI will:
 
 ## Step 5: Implement
 
-Ask your AI: "Implement the next issue for my-feature."
+Ask your AI: "Implement the next task flow for my-task."
 
 The AI will:
 1. Read the first issue
@@ -72,7 +72,7 @@ The AI will:
 
 ## Step 6: PR
 
-After all issues are complete, ask your AI: "Validate my-feature for PR."
+After all task flows are complete, ask your AI: "Validate my-task for PR."
 
 The AI will:
 1. Validate everything
@@ -85,7 +85,7 @@ The AI will:
 ## Next Steps
 
 - [Read how to customize](how-to-customize.md)
-- [Read how to add custom wizards](how-to-add-wizard.md)
+- [Read how to add custom flows](how-to-add-flow.md)
 - [Read architecture explained](architecture-explained.md)
 
 ---
@@ -95,8 +95,8 @@ The AI will:
 ### "Profile not detected"
 The AI will ask you to choose a profile or create a custom one. Pick the closest match.
 
-### "Wizards not generated"
-Check that `.ai-workflow/wizards/` exists after the AI finishes initialization.
+### "Flows not generated"
+Check that `.ai-workflow/flows/` exists after the AI finishes initialization.
 
 ### "Design phase stuck"
 Type `A` or `Accept` explicitly. The AI waits for your approval.
@@ -105,7 +105,7 @@ Type `A` or `Accept` explicitly. The AI waits for your approval.
 
 ## Tips
 
-- **Be specific** when describing features
+- **Be specific** when describing tasks
 - **Iterate** — it's okay to reject and refine
 - **Update docs** as you go — they're living documents
 - **Use diagrams** — they catch misunderstandings early

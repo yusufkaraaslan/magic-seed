@@ -31,7 +31,7 @@ Supports:
 
 ## Capabilities
 
-All 6 wizards with Godot-specific patterns:
+All 6 flows with Godot-specific patterns:
 - Node-based architecture
 - GDScript conventions
 - Signal system

@@ -35,7 +35,7 @@ Supports:
 
 ## Capabilities
 
-All 6 wizards with backend-specific patterns:
+All 6 flows with backend-specific patterns:
 - API design (REST, GraphQL, gRPC)
 - Database integration
 - Authentication/authorization

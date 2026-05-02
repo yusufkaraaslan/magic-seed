@@ -1,0 +1,39 @@
+---
+description: Universal workflow generator. Apply when the developer asks to initialize ai-flow-anything, design or implement a task, run a flow (design, implement, pr, test, deploy, docs), validate a task for PR, capture lessons learned, or search the project knowledge base.
+alwaysApply: false
+---
+
+# ai-flow-anything (Cursor wrapper)
+
+This is the Cursor packaging of ai-flow-anything. The full platform-neutral workflow lives in `instructions.md` at the repo root (one directory above `.cursor/rules/` once installed). **Read it before acting on any ai-flow-anything intent.**
+
+---
+
+## When to apply this rule
+
+Cursor activates this rule when the developer's request matches the `description` above. Typical triggers:
+
+- "Initialize ai-flow-anything for this project"
+- "Design a task called <name>"
+- "Implement the next task flow for <task>"
+- "Validate <task> for PR"
+- "Process PR feedback for <task>"
+- "Capture lessons learned for <task>"
+- "Search the knowledge base for <query>"
+
+If the developer expresses any of these intents — naturally phrased or with explicit flow names — translate it to the corresponding ai-flow-anything action and follow `instructions.md`.
+
+---
+
+## What this wrapper does
+
+This file exists only to:
+
+1. Provide the YAML frontmatter Cursor's agent uses to recognize when ai-flow-anything is relevant.
+2. Point the agent at `instructions.md` for the full workflow logic.
+
+All workflow logic — detection, discovery, profile loading, flow generation, knowledge-base structure, review gates — lives in `instructions.md`. Do not duplicate it here.
+
+## Init must persist plumbing, not just generate output
+
+When the developer says "initialize ai-flow-anything for this project", the agent must follow `instructions.md` Step 7 in full. A successful Cursor init produces all four of: this wrapper at `.cursor/rules/ai-flow-anything.mdc`; universal entry point reachable at `.ai-workflow/{instructions.md, universal/, profiles/{detected}/}`; rendered flows at `.ai-workflow/flows/*.md`; and knowledge base scaffold at `flow-storage/{project,team,tasks}/`. Run `instructions.md` Step 8 (Verify Install) before reporting success.

@@ -1,20 +1,20 @@
 # How to Customize
 
-Tailor magic-seed to your project's specific needs.
+Tailor ai-flow-anything to your project's specific needs.
 
 ---
 
 ## Customization Points
 
-You can customize without modifying magic-seed core:
+You can customize without modifying ai-flow-anything core:
 
 | File | Purpose |
 |------|---------|
 | `.ai-workflow/rules.md` | Project-specific rules |
-| `.ai-workflow/wizards/*.md` | Custom or overridden wizards |
-| `docs/project/CONVENTIONS.md` | Team coding standards |
-| `docs/project/PATTERNS.md` | Reusable patterns |
-| `docs/team/workflows.md` | Team processes |
+| `.ai-workflow/flows/*.md` | Custom or overridden flows |
+| `flow-storage/project/CONVENTIONS.md` | Team coding standards |
+| `flow-storage/project/PATTERNS.md` | Reusable patterns |
+| `flow-storage/team/workflows.md` | Team processes |
 
 ---
 
@@ -44,13 +44,13 @@ Rules here are merged with profile rules. In conflicts, custom rules win.
 
 ---
 
-## Overriding Wizards
+## Overriding Flows
 
-To modify a wizard's behavior:
+To modify a flow's behavior:
 
-1. Copy from profile (replace `<wizard-name>` with the wizard you want to override, e.g. `design-wizard`):
+1. Copy from profile (replace `<flow-name>` with the flow you want to override, e.g. `design-flow`):
    ```bash
-   cp .ai-workflow/profiles/{type}/skeletons/<wizard-name>.md .ai-workflow/wizards/<wizard-name>.md
+   cp .ai-workflow/profiles/{type}/skeletons/<flow-name>.md .ai-workflow/flows/<flow-name>.md
    ```
 
 2. Edit the copy:
@@ -65,7 +65,7 @@ To modify a wizard's behavior:
 
 ## Example: Adding a Phase
 
-Add "Security Review" to design-wizard:
+Add "Security Review" to design-flow:
 
 ```markdown
 ### Phase 4.5: SECURITY REVIEW
@@ -78,7 +78,7 @@ Add "Security Review" to design-wizard:
 4. Review input validation needs
 
 **Artifacts:**
-- Security notes in DESIGN.md
+- Security notes in task-design.md
 
 **Gate:** [A]ccept / [F]eedback / [R]eject
 ```
@@ -87,7 +87,7 @@ Add "Security Review" to design-wizard:
 
 ## Example: Custom Validation
 
-Add project-specific validation to implement-wizard:
+Add project-specific validation to implement-flow:
 
 ```markdown
 ### Phase 4: AUTO-VALIDATE
@@ -103,7 +103,7 @@ Additional checks:
 
 ## Team Conventions
 
-Document team-specific conventions in `docs/project/CONVENTIONS.md`:
+Document team-specific conventions in `flow-storage/project/CONVENTIONS.md`:
 
 ```markdown
 # Conventions: {Team Name}
@@ -128,7 +128,7 @@ Document team-specific conventions in `docs/project/CONVENTIONS.md`:
 
 ## Pattern Catalog
 
-Document reusable patterns in `docs/project/PATTERNS.md`:
+Document reusable patterns in `flow-storage/project/PATTERNS.md`:
 
 ```markdown
 # Patterns
@@ -159,19 +159,19 @@ class CachedRepository<T> {
 
 ## Team Workflows
 
-Document how your team works in `docs/team/workflows.md`:
+Document how your team works in `flow-storage/team/workflows.md`:
 
 ```markdown
 # Workflows
 
-## Feature Development
+## Task Development
 1. Create ticket in {tool}
-2. Run the design wizard
+2. Run the design flow
 3. Get design approved by tech lead
-4. Run the implement wizard
-5. Run the test wizard
+4. Run the implement flow
+5. Run the test flow
 6. Create PR (minimum 1 reviewer)
-7. Run the PR wizard
+7. Run the PR flow
 8. Merge after approval
 
 ## Hotfix Process
@@ -233,9 +233,9 @@ Different environments may need different rules:
 If migrating from another workflow tool:
 
 1. Export existing conventions
-2. Map to magic-seed structure:
-   - Conventions → `docs/project/CONVENTIONS.md`
-   - Patterns → `docs/project/PATTERNS.md`
+2. Map to ai-flow-anything structure:
+   - Conventions → `flow-storage/project/CONVENTIONS.md`
+   - Patterns → `flow-storage/project/PATTERNS.md`
    - Rules → `.ai-workflow/rules.md`
-3. Adapt wizards to match existing workflow
+3. Adapt flows to match existing workflow
 4. Train team on new commands

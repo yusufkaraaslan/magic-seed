@@ -54,13 +54,13 @@
 **Flutter:**
 - Check `lib/` structure:
   - `screens/`, `widgets/`, `models/` → Simple
-  - `features/`, `core/` → Feature-based
+  - `tasks/`, `core/` → Feature-based
   - `presentation/`, `domain/`, `data/` → Clean Architecture
 
 **React Native:**
 - Check `src/` structure:
   - `screens/`, `components/` → Simple
-  - `features/` → Feature-based
+  - `tasks/` → Feature-based
 
 ---
 

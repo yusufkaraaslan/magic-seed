@@ -1,13 +1,13 @@
 # GitHub Copilot wrapper
 
-Install magic-seed for use with [GitHub Copilot](https://github.com/features/copilot).
+Install ai-flow-anything for use with [GitHub Copilot](https://github.com/features/copilot).
 
 ## Install
 
 From your project root:
 
 ```bash
-git clone https://github.com/yourusername/magic-seed.git .ai-workflow
+git clone https://github.com/yourusername/ai-flow-anything.git .ai-workflow
 mkdir -p .github
 ln -s ../.ai-workflow/platforms/github-copilot/copilot-instructions.md .github/copilot-instructions.md
 ```
@@ -20,7 +20,7 @@ cp .ai-workflow/platforms/github-copilot/copilot-instructions.md .github/copilot
 
 ## Already have a `copilot-instructions.md`?
 
-Append the magic-seed wrapper's content to your existing file rather than overwriting it. Order matters: put magic-seed last so it doesn't dominate the context.
+Append the ai-flow-anything wrapper's content to your existing file rather than overwriting it. Order matters: put ai-flow-anything last so it doesn't dominate the context.
 
 ```bash
 echo "" >> .github/copilot-instructions.md
@@ -31,9 +31,9 @@ cat .ai-workflow/platforms/github-copilot/copilot-instructions.md >> .github/cop
 
 GitHub Copilot reads `.github/copilot-instructions.md` and prepends its content to every Copilot Chat request and every code-completion context for this repository. There is no triggering mechanism — the file is **always loaded**.
 
-That makes context discipline critical. The magic-seed wrapper is intentionally minimal (~20 lines): it tells Copilot that magic-seed exists, lists the intents that should trigger workflow behavior, and points at `instructions.md` for the full logic. Everyday code completion isn't slowed down.
+That makes context discipline critical. The ai-flow-anything wrapper is intentionally minimal (~20 lines): it tells Copilot that ai-flow-anything exists, lists the intents that should trigger workflow behavior, and points at `instructions.md` for the full logic. Everyday code completion isn't slowed down.
 
-When the developer's request matches a magic-seed intent, Copilot reads `instructions.md` (and the universal/profile/skeleton files it references) and executes the workflow.
+When the developer's request matches a ai-flow-anything intent, Copilot reads `instructions.md` (and the universal/profile/skeleton files it references) and executes the workflow.
 
 ## Update
 
@@ -50,4 +50,4 @@ rm .github/copilot-instructions.md
 rm -rf .ai-workflow
 ```
 
-If you appended magic-seed to an existing `copilot-instructions.md`, manually delete the magic-seed section instead of removing the whole file.
+If you appended ai-flow-anything to an existing `copilot-instructions.md`, manually delete the ai-flow-anything section instead of removing the whole file.

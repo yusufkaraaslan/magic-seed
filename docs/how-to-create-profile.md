@@ -21,12 +21,12 @@ profiles/your-profile/
 ├── discovery.md           # Discovery instructions
 ├── rules.md               # Profile-specific rules
 └── skeletons/
-    ├── design-wizard.md
-    ├── implement-wizard.md
-    ├── pr-wizard.md
-    ├── test-wizard.md
-    ├── deploy-wizard.md
-    └── docs-wizard.md
+    ├── design-flow.md
+    ├── implement-flow.md
+    ├── pr-flow.md
+    ├── test-flow.md
+    ├── deploy-flow.md
+    └── docs-flow.md
 ```
 
 ---
@@ -135,11 +135,11 @@ Use appropriate exit codes:
 
 ---
 
-## Step 5: Edit Wizard Skeletons
+## Step 5: Edit Flow Skeletons
 
-Customize wizards for your tech stack:
+Customize flows for your tech stack:
 
-### design-wizard.md
+### design-flow.md
 Add tech-specific design patterns:
 ```markdown
 ## Rust CLI Patterns
@@ -161,7 +161,7 @@ enum Commands {
 ```
 ```
 
-### implement-wizard.md
+### implement-flow.md
 Add implementation patterns:
 ```markdown
 ### Phase 3: IMPLEMENT
@@ -188,9 +188,9 @@ pub fn execute(args: AddArgs) -> Result<()> {
 ## Step 6: Test Your Profile
 
 1. Create a test project with your tech stack
-2. Initialize magic-seed for it
+2. Initialize ai-flow-anything for it
 3. Verify detection works
-4. Run each wizard
+4. Run each flow
 5. Check generated output
 
 ---
@@ -199,7 +199,7 @@ pub fn execute(args: AddArgs) -> Result<()> {
 
 To share with the community:
 
-1. Fork the magic-seed repository
+1. Fork the ai-flow-anything repository
 2. Add your profile to `profiles/`
 3. Update main README with your profile
 4. Submit a pull request

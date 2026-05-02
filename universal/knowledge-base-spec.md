@@ -10,59 +10,65 @@
 ```
 ┌─────────────────────────────────────────┐
 │           Team-Level KB                 │
-│   docs/team/                            │
+│   flow-storage/team/                            │
 │   - Onboarding, workflows, glossary     │
 ├─────────────────────────────────────────┤
 │          Project-Level KB               │
-│   docs/project/                         │
+│   flow-storage/project/                         │
 │   - Architecture, conventions, patterns │
 ├─────────────────────────────────────────┤
-│          Feature-Level KB               │
-│   docs/features/{name}/                 │
-│   - Design, TDD, edge cases, issues     │
+│          Task-Level KB               │
+│   flow-storage/tasks/{task-name}/                 │
+│   - Design, technical design, edge cases, task flows     │
 └─────────────────────────────────────────┘
 ```
 
 ---
 
-## Tier 1: Feature-Level Knowledge Base
+## Tier 1: Task-Level Knowledge Base
 
-Created for every feature. Grows as the feature is designed, implemented, and reviewed.
+Created for every task. Grows as the task is designed, implemented, and reviewed. Each flow owns its own subfolder under the task root.
 
 ### Directory Structure
 
 ```
-docs/features/{feature-name}/
-├── DESIGN.md                    # Design document (immutable after sign-off)
-├── TDD.md                       # Technical design document
-├── EDGE-CASES.md               # Edge cases and decisions
-├── diagrams/
-│   ├── 01-class-diagram.puml
-│   ├── 02-package-diagram.puml
-│   ├── 03-sequence-{flow}.puml
-│   └── 04-issue-dependencies.puml
-├── issues/
-│   ├── user-session-store.md    # Dynamically named issues
-│   ├── login-form-component.md
-│   ├── auth-service.md
-│   ├── api-integration.md
-│   └── tests.md
-├── feedback/
-│   ├── feedback-1-review.md     # PR feedback → knowledge record
-│   └── feedback-2-review.md
-└── lessons-learned.md          # Post-merge summary
+flow-storage/tasks/{task-name}/
+├── design/                                       # design-flow output
+│   ├── task-design.md                            # Design document (immutable after sign-off)
+│   ├── task-technical-design.md                  # Technical design document (evolves)
+│   ├── task-edge-cases.md                        # Edge cases and decisions
+│   └── diagrams/
+│       ├── 01-class-diagram.puml
+│       ├── 02-package-diagram.puml
+│       ├── 03-sequence-{flow}.puml
+│       └── 04-task-flow-dependencies.puml
+├── implement/                                    # implement-flow output
+│   └── flow-plan/
+│       ├── task-flow-user-session-store.md       # Dynamically named task flows
+│       ├── task-flow-login-form-component.md
+│       ├── task-flow-auth-service.md
+│       ├── task-flow-api-integration.md
+│       └── task-flow-tests.md
+├── test/                                         # test-flow output
+├── pr/                                           # pr-flow output
+│   └── feedback/
+│       ├── feedback-1-review.md                  # PR feedback → knowledge record
+│       └── feedback-2-review.md
+├── deploy/                                       # deploy-flow output
+└── docs/                                         # docs-flow output
+    └── lessons-learned.md                        # Post-merge summary
 ```
 
 ### Files
 
-#### DESIGN.md
+#### task-design.md
 
-**Purpose:** Complete design specification for the feature.
+**Purpose:** Complete design specification for the task.
 
 **Status lifecycle:**
 - `Draft` — Initial creation
 - `In Review` — Developer reviewing
-- `v1.0 (ENHANCED)` — After design-wizard enhancement
+- `v1.0 (ENHANCED)` — After design-flow enhancement
 - `v2.0 (SIGNED OFF)` — After developer approval (IMMUTABLE)
 
 **Sections (example):**
@@ -85,13 +91,13 @@ docs/features/{feature-name}/
 > **Immutable:** Yes
 ```
 
-#### TDD.md
+#### task-technical-design.md
 
 **Purpose:** Technical design document — implementation details.
 
 **Status lifecycle:**
-- `Draft` — Created by design-wizard
-- `Updated` — Modified during implement-wizard (deviations recorded)
+- `Draft` — Created by design-flow
+- `Updated` — Modified during implement-flow (deviations recorded)
 - `Final` — After implementation complete
 
 **Sections (example):**
@@ -106,21 +112,21 @@ docs/features/{feature-name}/
 
 **Deviations section:**
 ```markdown
-## Deviations from DESIGN.md
+## Deviations from task-design.md
 
 During implementation, these deviations were necessary:
 
-1. **DESIGN.md Section 4.2** specified X, but implemented Y because Z
+1. **task-design.md Section 4.2** specified X, but implemented Y because Z
 2. **New pattern discovered:** Added caching layer not in original design
 ```
 
-#### EDGE-CASES.md
+#### task-edge-cases.md
 
 **Purpose:** Document edge cases, boundary conditions, and error scenarios.
 
 **Format:**
 ```markdown
-# Edge Cases: {Feature Name}
+# Edge Cases: {Task Name}
 
 ## EC1: Empty State
 **Scenario:** No items to process
@@ -140,8 +146,8 @@ During implementation, these deviations were necessary:
 **Frontmatter:**
 ```yaml
 ---
-issue: user-session-store
-feature: "user-authentication"
+task-flow: user-session-store
+task: "user-authentication"
 status: complete          # pending | in_progress | complete
 depends-on: []
 accepted-date: 2026-04-23
@@ -152,7 +158,7 @@ tags: ["backend", "data-model", "session"]
 **Sections:**
 1. Acceptance Criteria
 2. Files to Create
-3. Implementation Notes (added during implement-wizard)
+3. Implementation Notes (added during implement-flow)
 4. Patterns Used
 5. Deviations from Design
 6. Tests Written
@@ -176,25 +182,25 @@ tags: ["backend", "data-model", "session"]
 
 **Purpose:** Post-merge summary for future reference.
 
-**Generated by:** PR wizard, `capture` mode
+**Generated by:** PR flow, `capture` mode
 
 **Sections:**
 1. What Went Well
 2. What Was Missed
 3. New Patterns Discovered
 4. Process Improvements
-5. Metrics (time spent, iterations, issues found)
+5. Metrics (time spent, iterations, task flows found)
 
 ---
 
 ## Tier 2: Project-Level Knowledge Base
 
-Shared across all features in the project. Updated by wizards as patterns are discovered.
+Shared across all tasks in the project. Updated by flows as patterns are discovered.
 
 ### Directory Structure
 
 ```
-docs/project/
+flow-storage/project/
 ├── ARCHITECTURE.md              # Overall architecture
 ├── CONVENTIONS.md               # Coding standards
 ├── PATTERNS.md                  # Reusable patterns catalog
@@ -207,9 +213,9 @@ docs/project/
 
 **Purpose:** High-level architecture overview.
 
-**Created during:** magic-seed initialization
+**Created during:** ai-flow-anything initialization
 
-**Updated by:** design wizard; PR wizard, `capture` mode
+**Updated by:** design flow; PR flow, `capture` mode
 
 **Sections:**
 1. Architecture Overview
@@ -223,9 +229,9 @@ docs/project/
 
 **Purpose:** Coding standards and conventions.
 
-**Created during:** magic-seed initialization (from profile rules + developer input)
+**Created during:** ai-flow-anything initialization (from profile rules + developer input)
 
-**Updated by:** PR wizard, `capture` mode (when conventions evolve)
+**Updated by:** PR flow, `capture` mode (when conventions evolve)
 
 **Sections:**
 1. Naming Conventions
@@ -238,9 +244,9 @@ docs/project/
 
 **Purpose:** Catalog of reusable patterns discovered during development.
 
-**Created during:** magic-seed initialization (empty template)
+**Created during:** ai-flow-anything initialization (empty template)
 
-**Updated by:** implement wizard; PR wizard, `capture` mode
+**Updated by:** implement flow; PR flow, `capture` mode
 
 **Format:**
 ```markdown
@@ -269,7 +275,7 @@ docs/project/
 
 **Purpose:** Architecture Decision Records (ADRs).
 
-**Created during:** design-wizard (for each major decision)
+**Created during:** design-flow (for each major decision)
 
 **Format:**
 ```markdown
@@ -292,7 +298,7 @@ Shared across team members. Contains onboarding and team processes.
 ### Directory Structure
 
 ```
-docs/team/
+flow-storage/team/
 ├── onboarding.md                # New team member guide
 ├── workflows.md                 # How the team works
 └── glossary.md                  # Domain terminology
@@ -309,7 +315,7 @@ docs/team/
 2. Setup Instructions
 3. Architecture Overview
 4. Key Patterns
-5. How to Start a Feature
+5. How to Start a Task
 6. Review Process
 7. Deployment Process
 
@@ -318,7 +324,7 @@ docs/team/
 **Purpose:** Document team workflows and processes.
 
 **Sections:**
-1. Feature Development Flow
+1. Task Development Flow
 2. Code Review Process
 3. Testing Requirements
 4. Deployment Process
@@ -350,17 +356,17 @@ A data object that represents a domain concept (user, order, product).
 
 | Event | KB Tier | Action |
 |-------|---------|--------|
-| magic-seed initialization | Project, Team | Create initial structure |
-| Design wizard | Feature | Create feature KB |
-| Implement wizard | Feature | Update issues with implementation notes |
-| PR wizard, `feedback` mode | Feature | Create feedback issues |
-| PR wizard, `capture` mode | All tiers | Update lessons-learned, patterns, decisions |
+| ai-flow-anything initialization | Project, Team | Create initial structure |
+| Design flow | Task | Create task KB |
+| Implement flow | Task | Update task flows with implementation notes |
+| PR flow, `feedback` mode | Task | Create feedback task flows |
+| PR flow, `capture` mode | All tiers | Update lessons-learned, patterns, decisions |
 | Code refactoring | Project | Update patterns, architecture |
 
 ### Update Rules
 
-1. **Feature-level:** Updated continuously during feature development
-2. **Project-level:** Updated after each feature (by capture mode)
+1. **Task-level:** Updated continuously during task development
+2. **Project-level:** Updated after each task (by capture mode)
 3. **Team-level:** Updated when processes change
 
 ### Search
@@ -370,7 +376,7 @@ Knowledge base is searchable. Ask the AI to search the knowledge base for a quer
 > "Search the knowledge base for the repository pattern."
 
 Searches:
-- All DESIGN.md files
+- All task-design.md files
 - PATTERNS.md
 - DECISIONS.md
 - Issues (knowledge records)
@@ -386,10 +392,10 @@ Knowledge base is version-controlled (in `docs/`). No separate backup needed.
 
 ### Completeness
 
-- [ ] Every feature has a knowledge base directory
+- [ ] Every task has a knowledge base directory
 - [ ] Every issue is transformed to knowledge record
 - [ ] Every PR feedback is captured
-- [ ] Patterns catalog is updated after each feature
+- [ ] Patterns catalog is updated after each task
 - [ ] ADRs are created for major decisions
 
 ### Accuracy

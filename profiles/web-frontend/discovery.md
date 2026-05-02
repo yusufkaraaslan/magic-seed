@@ -49,7 +49,7 @@
 **Slot: architecture-pattern**
 - Check directory structure:
   - `components/`, `pages/`, `hooks/` → Component-based
-  - `features/`, `shared/` → Feature-based
+  - `tasks/`, `shared/` → Feature-based
   - `src/app/`, `src/environments/` → Angular
 
 ---

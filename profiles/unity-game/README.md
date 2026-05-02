@@ -40,14 +40,14 @@ Works with any Unity version and any frameworks:
 
 ## Capabilities
 
-| Wizard | Description |
+| Flow | Description |
 |--------|-------------|
-| **design-wizard** | Feature design with Unity-specific diagrams and component architecture |
-| **implement-wizard** | Per-issue implementation with C# patterns and Unity lifecycle |
-| **pr-wizard** | PR validation with Unity-specific checks (scene references, prefab integrity) |
-| **test-wizard** | Unity Test Framework (EditMode/PlayMode) integration |
-| **deploy-wizard** | Unity build pipeline and store submission |
-| **docs-wizard** | Unity docs upkeep with component diagrams |
+| **design-flow** | Task design with Unity-specific diagrams and component architecture |
+| **implement-flow** | Per-issue implementation with C# patterns and Unity lifecycle |
+| **pr-flow** | PR validation with Unity-specific checks (scene references, prefab integrity) |
+| **test-flow** | Unity Test Framework (EditMode/PlayMode) integration |
+| **deploy-flow** | Unity build pipeline and store submission |
+| **docs-flow** | Unity docs upkeep with component diagrams |
 
 ---
 

@@ -1,12 +1,12 @@
 # Architecture Explained
 
-Why magic-seed is built this way.
+Why ai-flow-anything is built this way.
 
 ---
 
 ## Core Principle: AI as Runtime
 
-Traditional tools build an engine that interprets configuration. magic-seed flips this:
+Traditional tools build an engine that interprets configuration. ai-flow-anything flips this:
 
 **The AI (Claude, Cursor, etc.) IS the runtime.**
 
@@ -24,7 +24,7 @@ Everything is markdown instructions that the AI reads and follows. No Python eng
 | Approach | Engine | Config | Runtime |
 |----------|--------|--------|---------|
 | Traditional | Python/Node | YAML/JSON | Interpreter |
-| magic-seed | None | Markdown | AI Assistant |
+| ai-flow-anything | None | Markdown | AI Assistant |
 
 ---
 
@@ -33,9 +33,9 @@ Everything is markdown instructions that the AI reads and follows. No Python eng
 ```
 ┌─────────────────────────────────────┐
 │         User Project                │
-│  .ai-workflow/wizards/*.md         │
-│  docs/project/*.md                  │
-│  docs/features/*/*.md               │
+│  .ai-workflow/flows/*.md         │
+│  flow-storage/project/*.md                  │
+│  flow-storage/tasks/*/*.md               │
 ├─────────────────────────────────────┤
 │         Profile Layer               │
 │  profiles/{type}/                   │
@@ -69,7 +69,7 @@ Contains:
 - Detection hints (how to identify this project)
 - Discovery instructions (how to explore codebase)
 - Profile rules (tech-specific conventions)
-- Wizard skeletons (templates for wizards)
+- Flow skeletons (templates for flows)
 
 **Why profiles?** Unity games need different rules than web apps.
 
@@ -78,10 +78,10 @@ Contains:
 **Per project.**
 
 Contains:
-- Generated wizards (filled with project specifics)
-- Knowledge base (designs, issues, patterns)
+- Generated flows (filled with project specifics)
+- Knowledge base (designs, task flows, patterns)
 - Custom rules (team conventions)
-- Custom wizards (project-specific)
+- Custom flows (project-specific)
 
 **Why user layer?** Every project is unique.
 
@@ -90,7 +90,7 @@ Contains:
 ## How It Works: Execution Flow
 
 ```
-Developer asks to initialize magic-seed.
+Developer asks to initialize ai-flow-anything.
 
 AI reads:
   universal/rules.md                    → "Apply these always"
@@ -106,15 +106,15 @@ AI executes discovery:
   → Asks developer questions
   → Fills slot catalog
 
-AI generates wizards:
+AI generates flows:
   → Loads skeletons
   → Fills slots (class names, namespaces, etc.)
   → Applies rules
-  → Writes to .ai-workflow/wizards/
+  → Writes to .ai-workflow/flows/
 
-Developer uses wizards by asking:
-  "Design a feature called my-feature"
-    → AI reads the generated design-wizard.md in .ai-workflow/wizards/
+Developer uses flows by asking:
+  "Design a task called my-task"
+    → AI reads the generated design-flow.md in .ai-workflow/flows/
     → Follows instructions
     → Presents for review at each phase
 ```
@@ -165,7 +165,7 @@ Profiles are **independent** (no inheritance chain).
 
 ## Why Visual-First Design?
 
-Diagrams come BEFORE text in design-wizard.
+Diagrams come BEFORE text in design-flow.
 
 **Why?**
 1. **Faster understanding** — Humans process diagrams faster
@@ -190,11 +190,11 @@ Docs are updated at every step, never archived.
 ## Why Three-Tier Knowledge Base?
 
 ```
-Feature-level → Project-level → Team-level
+Task-level → Project-level → Team-level
 ```
 
 **Why?**
-1. **Feature:** Details of specific work
+1. **Task:** Details of specific work
 2. **Project:** Shared patterns and decisions
 3. **Team:** Onboarding and processes
 
@@ -204,14 +204,14 @@ Each tier serves different needs and audiences.
 
 ## Trade-offs
 
-### What magic-seed sacrifices:
+### What ai-flow-anything sacrifices:
 
 - **Speed** — AI interpretation is slower than compiled code
 - **Determinism** — AI may interpret instructions differently
 - **Validation** — Can't run automated checks without tools
 - **IDE integration** — No syntax highlighting for markdown instructions
 
-### What magic-seed gains:
+### What ai-flow-anything gains:
 
 - **Flexibility** — Adapt to any project without code changes
 - **Simplicity** — No complex setup or configuration
@@ -224,7 +224,7 @@ Each tier serves different needs and audiences.
 
 Possible enhancements (not in core):
 
-1. **IDE Plugins** — Syntax highlighting for markdown wizards
+1. **IDE Plugins** — Syntax highlighting for markdown flows
 2. **Validation Tools** — Optional CLI to check markdown validity
 3. **Template Marketplace** — Community-contributed profiles
 4. **AI Model Tuning** — Fine-tune models on markdown instructions
@@ -236,7 +236,7 @@ These are additive, not required. Core remains markdown-only.
 
 ## Philosophy
 
-**magic-seed believes:**
+**ai-flow-anything believes:**
 
 1. **AI is the future of development tools.** Don't build interpreters, write instructions.
 2. **Documentation is code.** Living docs are as important as source code.
@@ -250,6 +250,6 @@ These are additive, not required. Core remains markdown-only.
 
 - [How to create a profile](how-to-create-profile.md)
 - [How to write rules](how-to-write-rules.md)
-- [How to add a wizard](how-to-add-wizard.md)
+- [How to add a flow](how-to-add-flow.md)
 - [How to customize](how-to-customize.md)
 - [Quick start](../README.md)

@@ -234,7 +234,7 @@ public async UniTask DoSomething(CancellationToken ct)
 
 ## Validation Checklist
 
-Before considering Unity feature complete:
+Before considering Unity task complete:
 
 - [ ] No UnityEngine in pure C# layers
 - [ ] Views use Init() not [Inject]

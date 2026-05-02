@@ -71,7 +71,7 @@ All public functions, classes, and modules must have documentation.
 
 ### Rule G6: Keep Documentation Close
 
-Documentation lives with the code or in `docs/features/{name}/`.
+Documentation lives with the code or in `flow-storage/tasks/{task-name}/`.
 
 **Not in:** Separate wiki, external docs, or outdated files.
 
@@ -156,7 +156,7 @@ Use appropriate data structures and algorithms.
 
 ## Validation Checklist
 
-Before considering a feature complete:
+Before considering a task complete:
 
 - [ ] Code follows naming conventions
 - [ ] Public APIs are documented

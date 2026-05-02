@@ -1,6 +1,6 @@
 # Universal Rules
 
-> **Applies to:** ALL projects, ALL profiles, ALL wizards  
+> **Applies to:** ALL projects, ALL profiles, ALL flows  
 > **Purpose:** Non-negotiable guardrails that never change regardless of tech stack
 
 ---
@@ -10,9 +10,9 @@
 No implementation may begin without an approved design document.
 
 **Enforcement:**
-- The design wizard MUST run before the implement wizard
-- The implement wizard checks for `DESIGN.md` before starting
-- If `DESIGN.md` is missing, the implement wizard exits with: "Run the design wizard for `{name}` first"
+- The design flow MUST run before the implement flow
+- The implement flow checks for `task-design.md` before starting
+- If `task-design.md` is missing, the implement flow exits with: "Run the design flow for `{name}` first"
 
 **Exception:** Hotfixes and one-line changes may skip design phase, but must be documented retroactively.
 
@@ -23,11 +23,11 @@ No implementation may begin without an approved design document.
 All documentation in `docs/` is living — updated at every workflow step, never archived.
 
 **Practices:**
-- DESIGN.md is locked after sign-off (immutable), but deviations are recorded in TDD.md
-- TDD.md evolves during implementation
-- EDGE-CASES.md grows as new edge cases are discovered
+- task-design.md is locked after sign-off (immutable), but deviations are recorded in task-technical-design.md
+- task-technical-design.md evolves during implementation
+- task-edge-cases.md grows as new edge cases are discovered
 - Issues transform into knowledge records after completion
-- Feedback issues become permanent knowledge records
+- Feedback task flows become permanent knowledge records
 
 **Anti-pattern:** Creating `docs-v2/`, `docs-archive/`, or dated copies. Update in place.
 
@@ -38,7 +38,7 @@ All documentation in `docs/` is living — updated at every workflow step, never
 Every phase ends with developer review. Options are always:
 
 - **[A]ccept** — Proceed to next phase
-- **[F]eedback** — Provide feedback, wizard revises and re-presents
+- **[F]eedback** — Provide feedback, flow revises and re-presents
 - **[R]eject** — Abandon this approach, start over
 
 **Constraints:**
@@ -51,36 +51,36 @@ Every phase ends with developer review. Options are always:
 
 ## Rule 4: Diagrams Are Mandatory
 
-Every feature design must produce at minimum:
+Every task design must produce at minimum:
 
 1. **Class diagram** — Core abstractions and relationships
 2. **Package/module diagram** — Dependencies and layering
-3. **Sequence diagram** — For any non-trivial flow (optional for trivial features)
+3. **Sequence diagram** — For any non-trivial flow (optional for trivial flows)
 
 **Standards:**
 - Follow `universal/diagram-standards.md`
 - Default format: PlantUML
 - User can override per project
 - Diagrams are reviewed alongside text documents
-- Diagrams live in `docs/features/{name}/diagrams/`
+- Diagrams live in `flow-storage/tasks/{task-name}/design/diagrams/`
 - **Source AND rendered image both required.** Every `.puml` / `.d2` / `.mmd` must have a sibling `.svg` (preferred) or `.png` in the same directory. An unrendered diagram source is not a deliverable — readers shouldn't need to install a renderer locally to see what was designed. Mermaid is exempt only when the docs are read on a Mermaid-rendering platform (GitHub, GitLab, Notion). See `universal/diagram-standards.md` "Rendering" for the install commands.
 
 ---
 
 ## Rule 5: Knowledge Capture
 
-After every feature, the following must be updated:
+After every task, the following must be updated:
 
-**Per-feature:**
+**Per-task:**
 - `lessons-learned.md` — What went well, what was missed
 - `feedback/` — PR feedback records (if any)
 
 **Project-level:**
-- `docs/project/PATTERNS.md` — New reusable patterns discovered
-- `docs/project/DECISIONS.md` — Architecture decisions (ADRs)
+- `flow-storage/project/PATTERNS.md` — New reusable patterns discovered
+- `flow-storage/project/DECISIONS.md` — Architecture decisions (ADRs)
 
 **Team-level:**
-- `docs/team/workflows.md` — Process improvements
+- `flow-storage/team/workflows.md` — Process improvements
 
 ---
 
@@ -101,11 +101,11 @@ The AI never decides a phase is "good enough" without developer input.
 
 ## Rule 7: Atomic Commits
 
-Each issue (from implement-wizard) becomes one commit.
+Each issue (from implement-flow) becomes one commit.
 
 **Format:**
 ```
-feat({feature-name}): {issue-type} — brief description
+feat({task-name}): {issue-type} — brief description
 
 - Detailed change 1
 - Detailed change 2
@@ -128,12 +128,12 @@ Refs: #124
 
 ## Rule 8: Issue Frontmatter Schema
 
-All generated issue files must use this frontmatter:
+All generated task flow files must use this frontmatter:
 
 ```yaml
 ---
-issue: {issue-name}
-feature: "{feature-name}"
+task-flow: {task-flow-name}
+task: "{task-name}"
 status: pending          # pending | in_progress | complete
 depends-on: [{dependencies}]
 accepted-date: null       # set when developer accepts implementation
@@ -142,7 +142,7 @@ accepted-date: null       # set when developer accepts implementation
 
 **Fields:**
 - `issue` — Short identifier (kebab-case, e.g., user-session, auth-service, login-form)
-- `feature` — Full feature name (kebab-case or PascalCase)
+- `task-name` — Full task name (kebab-case or PascalCase)
 - `status` — Current state
 - `depends-on` — List of issue names this depends on
 - `accepted-date` — Date of developer acceptance (ISO 8601)
@@ -151,7 +151,7 @@ accepted-date: null       # set when developer accepts implementation
 
 ## Rule 9: Design Lock After Sign-Off
 
-After developer accepts DESIGN.md, it becomes immutable:
+After developer accepts task-design.md, it becomes immutable:
 
 ```markdown
 > **Status:** v2.0 (ENHANCED) — Signed Off
@@ -161,21 +161,21 @@ After developer accepts DESIGN.md, it becomes immutable:
 ```
 
 **Implications:**
-- Changes after lock require new version or new feature
-- Deviations during implementation are recorded in TDD.md, not DESIGN.md
+- Changes after lock require new version or new task
+- Deviations during implementation are recorded in task-technical-design.md, not task-design.md
 - Post-merge, edge cases and deviations feed into next iteration
 
 ---
 
 ## Rule 10: Context Loading First
 
-Every wizard must load project context before doing anything else.
+Every flow must load project context before doing anything else.
 
 **Context sources (in order):**
-1. `docs/project/ARCHITECTURE.md` — Overall architecture
-2. `docs/project/CONVENTIONS.md` — Coding standards
-3. `docs/project/PATTERNS.md` — Reusable patterns
-4. Prior feature docs in `docs/features/` — Reference implementations
+1. `flow-storage/project/ARCHITECTURE.md` — Overall architecture
+2. `flow-storage/project/CONVENTIONS.md` — Coding standards
+3. `flow-storage/project/PATTERNS.md` — Reusable patterns
+4. Prior task docs in `flow-storage/tasks/` — Reference implementations
 5. `.ai-workflow/rules.md` — Project-specific overrides
 
 **Loading pattern:**
@@ -183,9 +183,9 @@ Every wizard must load project context before doing anything else.
 ## First Step: Load Context
 
 Before doing anything else, read:
-1. `docs/project/ARCHITECTURE.md`
-2. `docs/project/CONVENTIONS.md`
-3. `docs/project/PATTERNS.md`
+1. `flow-storage/project/ARCHITECTURE.md`
+2. `flow-storage/project/CONVENTIONS.md`
+3. `flow-storage/project/PATTERNS.md`
 
 This provides: architecture rules, framework patterns, coding standards, 
 and reference implementations. **Do not skip this step.**
@@ -213,9 +213,9 @@ Issue: controller.md
   Files to create: 5 identified
 
 Design docs loaded:
-  DESIGN.md Section 4.3 (Controller Layer)
-  TDD.md Controller section
-  EDGE-CASES.md: 3 relevant edge cases
+  task-design.md Section 4.3 (Controller Layer)
+  task-technical-design.md Controller section
+  task-edge-cases.md: 3 relevant edge cases
 
 Reference implementation:
   OrderController.{{ext}} (API controller pattern)
@@ -235,14 +235,14 @@ After generation, verify no `{placeholder}` text remains in non-template files.
 
 ---
 
-## Rule 13: Test Coverage for New Features
+## Rule 13: Test Coverage for New Tasks
 
-Every feature must have tests.
+Every task must have tests.
 
 **Minimum:**
 - Unit tests for business logic
 - Integration tests for system boundaries
-- Edge case tests from EDGE-CASES.md
+- Edge case tests from task-edge-cases.md
 
 **Coverage target:** 80% for new code (profile may override)
 
@@ -274,7 +274,7 @@ Changes must not break existing features.
 ## Enforcement
 
 These rules are enforced by:
-1. **Wizards** — Check rules at each phase gate
+1. **Flows** — Check rules at each phase gate
 2. **Validators** — Run automated checks where possible
 3. **Developer review** — Human verifies at [A]/[F]/[R] gates
 4. **Knowledge base** — Violations recorded in lessons-learned

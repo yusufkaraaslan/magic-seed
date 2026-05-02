@@ -1,6 +1,6 @@
 # Example: Web Frontend Workflow
 
-Walkthrough of using magic-seed with a React project.
+Walkthrough of using ai-flow-anything with a React project.
 
 ---
 
@@ -26,25 +26,25 @@ TaskMaster/
 ## Step 1: Initialize
 
 ```
-Developer: "Initialize magic-seed for this project"
+Developer: "Initialize ai-flow-anything for this project"
 
 AI: Detecting project type...
     Found: package.json, src/, .tsx files
     Framework: React
     Confidence: 100%
 
-AI: Generating wizards...
-    ✓ All 6 wizards created
+AI: Generating flows...
+    ✓ All 6 flows created
 ```
 
 ---
 
-## Step 2: Design Feature
+## Step 2: Design Task
 
-**Feature:** Task Categories
+**Task:** Task Categories
 
 ```
-Developer: "Design a feature called task-categories"
+Developer: "Design a task called task-categories"
 
 AI: Phase 2: DESIGN (Visual-First)
     
@@ -60,11 +60,11 @@ AI: Phase 2: DESIGN (Visual-First)
     Developer: Accept
 
 AI: Creating docs...
-    ✓ DESIGN.md
-    ✓ TDD.md
-    ✓ EDGE-CASES.md
+    ✓ task-design.md
+    ✓ task-technical-design.md
+    ✓ task-edge-cases.md
     
-AI: Creating issues...
+AI: Creating task flows...
     1. model.md — Category types and state
     2. components.md — CategoryList, CategoryBadge
     3. hooks.md — useCategories hook
@@ -77,7 +77,7 @@ AI: Creating issues...
 ## Step 3: Implement
 
 ```
-Developer: "Implement the next issue for task-categories"
+Developer: "Implement the next task flow for task-categories"
 
 AI: Issue: model.md
     Creating types...
@@ -127,7 +127,7 @@ AI: pre-pr validation...
 
 ## Result
 
-Clean feature with:
+Clean task with:
 - Type-safe implementation
 - Component tests
 - Accessibility labels

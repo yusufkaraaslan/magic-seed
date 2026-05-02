@@ -1,36 +1,36 @@
 # Workflow Structure
 
 > **Applies to:** ALL profiles  
-> **Purpose:** Defines the wizard architecture, phase patterns, and execution model
+> **Purpose:** Defines the flow architecture, phase patterns, and execution model
 
 ---
 
-## Wizard Types
+## Flow Types
 
-Every profile provides one or more wizards. The core set is:
+Every profile provides one or more flows. The core set is:
 
-| Wizard | Purpose | Input | Output |
+| Flow | Purpose | Input | Output |
 |--------|---------|-------|--------|
-| **design-wizard** | Design features with diagrams | Feature idea | DESIGN.md, TDD.md, EDGE-CASES.md, diagrams, issues |
-| **implement-wizard** | Implement issues with validation | Issue files | Source code, updated issues (knowledge records) |
-| **pr-wizard** | PR lifecycle management | Completed issues | Validation report, feedback issues, lessons learned |
-| **test-wizard** | Test planning & execution | Feature docs | Test files, coverage report |
-| **deploy-wizard** | Deployment & release | Build artifacts | Deployed release, verification report |
-| **docs-wizard** | Documentation maintenance | Existing docs | Updated docs, new patterns catalog |
+| **design-flow** | Design tasks with diagrams | Task idea | task-design.md, task-technical-design.md, task-edge-cases.md, diagrams, task flows |
+| **implement-flow** | Implement task flows with validation | Task flow files | Source code, updated task flows (knowledge records) |
+| **pr-flow** | PR lifecycle management | Completed task flows | Validation report, feedback task flows, lessons learned |
+| **test-flow** | Test planning & execution | Task docs | Test files, coverage report |
+| **deploy-flow** | Deployment & release | Build artifacts | Deployed release, verification report |
+| **docs-flow** | Documentation maintenance | Existing docs | Updated docs, new patterns catalog |
 
-Profiles may add custom wizard types (e.g., `security-wizard`, `perf-wizard`).
+Profiles may add custom flow types (e.g., `security-flow`, `perf-flow`).
 
 ---
 
 ## Phase Architecture
 
-Every wizard is composed of **phases**. Phases are sequential, each ending with a review gate.
+Every flow is composed of **phases**. Phases are sequential, each ending with a review gate.
 
-### Design Wizard Phases
+### Design Flow Phases
 
 ```
 Phase 1: UNDERSTAND
-  → Load project context (universal/, profiles/{detected}/, docs/project/*)
+  → Load project context (universal/, profiles/{detected}/, flow-storage/project/*)
   → Read existing docs and architecture
   → Explore codebase for related features
   [GATE TYPE A — LIGHT]
@@ -50,13 +50,13 @@ Phase 2: DESIGN (Visual-First)
   [GATE TYPE B — STANDARD]
 
 Phase 3: SPECIFY
-  → Write DESIGN.md, TDD.md, EDGE-CASES.md
+  → Write task-design.md, task-technical-design.md, task-edge-cases.md
   → Cross-reference diagrams from Phase 2
   [GATE TYPE B — STANDARD]
 
 Phase 4: PLAN
-  → Decompose feature into implementation issues
-  → Each issue gets frontmatter (issue, feature, status, depends-on, accepted-date)
+  → Decompose task into implementation task flows
+  → Each issue gets frontmatter (task-flow, task, status, depends-on, accepted-date)
   → Each issue declares Files to Create / Files to Modify
   → Build issue dependency graph
   [GATE TYPE C — CRITICAL]
@@ -65,10 +65,10 @@ Phase 4: PLAN
       file no prior issue has "Files to Create". Reorder or merge.
     - Type/symbol references: every type, enum, or class named in a
       Files to Create / Files to Modify list must be defined either in
-      this feature's design or already in the codebase. Hunt for
+      this task's design or already in the codebase. Hunt for
       undefined references (e.g. a parameter `foo: BarType` where
       BarType is mentioned nowhere).
-    - Coverage: scan DESIGN.md sections — is every public method,
+    - Coverage: scan task-design.md sections — is every public method,
       signal, and resource covered by exactly one issue?
     - Independence: any issue listed as parallel-with another that
       actually shares a file? Mark dependent or merge.
@@ -76,66 +76,66 @@ Phase 4: PLAN
       Split it.
 
 Phase 5: FINALIZE
-  → Sign off DESIGN.md (status: v1.0 — Signed Off, Immutable: Yes)
-  → Confirm all issue files written, dep graph diagram generated
+  → Sign off task-design.md (status: v1.0 — Signed Off, Immutable: Yes)
+  → Confirm all task flow files written, dep graph diagram generated
   [GATE TYPE C — CRITICAL]
-  ⚠️ Once accepted, DESIGN.md becomes IMMUTABLE per Rule 9.
+  ⚠️ Once accepted, task-design.md becomes IMMUTABLE per Rule 9.
   Failure modes to verify before [A]ccept:
-    - Anything you'd want to change in DESIGN.md? Now is the only
-      time. Post-sign-off changes go in TDD.md only, never DESIGN.md.
-    - Diagrams cross-referenced correctly from DESIGN.md?
+    - Anything you'd want to change in task-design.md? Now is the only
+      time. Post-sign-off changes go in task-technical-design.md only, never task-design.md.
+    - Diagrams cross-referenced correctly from task-design.md?
     - All diagrams rendered: every `.puml` (or `.d2` / `.mmd`) has a
       sibling `.svg` or `.png` in the same diagrams/ directory.
-      Run: `for f in docs/features/{name}/diagrams/*.puml; do
+      Run: `for f in flow-storage/tasks/{task-name}/design/diagrams/*.puml; do
               base="${f%.puml}"; [ -f "${base}.svg" ] || [ -f "${base}.png" ]
               || echo "MISSING IMAGE: $f"
             done`
       Any "MISSING IMAGE" output means render before signing off.
-    - All issues from Phase 4 actually written to disk?
+    - All task flows from Phase 4 actually written to disk?
     - References section points to real Docs/* files?
 
 Phase 6: COMMIT
-  → Stage docs/features/{name}/ entirely (DESIGN.md, TDD.md,
-    EDGE-CASES.md, diagrams/*.puml + *.svg/*.png, issues/*.md)
+  → Stage flow-storage/tasks/{task-name}/ entirely (task-design.md, task-technical-design.md,
+    task-edge-cases.md, diagrams/*.puml + *.svg/*.png, flow-plan/task-flow-*.md)
   → Compose commit message:
-      design({feature-name}): sign off DESIGN.md and {N} issues
+      design({task-name}): sign off task-design.md and {N} task flows
       
-      {one-line summary of feature scope}
+      {one-line summary of task scope}
       
       Issues created: {issue list, comma-separated}
       Diagrams: class, package, sequence (and any others)
   → Run git commit
   [GATE TYPE C — CRITICAL]
-  ⚠️ DESIGN.md "Immutable: Yes" claim is meaningful only if locked
+  ⚠️ task-design.md "Immutable: Yes" claim is meaningful only if locked
   in git history. An uncommitted "immutable" file is editable by
   anyone — convention only.
   Failure modes to verify before [A]ccept:
-    - Files staged: only docs/features/{name}/ contents — no stray
-      edits from other features or from .ai-workflow/. Run
+    - Files staged: only flow-storage/tasks/{task-name}/ contents — no stray
+      edits from other tasks or from .ai-workflow/. Run
       `git diff --cached --stat` and verify the file list.
-    - Commit message: feature name correct? Issue count matches
-      what's in issues/? Summary captures the *why* not the *what*?
+    - Commit message: task name correct? Issue count matches
+      what's in flow-plan/? Summary captures the *why* not the *what*?
     - Hooks won't fail (no linter complaint, no missing files).
     - If --no-commit flag passed, skip this phase entirely (the
-      developer wants to bundle multiple wizard runs into one commit).
+      developer wants to bundle multiple flow runs into one commit).
 
-  Opt-out: developer can pass --no-commit when invoking the wizard
+  Opt-out: developer can pass --no-commit when invoking the flow
   to skip Phase 6. Use when bundling design with adjacent work into
   a single commit (e.g., design + plane.so issue creation in one go).
 ```
 
-### Implement Wizard Phases
+### Implement Flow Phases
 
 ```
 Phase 1: READ
   → Load architecture context (rules, profile, project docs)
   → Read issue file (acceptance criteria, files to create/modify, deps)
-  → Read DESIGN.md and TDD.md sections relevant to this issue
+  → Read task-design.md and task-technical-design.md sections relevant to this issue
   → Find reference implementations in codebase
   [GATE TYPE A — LIGHT]
   Agent reports issue loaded + key acceptance criteria + reference files
-  found, auto-proceeds. Hard refusal if no DESIGN.md or DESIGN.md not
-  signed off — point developer at design-wizard.
+  found, auto-proceeds. Hard refusal if no task-design.md or task-design.md not
+  signed off — point developer at design-flow.
 
 Phase 2: PLAN
   → Analyze acceptance criteria against existing patterns
@@ -152,16 +152,16 @@ Phase 3: IMPLEMENT
 Phase 4: AUTO-VALIDATE
   → Run architecture/style checks specified in profile rules.md
   → Run the project's test suite (NEVER skip tests — user global rule)
-  → Check integration points against DESIGN.md signal flow
+  → Check integration points against task-design.md signal flow
   [GATE TYPE B — STANDARD]
   If validation fails, surface failures clearly and offer Fix/Defer/Skip
   per failure (Skip only with developer override).
 
 Phase 5: DOC-SYNC
-  → Update TDD.md with any deviations from DESIGN.md (Rule 9 — DESIGN
-    stays immutable; deviations live in TDD)
-  → Update EDGE-CASES.md with discoveries
-  → Update docs/project/PATTERNS.md with new reusable patterns
+  → Update task-technical-design.md with any deviations from task-design.md (Rule 9 — DESIGN
+    stays immutable; deviations live in task-technical-design.md)
+  → Update task-edge-cases.md with discoveries
+  → Update flow-storage/project/PATTERNS.md with new reusable patterns
   [GATE TYPE B — STANDARD]
 
 Phase 6: DEVELOPER REVIEW
@@ -190,12 +190,12 @@ Phase 8: COMMIT
     - Pre-existing failing tests not silently bypassed?
 ```
 
-### Docs Wizard Phases
+### Docs Flow Phases
 
 ```
 Phase 1: SCAN
   → Identify which docs are stale or missing (compare last
-    modified vs recent commits / merged PRs / new features)
+    modified vs recent commits / merged PRs / new tasks)
   → Build a list of docs to update with rationale
   [GATE TYPE A — LIGHT]
   Agent reports the scan + proposed update list, auto-proceeds.
@@ -222,15 +222,15 @@ Phase 4: COMMIT
   [GATE TYPE C — CRITICAL]
   Failure modes to verify before [A]ccept:
     - Files staged: only docs touched by this run — no code edits
-      sneaking in (docs-wizard never touches code).
+      sneaking in (docs-flow never touches code).
     - Living-document compliance: did the diffs update files in
       place, or did they create *-v2.md / archive copies? The
       latter violates Rule 2.
-    - DESIGN.md untouched (Rule 9 — immutable).
+    - task-design.md untouched (Rule 9 — immutable).
   Opt-out: --no-commit to defer.
 ```
 
-### PR Wizard Modes
+### PR Flow Modes
 
 ```
 Mode: pre-pr (default)
@@ -254,27 +254,27 @@ Mode: feedback
   Step 3: Summary + commit
 
 Mode: capture
-  Step 1: Read all issue files
+  Step 1: Read all task flow files
   Step 2: Generate lessons learned
   Step 3: Propose knowledge base updates
-  Step 4: Update feature catalog
+  Step 4: Update task catalog
   Step 5: Update living documents (PATTERNS.md, DECISIONS.md,
-          docs/features/{name}/lessons-learned.md)
+          flow-storage/tasks/{task-name}/lessons-learned.md)
   Step 6: Capture metrics
   Step 7: Completion summary
   Step 8: COMMIT [GATE TYPE C — CRITICAL]
-    → Stage updated docs/project/PATTERNS.md, docs/project/DECISIONS.md,
-      docs/features/{name}/lessons-learned.md, and any other living
+    → Stage updated flow-storage/project/PATTERNS.md, flow-storage/project/DECISIONS.md,
+      flow-storage/tasks/{task-name}/lessons-learned.md, and any other living
       documents touched
     → Compose commit message:
-        docs(capture): {feature} lessons learned and patterns
+        docs(capture): {task-name} lessons learned and patterns
         
         Patterns added: {list}
         ADRs added: {list}
     → Run git commit
     Failure modes to verify before [A]ccept:
       - Files staged: only the docs touched by capture — no stray
-        edits to feature code or DESIGN.md (which is immutable).
+        edits to task code or task-design.md (which is immutable).
       - PATTERNS.md/DECISIONS.md edits use established sections
         (no random new sections that break the doc structure).
       - Commit message lists every pattern/ADR added.
@@ -285,11 +285,11 @@ Mode: capture
 
 ## Phase Gate Protocol
 
-Not every phase needs the same level of review. A "I just read the project files" phase doesn't deserve the same ceremony as "I'm about to lock DESIGN.md immutable forever." Three gate types exist; each wizard phase declares which one it uses.
+Not every phase needs the same level of review. A "I just read the project files" phase doesn't deserve the same ceremony as "I'm about to lock task-design.md immutable forever." Three gate types exist; each flow phase declares which one it uses.
 
 ### Gate type A — LIGHT (auto-proceed with summary)
 
-Use for **context-loading** phases that don't produce reviewable artifacts (Phase 1 UNDERSTAND, Phase 1 READ in implement-wizard, etc.). The agent reports what it loaded and proceeds without asking. The developer can interrupt at any time, but no blocking gate. Saves a click per wizard run for a phase where the answer is almost always "yes."
+Use for **context-loading** phases that don't produce reviewable artifacts (Phase 1 UNDERSTAND, Phase 1 READ in implement-flow, etc.). The agent reports what it loaded and proceeds without asking. The developer can interrupt at any time, but no blocking gate. Saves a click per flow run for a phase where the answer is almost always "yes."
 
 ```
 Phase {N}: {Name} complete.
@@ -309,7 +309,7 @@ Proceeding to Phase {N+1}: {Next Name}.
 
 ### Gate type B — STANDARD ([A]/[F]/[R])
 
-Use for phases that produce **reviewable artifacts** the developer can scan in 30 seconds and form an opinion on (Phase 2 DESIGN diagrams, Phase 3 SPECIFY prose, Phase 2 PLAN of implement-wizard). The current default behavior.
+Use for phases that produce **reviewable artifacts** the developer can scan in 30 seconds and form an opinion on (Phase 2 DESIGN diagrams, Phase 3 SPECIFY prose, Phase 2 PLAN of implement-flow). The current default behavior.
 
 ```
 Phase {N}: {Name} complete.
@@ -328,7 +328,7 @@ Your choice:
 
 ### Gate type C — CRITICAL ([A]/[F]/[R] + review checklist)
 
-Use for phases that produce **permanent or hard-to-fix artifacts**: Phase 4 PLAN of design-wizard (issue decomposition baked into immutable DESIGN.md), Phase 5 FINALIZE of design-wizard (immutability lock), Phase 8 COMMIT of implement-wizard (commit lands in history). The standard `[A]/[F]/[R]` choice but the prompt explicitly names the failure modes the developer should look for. Prevents reflex-yes by giving the eye specific things to check.
+Use for phases that produce **permanent or hard-to-fix artifacts**: Phase 4 PLAN of design-flow (issue decomposition baked into immutable task-design.md), Phase 5 FINALIZE of design-flow (immutability lock), Phase 8 COMMIT of implement-flow (commit lands in history). The standard `[A]/[F]/[R]` choice but the prompt explicitly names the failure modes the developer should look for. Prevents reflex-yes by giving the eye specific things to check.
 
 ```
 Phase {N}: {Name} complete.
@@ -375,16 +375,16 @@ If **Accept** (or auto-proceed for LIGHT gates):
 
 ## Resume Logic
 
-Wizards support resuming across sessions.
+Flows support resuming across sessions.
 
 **Detection:**
 - Check issue frontmatter for `status`
-- Read all issue files in `docs/features/{name}/issues/`
+- Read all task flow files in `flow-storage/tasks/{task-name}/implement/flow-plan/`
 - Find first issue with `status: pending` or `status: in_progress`
 
 **Resume message:**
 ```
-Implementation Status: {feature-name}
+Implementation Status: {task-name}
 
   model.md       complete   (2026-04-15)
   controller.md  in_progress
@@ -401,10 +401,10 @@ Resuming: controller.md
 
 ## Status Mode
 
-Every wizard supports `--status` flag:
+Every flow supports `--status` flag:
 
 ```
-/wizard-name {feature} --status
+/flow-name {task-name} --status
 ```
 
 **Output:**
@@ -417,26 +417,26 @@ Every wizard supports `--status` flag:
 
 ---
 
-## Custom Wizard Types
+## Custom Flow Types
 
-Profiles and users can define custom wizard types.
+Profiles and users can define custom flow types.
 
-**Requirements for a new wizard:**
-1. Markdown file in `.ai-workflow/wizards/` or profile `skeletons/`
+**Requirements for a new flow:**
+1. Markdown file in `.ai-workflow/flows/` or profile `skeletons/`
 2. Clear purpose statement
 3. Defined phases with gates
 4. Specified input/output artifacts
 5. Review protocol at each gate
 
-**Example custom wizard:**
+**Example custom flow:**
 ```markdown
-# Wizard: Security Audit
+# Flow: Security Audit
 
 ## Purpose
-Run security checks on new or modified features.
+Run security checks on new or modified tasks.
 
 ## When to Use
-After implement-wizard, before PR.
+After implement-flow, before PR.
 
 ## Phases
 
@@ -456,7 +456,7 @@ After implement-wizard, before PR.
 ### Phase 3: REPORT
 - Generate security report
 - Suggest fixes with code examples
-- Create security issue files if needed
+- Create security task flow files if needed
 [GATE: [A]/[F]/[R]]
 ```
 
@@ -467,29 +467,29 @@ After implement-wizard, before PR.
 ```
 Developer idea
     ↓
-Run design wizard for {name}
+Run design flow for {name}
     ↓
-DESIGN.md + diagrams (class, package, sequence)
+task-design.md + diagrams (class, package, sequence)
     ↓
-TDD.md + EDGE-CASES.md
+task-technical-design.md + task-edge-cases.md
     ↓
-Issue files (model, controller, view, tests, integration)
+Task flow files (model, controller, view, tests, integration)
     ↓
-Run implement wizard for {name}, issue=model
+Run implement flow for {name}, issue=model
     ↓
 Model implementation + tests
     ↓
 Knowledge record (model.md updated)
     ↓
-Run implement wizard for {name}, issue=controller
+Run implement flow for {name}, issue=controller
     ↓
 Controller implementation + tests
     ↓
 Knowledge record (controller.md updated)
     ↓
-... (repeat for all issues)
+... (repeat for all task flows)
     ↓
-Run PR wizard for {name}, mode=pre-pr
+Run PR flow for {name}, mode=pre-pr
     ↓
 Validation report (PASS/FAIL)
     ↓
@@ -497,30 +497,30 @@ Developer creates PR
     ↓
 Reviewers comment
     ↓
-Run PR wizard for {name}, mode=feedback
+Run PR flow for {name}, mode=feedback
     ↓
-Feedback issues → fixes → knowledge records
+Feedback task flows → fixes → knowledge records
     ↓
 PR merged
     ↓
-Run PR wizard for {name}, mode=capture
+Run PR flow for {name}, mode=capture
     ↓
 lessons-learned.md + PATTERNS.md updates
     ↓
-Feature complete
+Task complete
 ```
 
 ---
 
 ## Extending the Workflow
 
-### Add a phase to existing wizard
+### Add a phase to existing flow
 
-Edit the wizard markdown file, add a new phase section following the same pattern.
+Edit the flow markdown file, add a new phase section following the same pattern.
 
-### Add a new wizard type
+### Add a new flow type
 
-Create new markdown file in `.ai-workflow/wizards/` with phases, gates, and artifacts.
+Create new markdown file in `.ai-workflow/flows/` with phases, gates, and artifacts.
 
 ### Modify review options
 

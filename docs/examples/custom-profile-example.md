@@ -18,7 +18,7 @@ Building a profile from scratch for a unique tech stack.
 ## Step 1: Create Directory
 
 ```bash
-cd magic-seed/profiles
+cd ai-flow-anything/profiles
 cp -r generic rust-cli
 ```
 
@@ -42,7 +42,7 @@ Command-line tools written in Rust.
 - 2/3: "Likely Rust"
 
 ## Capabilities
-All 6 wizards with Rust-specific patterns.
+All 6 flows with Rust-specific patterns.
 
 ## Conventions
 - Error handling with `anyhow`
@@ -110,9 +110,9 @@ Provide defaults for optional arguments.
 
 ---
 
-## Step 5: Edit Wizards
+## Step 5: Edit Flows
 
-### design-wizard.md
+### design-flow.md
 
 Add Rust-specific design:
 ```markdown
@@ -141,7 +141,7 @@ fn main() -> Result<()> {
 ```
 ```
 
-### implement-wizard.md
+### implement-flow.md
 
 Add Rust implementation:
 ```markdown
@@ -170,9 +170,9 @@ pub fn execute(args: AddArgs) -> Result<()> {
 ## Step 6: Test
 
 1. Create test Rust project
-2. Initialize magic-seed for it
+2. Initialize ai-flow-anything for it
 3. Verify detection
-4. Ask the AI to design a feature called `test-feature`
+4. Ask the AI to design a task called `test-task`
 5. Verify output
 
 ---
@@ -185,7 +185,7 @@ git commit -m "feat: add Rust CLI profile"
 git push origin main
 ```
 
-Create pull request to magic-seed repository.
+Create pull request to ai-flow-anything repository.
 
 ---
 

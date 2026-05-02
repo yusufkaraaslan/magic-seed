@@ -7,14 +7,14 @@
 
 ## What is a Slot?
 
-A **slot** is a project-specific value that wizards need to know. Examples:
+A **slot** is a project-specific value that flows need to know. Examples:
 - Project name
 - Source code directory
 - Base model class
 - Naming conventions
 - Framework version
 
-Slots are discovered during magic-seed initialization and filled into wizard skeletons.
+Slots are discovered during ai-flow-anything initialization and filled into flow skeletons.
 
 ---
 
@@ -162,7 +162,7 @@ Search these files for architecture keywords:
 - `README.md`
 - `ARCHITECTURE.md`
 - `docs/architecture.md`
-- `docs/project/ARCHITECTURE.md`
+- `flow-storage/project/ARCHITECTURE.md`
 
 Look for: "MVC", "MVVM", "Clean Architecture", "Hexagonal", "Layered", "Microservices"
 
@@ -181,11 +181,11 @@ If ambiguous, ask developer.
 Reference slots using `{{slot-name}}` notation:
 
 ```markdown
-# Wizard: Design
+# Flow: Design
 
-## Step 1: Create Feature Directory
+## Step 1: Create Task Directory
 
-Create `docs/features/{{feature-name}}/` for the new feature.
+Create `flow-storage/tasks/{{task-name}}/` for the new task.
 
 ## Step 2: Generate Class Diagram
 
@@ -217,7 +217,7 @@ Before generation, verify all required slots are filled:
 - [ ] test-directory
 
 **If required slots are missing:**
-Stop and ask developer. Do not generate wizards with empty required slots.
+Stop and ask developer. Do not generate flows with empty required slots.
 ```
 
 ---
@@ -238,7 +238,7 @@ Profiles can define custom slots beyond the template:
 | **Fallback** | Record "none" or ask developer |
 ```
 
-Custom slots are profile-specific and only used by that profile's wizards.
+Custom slots are profile-specific and only used by that profile's flows.
 
 ---
 
@@ -328,9 +328,9 @@ Custom slots are profile-specific and only used by that profile's wizards.
 
 ## Tips for Profile Authors
 
-1. **Start with required slots.** What does every wizard need to know?
+1. **Start with required slots.** What does every flow need to know?
 2. **Discovery first, ask second.** Only ask what can't be discovered.
 3. **Provide fallback questions.** If discovery fails, what should the AI ask?
-4. **Validate before generating.** Don't produce wizards with empty required slots.
+4. **Validate before generating.** Don't produce flows with empty required slots.
 5. **Document custom slots.** Explain why this profile needs slots beyond the template.
 6. **Test discovery.** Run the discovery instructions on a real project and verify slots are filled correctly.

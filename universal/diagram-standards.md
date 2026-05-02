@@ -125,7 +125,7 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 ### Class Diagram
 
-**Required for:** Every feature design
+**Required for:** Every task design
 
 **Shows:**
 - Classes/interfaces and their attributes/methods
@@ -135,11 +135,11 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Naming:** `NN-class-diagram.puml` where NN is sequence number (01, 02, ...)
 
-**Location:** `docs/features/{name}/diagrams/`
+**Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
 ### Package/Module Diagram
 
-**Required for:** Every feature design
+**Required for:** Every task design
 
 **Shows:**
 - Modules/packages/namespaces
@@ -148,11 +148,11 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Naming:** `NN-package-diagram.puml`
 
-**Location:** `docs/features/{name}/diagrams/`
+**Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
 ### Sequence Diagram
 
-**Required for:** Features with non-trivial flows (3+ interactions)
+**Required for:** Tasks with non-trivial flows (3+ interactions)
 
 **Shows:**
 - Objects/lifelines
@@ -162,11 +162,11 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Naming:** `NN-sequence-{flow-name}.puml`
 
-**Location:** `docs/features/{name}/diagrams/`
+**Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
 ### State Diagram
 
-**Required for:** Features with state machines (optional otherwise)
+**Required for:** Tasks with state machines (optional otherwise)
 
 **Shows:**
 - States
@@ -176,11 +176,11 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Naming:** `NN-state-{entity-name}.puml`
 
-**Location:** `docs/features/{name}/diagrams/`
+**Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
 ### Entity-Relationship Diagram
 
-**Required for:** Features involving data models (optional otherwise)
+**Required for:** Tasks involving data models (optional otherwise)
 
 **Shows:**
 - Entities
@@ -190,11 +190,11 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Naming:** `NN-erd.puml`
 
-**Location:** `docs/features/{name}/diagrams/`
+**Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
 ### Issue Dependency Diagram
 
-**Required for:** Every feature (generated in Phase 5)
+**Required for:** Every task (generated in Phase 5)
 
 **Shows:**
 - Issues as nodes
@@ -203,17 +203,17 @@ Rel(api, db, "Reads/Writes", "SQL")
 
 **Naming:** `NN-issue-dependencies.puml`
 
-**Location:** `docs/features/{name}/diagrams/`
+**Location:** `flow-storage/tasks/{task-name}/design/diagrams/`
 
 ---
 
 ## Visual-First Design Mode
 
-In design-wizard Phase 2, diagrams come BEFORE text.
+In design-flow Phase 2, diagrams come BEFORE text.
 
 ### Process
 
-1. **Developer describes feature** in 1-2 sentences
+1. **Developer describes task** in 1-2 sentences
 2. **AI generates rough class diagram** (PlantUML)
 3. **Present to developer:** "Does this match your intent?"
 4. **Iterate:**
@@ -221,7 +221,7 @@ In design-wizard Phase 2, diagrams come BEFORE text.
    - AI updates diagram
    - Re-present
 5. **Approval:** Developer accepts diagram
-6. **Generate text:** AI creates DESIGN.md, TDD.md from approved diagram
+6. **Generate text:** AI creates task-design.md, task-technical-design.md from approved diagram
 
 ### Why Visual-First?
 
@@ -257,7 +257,7 @@ AI: Updated diagram v2:
 
 Developer: A
 
-AI: Generating DESIGN.md and TDD.md from approved diagram...
+AI: Generating task-design.md and task-technical-design.md from approved diagram...
 ```
 
 ---
@@ -269,7 +269,7 @@ AI: Generating DESIGN.md and TDD.md from approved diagram...
 - [ ] All classes from design are in diagram
 - [ ] All relationships are shown (inheritance, association, composition)
 - [ ] Multiplicity is specified where meaningful
-- [ ] Methods/attributes relevant to feature are included
+- [ ] Methods/attributes relevant to task are included
 
 ### Clarity
 
@@ -298,9 +298,9 @@ AI: Generating DESIGN.md and TDD.md from approved diagram...
 - **Both source and image are committed.** `.puml` next to `.svg` (or `.png`) in the same `diagrams/` directory.
 - **Mermaid is the exception** — when Mermaid is the chosen format AND the docs are read on a platform that renders Mermaid natively (GitHub, GitLab, Notion), no rendered image is needed because the platform handles it. Outside those platforms, render to SVG/PNG anyway.
 
-### Wizard responsibility
+### Flow responsibility
 
-A wizard that produces diagrams (design-wizard Phase 2, implement-wizard Phase 5 doc-sync, pr-wizard capture mode) is **not done with that phase until rendering succeeds**. If the local toolchain doesn't have the renderer:
+A flow that produces diagrams (design-flow Phase 2, implement-flow Phase 5 doc-sync, pr-flow capture mode) is **not done with that phase until rendering succeeds**. If the local toolchain doesn't have the renderer:
 
 1. Stop the phase. Do not present an [A]ccept gate with unrendered diagrams.
 2. Tell the developer exactly what to install for their platform (commands below).
@@ -315,22 +315,22 @@ Silently producing only `.puml` files is a Rule 4 violation ("diagrams are manda
 ```bash
 # Native package (Manjaro/Arch)
 sudo pacman -S plantuml
-plantuml -tsvg docs/features/{name}/diagrams/*.puml
+plantuml -tsvg flow-storage/tasks/{task-name}/design/diagrams/*.puml
 
 # Native package (Debian/Ubuntu)
 sudo apt install plantuml
-plantuml -tsvg docs/features/{name}/diagrams/*.puml
+plantuml -tsvg flow-storage/tasks/{task-name}/design/diagrams/*.puml
 
 # Native package (macOS)
 brew install plantuml
-plantuml -tsvg docs/features/{name}/diagrams/*.puml
+plantuml -tsvg flow-storage/tasks/{task-name}/design/diagrams/*.puml
 
 # Java + jar (no package install needed; needs Java)
 curl -L -o /tmp/plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
-java -jar /tmp/plantuml.jar -tsvg docs/features/{name}/diagrams/*.puml
+java -jar /tmp/plantuml.jar -tsvg flow-storage/tasks/{task-name}/design/diagrams/*.puml
 
 # Docker (zero local install)
-docker run --rm -v "$PWD:/data" plantuml/plantuml -tsvg docs/features/{name}/diagrams/*.puml
+docker run --rm -v "$PWD:/data" plantuml/plantuml -tsvg flow-storage/tasks/{task-name}/design/diagrams/*.puml
 ```
 
 **D2:**
@@ -351,7 +351,7 @@ After rendering, every `.puml` (or `.d2` / `.mmd`) must have a matching image in
 
 ```bash
 # Quick check — any .puml without a .svg/.png sibling?
-for f in docs/features/*/diagrams/*.puml; do
+for f in flow-storage/tasks/*/diagrams/*.puml; do
   base="${f%.puml}"
   if [ ! -f "${base}.svg" ] && [ ! -f "${base}.png" ]; then
     echo "MISSING IMAGE: $f"
@@ -368,7 +368,7 @@ Re-render on push to keep images in sync with sources:
 - name: Render diagrams
   run: |
     sudo apt-get install -y plantuml
-    plantuml -tsvg docs/features/*/diagrams/*.puml
+    plantuml -tsvg flow-storage/tasks/*/diagrams/*.puml
     # Either commit back via auto-commit action, or fail the build if
     # any .svg is missing (forces local render before push).
 ```
@@ -404,7 +404,7 @@ Diagrams are living documents:
 - Reviewed in PRs
 
 **Update triggers:**
-- Design wizard — Creates initial diagrams
-- Implement wizard — May update sequence diagrams
-- PR wizard, `capture` mode — Updates diagrams with post-merge knowledge
+- Design flow — Creates initial diagrams
+- Implement flow — May update sequence diagrams
+- PR flow, `capture` mode — Updates diagrams with post-merge knowledge
 - Manual edits by developers

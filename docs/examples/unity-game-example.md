@@ -1,6 +1,6 @@
 # Example: Unity Game Workflow
 
-Walkthrough of using magic-seed with a Unity project.
+Walkthrough of using ai-flow-anything with a Unity project.
 
 ---
 
@@ -26,7 +26,7 @@ SpaceDefender/
 ## Step 1: Initialize
 
 ```
-Developer: "Initialize magic-seed for this project"
+Developer: "Initialize ai-flow-anything for this project"
 
 AI: Detecting project type...
     Found: Assets/, *.cs, ProjectSettings/
@@ -42,30 +42,30 @@ AI: Running discovery...
     Async: Coroutines
     Features: Controllers, Models, Views
 
-AI: Generating wizards...
-    ✓ design-wizard.md
-    ✓ implement-wizard.md
-    ✓ pr-wizard.md
-    ✓ test-wizard.md
-    ✓ deploy-wizard.md
-    ✓ docs-wizard.md
+AI: Generating flows...
+    ✓ design-flow.md
+    ✓ implement-flow.md
+    ✓ pr-flow.md
+    ✓ test-flow.md
+    ✓ deploy-flow.md
+    ✓ docs-flow.md
 
 AI: Install complete!
-    Wizards available in .ai-workflow/wizards/
+    Flows available in .ai-workflow/flows/
 ```
 
 ---
 
-## Step 2: Design New Feature
+## Step 2: Design New Task
 
-**Feature:** Shield Power-Up
+**Task:** Shield Power-Up
 
 ```
-Developer: "Design a feature called shield-powerup"
+Developer: "Design a task called shield-powerup"
 
 AI: Phase 1: UNDERSTAND
     Loading SpaceDefender architecture...
-    Found similar features: SpeedBoost, DoubleShot
+    Found similar tasks: SpeedBoost, DoubleShot
     Reading reference implementations...
 
 AI: Phase 2: DESIGN (Visual-First)
@@ -86,9 +86,9 @@ AI: Phase 2: DESIGN (Visual-First)
     Developer: Accept
 
 AI: Phase 3: SPECIFY
-    Creating DESIGN.md...
-    Creating TDD.md...
-    Creating EDGE-CASES.md...
+    Creating task-design.md...
+    Creating task-technical-design.md...
+    Creating task-edge-cases.md...
     
     Developer: Accept
 
@@ -104,7 +104,7 @@ AI: Phase 4: PLAN
 
 AI: Phase 5: FINALIZE
     Design locked!
-    Handing off to implement-wizard...
+    Handing off to implement-flow...
 ```
 
 ---
@@ -112,7 +112,7 @@ AI: Phase 5: FINALIZE
 ## Step 3: Implement
 
 ```
-Developer: "Implement the next issue for shield-powerup"
+Developer: "Implement the next task flow for shield-powerup"
 
 AI: Resuming from first pending issue...
     Issue: model.md
@@ -150,7 +150,7 @@ AI: Committing...
     
 AI: Next issue: controller.md
     
-[Repeat for all issues...]
+[Repeat for all task flows...]
 ```
 
 ---
@@ -175,7 +175,7 @@ Developer: [Creates PR]
 
 [Reviewers comment...]
 
-Developer: "Process PR feedback for shield-powerup" (PR wizard, feedback mode)
+Developer: "Process PR feedback for shield-powerup" (PR flow, feedback mode)
 
 AI: Processing feedback...
     Comment 1: "Shield duration should be configurable"
@@ -193,14 +193,14 @@ AI: Committing fixes...
     
 [PR merged...]
 
-Developer: "Capture lessons from shield-powerup" (PR wizard, capture mode)
+Developer: "Capture lessons from shield-powerup" (PR flow, capture mode)
 
 AI: Capturing knowledge...
     ✓ lessons-learned.md created
     ✓ PATTERNS.md updated (Shield pattern)
     ✓ CONVENTIONS.md updated (null checks)
     
-    Feature complete!
+    Task complete!
 ```
 
 ---
@@ -209,35 +209,39 @@ AI: Capturing knowledge...
 
 **Knowledge Base:**
 ```
-docs/features/shield-powerup/
-├── DESIGN.md (signed off)
-├── TDD.md
-├── EDGE-CASES.md
-├── diagrams/
-│   ├── 01-class-diagram.puml
-│   ├── 02-package-diagram.puml
-│   └── 04-issue-dependencies.puml
-├── issues/
-│   ├── 01-model.md (knowledge record)
-│   ├── 02-controller.md (knowledge record)
-│   ├── 03-view.md (knowledge record)
-│   ├── 04-tests.md (knowledge record)
-│   └── 05-integration.md (knowledge record)
-├── feedback/
-│   ├── feedback-1-review.md
-│   └── feedback-2-review.md
-└── lessons-learned.md
+flow-storage/tasks/shield-powerup/
+├── design/
+│   ├── task-design.md (signed off)
+│   ├── task-technical-design.md
+│   ├── task-edge-cases.md
+│   └── diagrams/
+│       ├── 01-class-diagram.puml
+│       ├── 02-package-diagram.puml
+│       └── 04-task-flow-dependencies.puml
+├── implement/
+│   └── flow-plan/
+│       ├── task-flow-01-model.md (knowledge record)
+│       ├── task-flow-02-controller.md (knowledge record)
+│       ├── task-flow-03-view.md (knowledge record)
+│       ├── task-flow-04-tests.md (knowledge record)
+│       └── task-flow-05-integration.md (knowledge record)
+├── pr/
+│   └── feedback/
+│       ├── feedback-1-review.md
+│       └── feedback-2-review.md
+└── docs/
+    └── lessons-learned.md
 ```
 
 **Project Knowledge Updated:**
-- `docs/project/PATTERNS.md` — Shield pattern added
-- `docs/project/CONVENTIONS.md` — Null check convention added
+- `flow-storage/project/PATTERNS.md` — Shield pattern added
+- `flow-storage/project/CONVENTIONS.md` — Null check convention added
 
 ---
 
 ## Lessons
 
 1. **Visual-first design caught missing component early.**
-2. **Per-issue commits kept history clean.**
-3. **Feedback issues captured review knowledge permanently.**
+2. **Per-task-flow commits kept history clean.**
+3. **Feedback task flows captured review knowledge permanently.**
 4. **Patterns catalog grew — next power-up will be faster.**

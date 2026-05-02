@@ -92,7 +92,7 @@ This project appears to use multiple languages:
   2. JavaScript (40% of files)
   3. Shell (15% of files)
 
-Which is the primary language for new features?
+Which is the primary language for new tasks?
 ```
 
 ---
@@ -251,5 +251,5 @@ Questions for Developer:
 After discovery:
 1. Present summary to developer
 2. Ask clarifying questions
-3. Generate wizards using discovered slots
-4. Write to `.ai-workflow/wizards/`
+3. Generate flows using discovered slots
+4. Write to `.ai-workflow/flows/`

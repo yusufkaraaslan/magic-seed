@@ -1,6 +1,6 @@
 # How to Write Rules
 
-Define project conventions that wizards enforce.
+Define project conventions that flows enforce.
 
 ---
 
@@ -186,7 +186,7 @@ Every schema change requires migration.
 ## Rule Enforcement
 
 Rules are enforced by:
-1. **Wizards** — Check at phase gates
+1. **Flows** — Check at phase gates
 2. **Validators** — Automated checks
 3. **Developer review** — Human verification
 4. **Knowledge base** — Record violations

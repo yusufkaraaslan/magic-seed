@@ -1,21 +1,21 @@
-# magic-seed
+# ai-flow-anything
 
 > **You are the engine.** Read these markdown files, interpret them, and act according to their instructions. No external tools, no CLI, no DSL. Just markdown.
 
-This file is the platform-neutral entry point for magic-seed. Platform wrappers (in `platforms/{tool}/`) point at this file and translate platform-specific triggers (Claude Code skill descriptions, Cursor `.mdc` rules, GitHub Copilot instructions, OpenCode skills, Kimi Code `AGENTS.md`, etc.) into the intents listed below.
+This file is the platform-neutral entry point for ai-flow-anything. Platform wrappers (in `platforms/{tool}/`) point at this file and translate platform-specific triggers (Claude Code skill descriptions, Cursor `.mdc` rules, GitHub Copilot instructions, OpenCode skills, Kimi Code `AGENTS.md`, etc.) into the intents listed below.
 
 ---
 
 ## Supported Actions
 
-magic-seed responds to the following developer intents. Each platform wrapper documents how to invoke them on its tool — but the underlying behavior is the same everywhere.
+ai-flow-anything responds to the following developer intents. Each platform wrapper documents how to invoke them on its tool — but the underlying behavior is the same everywhere.
 
 | Intent | What the AI does |
 |--------|------------------|
-| **Initialize magic-seed for this project** | Detect project type, discover the codebase, ask the developer for missing context, and generate tailored wizards into `.ai-workflow/wizards/`. |
-| **Run a specific wizard** (design, implement, pr, test, deploy, docs) | Load the corresponding wizard file from `.ai-workflow/wizards/` and execute its phases against the named feature. |
-| **Show project workflow status** | Read the knowledge base and report progress across in-flight features and their issues. |
-| **Search the knowledge base** | Query `docs/project/`, `docs/team/`, and `docs/features/` for relevant prior work. |
+| **Initialize ai-flow-anything for this project** | Detect project type, discover the codebase, ask the developer for missing context, and generate tailored flows into `.ai-workflow/flows/`. |
+| **Run a specific flow** (design, implement, pr, test, deploy, docs) | Load the corresponding flow file from `.ai-workflow/flows/` and execute its phases against the named task. |
+| **Show project workflow status** | Read the knowledge base and report progress across in-flight tasks and their task flows. |
+| **Search the knowledge base** | Query `flow-storage/project/`, `flow-storage/team/`, and `flow-storage/tasks/` for relevant prior work. |
 
 When the developer expresses one of these intents — whether through a slash command on a platform that supports them, a natural-language request, or any other channel — the AI follows the workflow described below.
 
@@ -25,7 +25,7 @@ When the developer expresses one of these intents — whether through a slash co
 
 ### Step 0: Identify the Host AI Tool
 
-Before anything else, identify **which AI CLI / IDE the developer is using to invoke magic-seed**. This determines which platform wrapper from `platforms/{tool}/` must be installed in Step 7.
+Before anything else, identify **which AI CLI / IDE the developer is using to invoke ai-flow-anything**. This determines which platform wrapper from `platforms/{tool}/` must be installed in Step 7.
 
 **Do not infer the tool from the model name.** "Kimi" and "Claude" are LLM providers; "OpenCode", "Claude Code", "Cursor", "Kimi-Code CLI", and "GitHub Copilot" are the *tools* — they each have their own discovery convention and install path. A single LLM (e.g. Kimi) can be used inside multiple tools, and each tool needs its own wrapper.
 
@@ -33,15 +33,15 @@ Before anything else, identify **which AI CLI / IDE the developer is using to in
 
 | Signal in project | Likely tool | Wrapper to install |
 |---|---|---|
-| `.opencode/` exists, or developer says "OpenCode" | OpenCode CLI | `platforms/opencode/SKILL.md` → `.opencode/skills/magic-seed/SKILL.md` |
-| `.claude/` exists, or developer says "Claude Code" | Claude Code | `platforms/claude/SKILL.md` → `.claude/skills/magic-seed/SKILL.md` |
-| `.cursor/` exists, or developer says "Cursor" | Cursor | `platforms/cursor/magic-seed.mdc` → `.cursor/rules/magic-seed.mdc` |
+| `.opencode/` exists, or developer says "OpenCode" | OpenCode CLI | `platforms/opencode/SKILL.md` → `.opencode/skills/ai-flow-anything/SKILL.md` |
+| `.claude/` exists, or developer says "Claude Code" | Claude Code | `platforms/claude/SKILL.md` → `.claude/skills/ai-flow-anything/SKILL.md` |
+| `.cursor/` exists, or developer says "Cursor" | Cursor | `platforms/cursor/ai-flow-anything.mdc` → `.cursor/rules/ai-flow-anything.mdc` |
 | `.github/copilot-instructions.md` exists, or developer says "Copilot" | GitHub Copilot | `platforms/github-copilot/copilot-instructions.md` → `.github/copilot-instructions.md` |
 | Developer explicitly says "Kimi-Code CLI" (the tool, not the model) | Kimi-Code CLI | `platforms/kimi-code/AGENTS.md` → `AGENTS.md` |
 
 **If none of these exist or are mentioned, ask the developer explicitly:**
 
-> "Which AI tool will be invoking magic-seed in this project?
+> "Which AI tool will be invoking ai-flow-anything in this project?
 > 1. Claude Code (CLI/IDE)
 > 2. OpenCode CLI
 > 3. Cursor IDE
@@ -78,7 +78,7 @@ Read the detected profile:
 - `profiles/{type}/README.md` — Profile overview and capabilities
 - `profiles/{type}/discovery.md` — Instructions for exploring this project type
 - `profiles/{type}/rules.md` — Profile-specific conventions and guardrails
-- `profiles/{type}/skeletons/*.md` — Wizard templates to fill
+- `profiles/{type}/skeletons/*.md` — Flow templates to fill
 
 ### Step 4: Execute Discovery
 
@@ -89,17 +89,17 @@ Follow `profiles/{type}/discovery.md` instructions. The AI explores the codebase
 
 Record all findings in a slot catalog format.
 
-### Step 5: Generate Wizards
+### Step 5: Generate Flows
 
 For each skeleton in `profiles/{type}/skeletons/`:
 1. Load the skeleton markdown
 2. Fill project-specific slots with discovered values
 3. Apply universal rules + profile rules
-4. Write to `.ai-workflow/wizards/{wizard-name}.md`
+4. Write to `.ai-workflow/flows/{flow-name}.md`
 
 ### Step 6: Review with Developer
 
-Present the generated wizards to the developer:
+Present the generated flows to the developer:
 - Show file list and summaries
 - Highlight key decisions made during generation
 - Offer review options: **[A]ccept / [F]eedback / [R]eject**
@@ -107,7 +107,7 @@ Present the generated wizards to the developer:
 
 ### Step 7: Install
 
-Init is **not just rendering output** — it must persist enough of magic-seed into the project that the *next* AI session can re-enter the workflow without you re-explaining anything. Generate-and-forget breaks the system: the platform wrapper says "Read `instructions.md` before acting on any magic-seed intent," and that file must actually exist locally for that to work.
+Init is **not just rendering output** — it must persist enough of ai-flow-anything into the project that the *next* AI session can re-enter the workflow without you re-explaining anything. Generate-and-forget breaks the system: the platform wrapper says "Read `instructions.md` before acting on any ai-flow-anything intent," and that file must actually exist locally for that to work.
 
 Persist the following into the user's project (in roughly this order):
 
@@ -117,13 +117,13 @@ For each tool identified in Step 0, install the matching wrapper(s) to its canon
 
 | Tool | Source | Destination |
 |---|---|---|
-| OpenCode | `platforms/opencode/SKILL.md` (orchestrator) **plus** all six wizard skill bodies in `platforms/opencode/wizard-skills/{wizard}/SKILL.md` **plus** all six command files in `platforms/opencode/commands/{name}.md` | `.opencode/skills/magic-seed/SKILL.md`, `.opencode/skills/{design,implement,pr,test,deploy,docs}-wizard/SKILL.md`, AND `.opencode/commands/{design,implement,test,pr,deploy,docs}.md` (7 skills + 6 commands = 13 files) |
-| Claude Code | `platforms/claude/SKILL.md` | `.claude/skills/magic-seed/SKILL.md` |
-| Cursor | `platforms/cursor/magic-seed.mdc` | `.cursor/rules/magic-seed.mdc` |
+| OpenCode | `platforms/opencode/SKILL.md` (orchestrator) **plus** all six flow skill bodies in `platforms/opencode/flow-skills/{flow}/SKILL.md` **plus** all six command files in `platforms/opencode/commands/{name}.md` | `.opencode/skills/ai-flow-anything/SKILL.md`, `.opencode/skills/{design,implement,pr,test,deploy,docs}-flow/SKILL.md`, AND `.opencode/commands/{design,implement,test,pr,deploy,docs}.md` (7 skills + 6 commands = 13 files) |
+| Claude Code | `platforms/claude/SKILL.md` | `.claude/skills/ai-flow-anything/SKILL.md` |
+| Cursor | `platforms/cursor/ai-flow-anything.mdc` | `.cursor/rules/ai-flow-anything.mdc` |
 | GitHub Copilot | `platforms/github-copilot/copilot-instructions.md` | `.github/copilot-instructions.md` (append, do not overwrite if file already exists) |
 | Kimi-Code CLI | `platforms/kimi-code/AGENTS.md` | `AGENTS.md` at repo root (append, do not overwrite — see notes in `platforms/kimi-code/README.md`) |
 
-**Why OpenCode installs seven skills plus six commands:** OpenCode has two concepts — *skills* (`.opencode/skills/{name}/SKILL.md`, agent decides via tool call when to load) and *commands* (`.opencode/commands/{name}.md`, user types `/{name}` to invoke directly). They're complementary, not redundant. Skills give the agent strong description-driven matching for natural-language requests; commands give the developer a one-keystroke way to start a wizard without going through the `/skills` picker. Installing only skills leaves the developer with a two-click invocation (`/skills` → pick); installing both gets parity with Claude Code's `/design-wizard <feature>` slash UX. Each command file (~15–25 lines) is a prompt template that loads the matching wizard skill and passes `$ARGUMENTS` as the feature/issue.
+**Why OpenCode installs seven skills plus six commands:** OpenCode has two concepts — *skills* (`.opencode/skills/{name}/SKILL.md`, agent decides via tool call when to load) and *commands* (`.opencode/commands/{name}.md`, user types `/{name}` to invoke directly). They're complementary, not redundant. Skills give the agent strong description-driven matching for natural-language requests; commands give the developer a one-keystroke way to start a flow without going through the `/skills` picker. Installing only skills leaves the developer with a two-click invocation (`/skills` → pick); installing both gets parity with Claude Code's `/design-flow <task>` slash UX. Each command file (~15–25 lines) is a prompt template that loads the matching flow skill and passes `$ARGUMENTS` as the task/task-flow.
 
 Prefer **symlinks** over copies if the OS supports them, so `git pull` in `.ai-workflow/` propagates wrapper updates automatically. Fall back to copy when symlinks aren't available.
 
@@ -133,37 +133,37 @@ The wrapper points at `instructions.md`, and `instructions.md` references `unive
 
 **Layout A — project-level install (self-contained, recommended for most teams):**
 
-Clone or copy the magic-seed core into `.ai-workflow/` so the project owns its own copy:
+Clone or copy the ai-flow-anything core into `.ai-workflow/` so the project owns its own copy:
 
 ```
 .ai-workflow/
-├── instructions.md          ← from magic-seed root
-├── universal/               ← copy of universal/ from magic-seed
+├── instructions.md          ← from ai-flow-anything root
+├── universal/               ← copy of universal/ from ai-flow-anything
 ├── profiles/{detected}/     ← at minimum, the detected profile
-├── wizards/                 ← rendered output (Step 5)
+├── flows/                 ← rendered output (Step 5)
 └── rules.md                 ← project-specific overrides (Step 7.4)
 ```
 
-**Layout B — global install + symlink (only viable when the magic-seed clone is project-private):**
+**Layout B — global install + symlink (only viable when the ai-flow-anything clone is project-private):**
 
-Magic-seed lives once at e.g. `~/tools/magic-seed/`. The project's `.ai-workflow/` symlinks to it:
+Magic-seed lives once at e.g. `~/tools/ai-flow-anything/`. The project's `.ai-workflow/` symlinks to it:
 
 ```bash
-ln -s ~/tools/magic-seed .ai-workflow
-# then write .ai-workflow/wizards/*.md and .ai-workflow/rules.md
+ln -s ~/tools/ai-flow-anything .ai-workflow
+# then write .ai-workflow/flows/*.md and .ai-workflow/rules.md
 ```
 
-⚠️ **Caveat:** the rendered `.ai-workflow/wizards/` and `.ai-workflow/rules.md` are written *into* the global magic-seed clone (since `.ai-workflow/` resolves to that clone). They become uncommitted additions to that clone's working tree, which collides with `git pull` updates and conflates project-specific output with magic-seed core.
+⚠️ **Caveat:** the rendered `.ai-workflow/flows/` and `.ai-workflow/rules.md` are written *into* the global ai-flow-anything clone (since `.ai-workflow/` resolves to that clone). They become uncommitted additions to that clone's working tree, which collides with `git pull` updates and conflates project-specific output with ai-flow-anything core.
 
-This is only safe if **one project owns the magic-seed clone** (e.g. `~/projects/myapp/.magic-seed/` symlinked from `~/projects/myapp/.ai-workflow/`). It does *not* work when multiple projects share `~/tools/magic-seed/` — they'd all write their wizards into the same place.
+This is only safe if **one project owns the ai-flow-anything clone** (e.g. `~/projects/myapp/.ai-flow-anything/` symlinked from `~/projects/myapp/.ai-workflow/`). It does *not* work when multiple projects share `~/tools/ai-flow-anything/` — they'd all write their flows into the same place.
 
 For shared global clones, prefer **Layout A** instead — copy the relevant subset into the project, accept the drift cost, and `git pull` the global clone separately when wrappers/rules update.
 
-If unsure, use Layout A. It survives moves, doesn't depend on a global path, and keeps project output cleanly separated from magic-seed core.
+If unsure, use Layout A. It survives moves, doesn't depend on a global path, and keeps project output cleanly separated from ai-flow-anything core.
 
-#### 7.3 Rendered wizards
+#### 7.3 Rendered flows
 
-Write the wizards generated in Step 5 to `.ai-workflow/wizards/{wizard-name}.md`. These are project-specific renders of the profile skeletons.
+Write the flows generated in Step 5 to `.ai-workflow/flows/{flow-name}.md`. These are project-specific renders of the profile skeletons.
 
 #### 7.4 Project-specific rules
 
@@ -183,54 +183,54 @@ docs/
 ├── team/
 │   ├── onboarding.md
 │   └── workflows.md
-└── features/                ← empty, populated by design-wizard
+└── tasks/                ← empty, populated by design-flow
 ```
 
-Populate `project/*.md` from discovery findings (architecture, naming conventions, ADRs surfaced from existing docs). Leave `features/` empty.
+Populate `project/*.md` from discovery findings (architecture, naming conventions, ADRs surfaced from existing docs). Leave `tasks/` empty.
 
 #### 7.6 Project-level directive (AGENTS.md / CLAUDE.md augmentation)
 
-**Why this step exists:** Most AI tools read project-root files (`AGENTS.md`, `CLAUDE.md`) as default session context, *separately* from the platform skill / wrapper file they may also discover. A platform wrapper alone is not enough — for tools where skills are pull-not-push (OpenCode invokes skills via a `skill` tool call the agent decides whether to make), the agent has no project-level pressure to defer to magic-seed and may just improvise on natural-language requests like "design feature X". The fix is to put a directive in the file the tool *always* reads.
+**Why this step exists:** Most AI tools read project-root files (`AGENTS.md`, `CLAUDE.md`) as default session context, *separately* from the platform skill / wrapper file they may also discover. A platform wrapper alone is not enough — for tools where skills are pull-not-push (OpenCode invokes skills via a `skill` tool call the agent decides whether to make), the agent has no project-level pressure to defer to ai-flow-anything and may just improvise on natural-language requests like "design task X". The fix is to put a directive in the file the tool *always* reads.
 
-**Action:** If `AGENTS.md` or `CLAUDE.md` exists at the project root (or both), append a magic-seed directive section to each. Skip this step for the Kimi-Code CLI install path — there `AGENTS.md` *is* the magic-seed wrapper, the directive is implicit. If neither file exists and the host tool is one that reads them (OpenCode reads `AGENTS.md`, Claude Code reads `CLAUDE.md`), create the file with just the directive.
+**Action:** If `AGENTS.md` or `CLAUDE.md` exists at the project root (or both), append a ai-flow-anything directive section to each. Skip this step for the Kimi-Code CLI install path — there `AGENTS.md` *is* the ai-flow-anything wrapper, the directive is implicit. If neither file exists and the host tool is one that reads them (OpenCode reads `AGENTS.md`, Claude Code reads `CLAUDE.md`), create the file with just the directive.
 
 **Idempotency:** Use a sentinel comment so re-runs don't duplicate. Wrap the directive in:
 
 ```markdown
-<!-- magic-seed-directive-start -->
+<!-- ai-flow-anything-directive-start -->
 ... directive content ...
-<!-- magic-seed-directive-end -->
+<!-- ai-flow-anything-directive-end -->
 ```
 
 On re-init, replace the content between the sentinels rather than appending again.
 
-**Directive content** (paste this verbatim, then customize the rendered wizard table if the project added custom wizards):
+**Directive content** (paste this verbatim, then customize the rendered flow table if the project added custom flows):
 
 ```markdown
-<!-- magic-seed-directive-start -->
-## magic-seed Workflow (Mandatory)
+<!-- ai-flow-anything-directive-start -->
+## ai-flow-anything Workflow (Mandatory)
 
-This project uses **magic-seed** for feature development. Before writing any code for a feature, you MUST run the design-wizard and obtain a signed-off `docs/features/{name}/DESIGN.md`.
+This project uses **ai-flow-anything** for task development. Before writing any code for a task, you MUST run the design-flow and obtain a signed-off `flow-storage/tasks/{task-name}/design/task-design.md`.
 
-When the developer's request matches one of the intents below, load and follow the corresponding wizard from `.ai-workflow/wizards/`. On platforms where wizards are exposed as a skill/tool (OpenCode `skill` tool, Claude Code skill, etc.), invoke that mechanism to load magic-seed before acting.
+When the developer's request matches one of the intents below, load and follow the corresponding flow from `.ai-workflow/flows/`. On platforms where flows are exposed as a skill/tool (OpenCode `skill` tool, Claude Code skill, etc.), invoke that mechanism to load ai-flow-anything before acting.
 
-| Developer says | Wizard |
+| Developer says | Flow |
 |---|---|
-| "design feature X" / "let's design X" | `.ai-workflow/wizards/design-wizard.md` |
-| "implement X" / "next issue" | `.ai-workflow/wizards/implement-wizard.md` |
-| "test X" / "add tests" | `.ai-workflow/wizards/test-wizard.md` |
-| "validate X for PR" / "PR check" | `.ai-workflow/wizards/pr-wizard.md` |
-| "deploy X" / "build" | `.ai-workflow/wizards/deploy-wizard.md` |
-| "update docs" / "docs for X" | `.ai-workflow/wizards/docs-wizard.md` |
+| "design task X" / "let's design X" | `.ai-workflow/flows/design-flow.md` |
+| "implement X" / "next issue" | `.ai-workflow/flows/implement-flow.md` |
+| "test X" / "add tests" | `.ai-workflow/flows/test-flow.md` |
+| "validate X for PR" / "PR check" | `.ai-workflow/flows/pr-flow.md` |
+| "deploy X" / "build" | `.ai-workflow/flows/deploy-flow.md` |
+| "update docs" / "docs for X" | `.ai-workflow/flows/docs-flow.md` |
 
 **Hard rules — do not violate:**
 
-- No feature code without a signed-off `DESIGN.md`. If the developer asks to implement a feature with no prior design, run **design-wizard first** even if they didn't ask for it.
-- Every wizard phase ends with `[A]ccept / [F]eedback / [R]eject`. Never auto-accept. Present the gate to the developer.
+- No task code without a signed-off `task-design.md`. If the developer asks to implement a task with no prior design, run **design-flow first** even if they didn't ask for it.
+- Every flow phase ends with `[A]ccept / [F]eedback / [R]eject`. Never auto-accept. Present the gate to the developer.
 - Universal rules in `.ai-workflow/universal/rules.md` are non-negotiable. Profile rules and `.ai-workflow/rules.md` layer on top.
 
 For the full workflow contract, read `.ai-workflow/instructions.md`.
-<!-- magic-seed-directive-end -->
+<!-- ai-flow-anything-directive-end -->
 ```
 
 **Where this directive lands per host tool:**
@@ -251,22 +251,22 @@ If multiple host tools were chosen in Step 0, write the directive to every appli
 
 Before declaring init complete, confirm every artifact landed. The AI must be able to answer "yes" to all of these:
 
-- [ ] **Wrapper(s) installed** — the file(s) at the destination(s) from the table in Step 7.1 exist and (if symlinks) resolve to the magic-seed source. For OpenCode specifically, verify all **seven** skills are present: `.opencode/skills/{magic-seed,design-wizard,implement-wizard,pr-wizard,test-wizard,deploy-wizard,docs-wizard}/SKILL.md`, AND all **six** commands: `.opencode/commands/{design,implement,test,pr,deploy,docs}.md`. The skills picker should show 7 entries; typing `/` should suggest the 6 commands. Either missing means the install is incomplete.
-- [ ] **`instructions.md` reachable** — either at `.ai-workflow/instructions.md` (Layout A) or via a symlink resolving to magic-seed (Layout B). The wrapper's "Read `instructions.md` before acting" sentence must not be a dangling reference.
+- [ ] **Wrapper(s) installed** — the file(s) at the destination(s) from the table in Step 7.1 exist and (if symlinks) resolve to the ai-flow-anything source. For OpenCode specifically, verify all **seven** skills are present: `.opencode/skills/{ai-flow-anything,design-flow,implement-flow,pr-flow,test-flow,deploy-flow,docs-flow}/SKILL.md`, AND all **six** commands: `.opencode/commands/{design,implement,test,pr,deploy,docs}.md`. The skills picker should show 7 entries; typing `/` should suggest the 6 commands. Either missing means the install is incomplete.
+- [ ] **`instructions.md` reachable** — either at `.ai-workflow/instructions.md` (Layout A) or via a symlink resolving to ai-flow-anything (Layout B). The wrapper's "Read `instructions.md` before acting" sentence must not be a dangling reference.
 - [ ] **`universal/rules.md` reachable** — at `.ai-workflow/universal/rules.md` or via the symlink.
 - [ ] **Detected profile reachable** — at `.ai-workflow/profiles/{detected}/` or via the symlink. At minimum the four files `README.md`, `discovery.md`, `rules.md`, and `skeletons/` must be present.
-- [ ] **Wizards rendered** — `.ai-workflow/wizards/*.md` exists, no leaked `{slot}` placeholders (Rule 12), phase gates `[A]/[F]/[R]` intact.
-- [ ] **Knowledge base scaffold** — `docs/project/`, `docs/team/`, `docs/features/` exist with the expected files.
-- [ ] **Project directive present** — for OpenCode, Claude Code, or Cursor host tools, the matching root file (`AGENTS.md` and/or `CLAUDE.md`) contains the magic-seed directive between `<!-- magic-seed-directive-start -->` and `<!-- magic-seed-directive-end -->` sentinels. Skip for Copilot and Kimi-Code (their wrappers serve this role). Without this, the agent has no project-level pressure to defer to wizards on natural-language requests and may improvise feature work — making the install functionally inert even though all files are in place.
+- [ ] **Flows rendered** — `.ai-workflow/flows/*.md` exists, no leaked `{slot}` placeholders (Rule 12), phase gates `[A]/[F]/[R]` intact.
+- [ ] **Knowledge base scaffold** — `flow-storage/project/`, `flow-storage/team/`, `flow-storage/tasks/` exist with the expected files.
+- [ ] **Project directive present** — for OpenCode, Claude Code, or Cursor host tools, the matching root file (`AGENTS.md` and/or `CLAUDE.md`) contains the ai-flow-anything directive between `<!-- ai-flow-anything-directive-start -->` and `<!-- ai-flow-anything-directive-end -->` sentinels. Skip for Copilot and Kimi-Code (their wrappers serve this role). Without this, the agent has no project-level pressure to defer to flows on natural-language requests and may improvise task work — making the install functionally inert even though all files are in place.
 - [ ] **Smoke test** — re-read the wrapper file you just installed and confirm the path it references (`instructions.md`) resolves. If it doesn't, the install is broken.
 
-If any check fails, fix it before reporting "magic-seed initialized" to the developer. Do not present the install as successful when the next session won't be able to load the workflow.
+If any check fails, fix it before reporting "ai-flow-anything initialized" to the developer. Do not present the install as successful when the next session won't be able to load the workflow.
 
 ---
 
 ## File Reading Order
 
-When acting on any magic-seed intent, read files in this order. Paths are relative to the magic-seed root, which after install is reachable in the user's project via either `.ai-workflow/` (Layout A) or a symlink at `.ai-workflow/` (Layout B). For a fresh init *before* install, read directly from the magic-seed checkout the wrapper points at.
+When acting on any ai-flow-anything intent, read files in this order. Paths are relative to the ai-flow-anything root, which after install is reachable in the user's project via either `.ai-workflow/` (Layout A) or a symlink at `.ai-workflow/` (Layout B). For a fresh init *before* install, read directly from the ai-flow-anything checkout the wrapper points at.
 
 ```
 1. universal/rules.md                    (always)
@@ -333,60 +333,67 @@ If no profile matches, ask the developer:
 > 2. **Create a custom profile** from scratch (I'll guide you)
 > 3. **Extend an existing profile** (closest match: {best-guess})"
 
-If they choose "Create custom," follow `universal/wizard-authoring-guide.md`.
+If they choose "Create custom," follow `universal/flow-authoring-guide.md`.
 
 ---
 
 ## Knowledge Base Integration
 
-After wizard generation, the knowledge base structure is:
+After flow generation, the knowledge base structure is:
 
 ```
-docs/
+flow-storage/
 ├── project/
 │   ├── ARCHITECTURE.md       (created during init)
 │   ├── CONVENTIONS.md        (created during init)
-│   ├── PATTERNS.md           (populated by wizards)
+│   ├── PATTERNS.md           (populated by flows)
 │   └── DECISIONS.md          (ADRs from design phase)
 ├── team/
 │   ├── onboarding.md         (team-specific)
 │   ├── workflows.md          (team-specific)
 │   └── glossary.md           (domain terms)
-└── features/
-    └── {feature-name}/
-        ├── DESIGN.md
-        ├── TDD.md
-        ├── EDGE-CASES.md
-        ├── diagrams/
-        ├── issues/
-        ├── feedback/
-        └── lessons-learned.md
+└── tasks/
+    └── {task-name}/
+        ├── design/                                    # design-flow output
+        │   ├── task-design.md
+        │   ├── task-technical-design.md
+        │   ├── task-edge-cases.md
+        │   └── diagrams/
+        ├── implement/                                 # implement-flow output
+        │   └── flow-plan/
+        │       └── task-flow-{task-flow-name}.md
+        ├── test/                                      # test-flow output
+        ├── pr/                                        # pr-flow output
+        │   └── feedback/
+        ├── deploy/                                    # deploy-flow output
+        └── docs/                                      # docs-flow output
+            └── lessons-learned.md
 ```
 
 ---
 
-## Wizard Execution
+## Flow Execution
 
-When the developer asks to run a wizard against a feature (for example, "design feature my-feature" or "implement the next issue for my-feature"):
+When the developer asks to run a flow against a task (for example, "design task my-task" or "implement the next task flow for my-task"):
 
-1. Read the corresponding wizard file in `.ai-workflow/wizards/` (e.g., `design-wizard.md`)
+1. Read the corresponding flow file in `.ai-workflow/flows/` (e.g., `design-flow.md`)
 2. Follow its instructions step by step
 3. Load project context from the knowledge base
-4. Execute phases, producing the artifacts the wizard specifies
+4. Execute phases, producing the artifacts the flow specifies
 5. Present for developer review at each phase gate
 
-The same pattern applies to all wizard types — design, implement, pr, test, deploy, docs — and to any custom wizards the project has added.
+The same pattern applies to all flow types — design, implement, pr, test, deploy, docs — and to any custom flows the project has added.
 
 ---
 
 ## Customization Points
 
-Users can customize without modifying magic-seed core:
+Users can customize without modifying ai-flow-anything core:
 
 - **`.ai-workflow/rules.md`** — Project-specific rules (merged with universal + profile)
-- **`.ai-workflow/wizards/*.md`** — Custom wizards or overrides
-- **`docs/project/CONVENTIONS.md`** — Team coding standards
-- **`docs/project/PATTERNS.md`** — Reusable patterns discovered by wizards
+- **`.ai-workflow/flows/*.md`** — Custom flows or overrides
+- **`flow-storage/project/CONVENTIONS.md`** — Team coding standards
+- **`flow-storage/project/PATTERNS.md`** — Reusable patterns discovered by flows
 
 ---
 
@@ -396,5 +403,5 @@ Users can customize without modifying magic-seed core:
 - **Never auto-accept.** The AI makes suggestions, the developer decides.
 - **Unlimited iterations.** No maximum review rounds. Quality over speed.
 - **Living documentation.** Docs are updated at every step, never archived.
-- **Diagrams are mandatory.** Minimum class diagram + package diagram per feature.
-- **Knowledge capture.** After every feature, update lessons-learned and patterns catalog.
+- **Diagrams are mandatory.** Minimum class diagram + package diagram per task.
+- **Knowledge capture.** After every task, update lessons-learned and patterns catalog.

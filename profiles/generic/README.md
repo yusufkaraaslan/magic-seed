@@ -31,14 +31,14 @@ This profile **always matches** with low confidence (1/5). It serves as the fall
 
 ## Capabilities
 
-| Wizard | Description |
+| Flow | Description |
 |--------|-------------|
-| **design-wizard** | Feature design with diagrams (class, package, sequence) |
-| **implement-wizard** | Issue-by-issue implementation |
-| **pr-wizard** | PR validation, feedback handling, knowledge capture |
-| **test-wizard** | Test planning and execution |
-| **deploy-wizard** | Release and deployment |
-| **docs-wizard** | Documentation maintenance |
+| **design-flow** | Task design with diagrams (class, package, sequence) |
+| **implement-flow** | Issue-by-issue implementation |
+| **pr-flow** | PR validation, feedback handling, knowledge capture |
+| **test-flow** | Test planning and execution |
+| **deploy-flow** | Release and deployment |
+| **docs-flow** | Documentation maintenance |
 
 ---
 
@@ -74,7 +74,7 @@ This profile **always matches** with low confidence (1/5). It serves as the fall
 The generic profile is designed to be customized. After init:
 
 1. Edit `.ai-workflow/rules.md` to add project-specific conventions
-2. Edit wizard files in `.ai-workflow/wizards/` to add language-specific patterns
+2. Edit flow files in `.ai-workflow/flows/` to add language-specific patterns
 3. Add custom slots by editing the discovery process
 
 See [docs/how-to-customize.md](../docs/how-to-customize.md) for details.
