@@ -39,6 +39,14 @@ Phase 1: UNDERSTAND
 Phase 2: DESIGN (Visual-First)
   → Generate class diagram, package diagram, sequence diagrams as needed
   → Per universal/diagram-standards.md
+  → Render every diagram source to .svg (or .png fallback) — both source
+    and image are committed. An unrendered .puml is not a deliverable
+    (Rule 4 — diagrams mandatory means *visible* diagrams).
+  → If the local toolchain has no renderer (no `plantuml`, no Java+jar,
+    no Docker), STOP the phase. Tell the developer the install command
+    for their OS (see diagram-standards.md "Local Rendering"). Resume
+    after install + render succeeds. Do not present the gate with
+    unrendered diagrams.
   [GATE TYPE B — STANDARD]
 
 Phase 3: SPECIFY
@@ -76,6 +84,13 @@ Phase 5: FINALIZE
     - Anything you'd want to change in DESIGN.md? Now is the only
       time. Post-sign-off changes go in TDD.md only, never DESIGN.md.
     - Diagrams cross-referenced correctly from DESIGN.md?
+    - All diagrams rendered: every `.puml` (or `.d2` / `.mmd`) has a
+      sibling `.svg` or `.png` in the same diagrams/ directory.
+      Run: `for f in docs/features/{name}/diagrams/*.puml; do
+              base="${f%.puml}"; [ -f "${base}.svg" ] || [ -f "${base}.png" ]
+              || echo "MISSING IMAGE: $f"
+            done`
+      Any "MISSING IMAGE" output means render before signing off.
     - All issues from Phase 4 actually written to disk?
     - References section points to real Docs/* files?
 ```

@@ -63,6 +63,7 @@ Every feature design must produce at minimum:
 - User can override per project
 - Diagrams are reviewed alongside text documents
 - Diagrams live in `docs/features/{name}/diagrams/`
+- **Source AND rendered image both required.** Every `.puml` / `.d2` / `.mmd` must have a sibling `.svg` (preferred) or `.png` in the same directory. An unrendered diagram source is not a deliverable — readers shouldn't need to install a renderer locally to see what was designed. Mermaid is exempt only when the docs are read on a Mermaid-rendering platform (GitHub, GitLab, Notion). See `universal/diagram-standards.md` "Rendering" for the install commands.
 
 ---
 

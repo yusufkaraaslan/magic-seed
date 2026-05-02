@@ -289,33 +289,88 @@ AI: Generating DESIGN.md and TDD.md from approved diagram...
 
 ## Rendering
 
+**Diagrams MUST be rendered to images.** A `.puml` (or `.d2`) source file alone is not a deliverable — without a matching rendered image (`.svg` preferred, `.png` fallback) committed alongside, anyone reading the docs has to run a renderer locally to see the diagram. That defeats the purpose of having diagrams in version control.
+
+### Render policy
+
+- **Default output format:** `.svg` (text-based, version-controllable, scales without quality loss, diff-readable)
+- **Fallback:** `.png` if SVG rendering fails or is unsupported by the toolchain
+- **Both source and image are committed.** `.puml` next to `.svg` (or `.png`) in the same `diagrams/` directory.
+- **Mermaid is the exception** — when Mermaid is the chosen format AND the docs are read on a platform that renders Mermaid natively (GitHub, GitLab, Notion), no rendered image is needed because the platform handles it. Outside those platforms, render to SVG/PNG anyway.
+
+### Wizard responsibility
+
+A wizard that produces diagrams (design-wizard Phase 2, implement-wizard Phase 5 doc-sync, pr-wizard capture mode) is **not done with that phase until rendering succeeds**. If the local toolchain doesn't have the renderer:
+
+1. Stop the phase. Do not present an [A]ccept gate with unrendered diagrams.
+2. Tell the developer exactly what to install for their platform (commands below).
+3. After install, re-run rendering and proceed.
+
+Silently producing only `.puml` files is a Rule 4 violation ("diagrams are mandatory") because an unrendered diagram is, in practice, no diagram.
+
 ### Local Rendering
 
-**PlantUML:** Requires Java + PlantUML.jar or server
+**PlantUML** (preferred — most expressive, widely supported):
+
 ```bash
-# Using PlantUML server
-plantuml -tsvg diagrams/*.puml
+# Native package (Manjaro/Arch)
+sudo pacman -S plantuml
+plantuml -tsvg docs/features/{name}/diagrams/*.puml
 
-# Using Docker
-docker run -v $(pwd):/data plantuml/plantuml diagrams/*.puml
+# Native package (Debian/Ubuntu)
+sudo apt install plantuml
+plantuml -tsvg docs/features/{name}/diagrams/*.puml
+
+# Native package (macOS)
+brew install plantuml
+plantuml -tsvg docs/features/{name}/diagrams/*.puml
+
+# Java + jar (no package install needed; needs Java)
+curl -L -o /tmp/plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+java -jar /tmp/plantuml.jar -tsvg docs/features/{name}/diagrams/*.puml
+
+# Docker (zero local install)
+docker run --rm -v "$PWD:/data" plantuml/plantuml -tsvg docs/features/{name}/diagrams/*.puml
 ```
-
-**Mermaid:** Rendered natively by GitHub/GitLab/Notion
 
 **D2:**
 ```bash
-d2 diagrams/*.d2 diagrams/
+# Install: https://d2lang.com/tour/install
+d2 diagrams/feature.d2 diagrams/feature.svg
+```
+
+**Mermaid (when not on a Mermaid-rendering platform):**
+```bash
+# Install: npm i -g @mermaid-js/mermaid-cli
+mmdc -i diagram.mmd -o diagram.svg
+```
+
+### Verification
+
+After rendering, every `.puml` (or `.d2` / `.mmd`) must have a matching image in the same directory:
+
+```bash
+# Quick check — any .puml without a .svg/.png sibling?
+for f in docs/features/*/diagrams/*.puml; do
+  base="${f%.puml}"
+  if [ ! -f "${base}.svg" ] && [ ! -f "${base}.png" ]; then
+    echo "MISSING IMAGE: $f"
+  fi
+done
 ```
 
 ### CI/CD Integration
 
-Generate diagrams in CI:
+Re-render on push to keep images in sync with sources:
+
 ```yaml
-# GitHub Actions example
-- name: Generate Diagrams
+# GitHub Actions
+- name: Render diagrams
   run: |
+    sudo apt-get install -y plantuml
     plantuml -tsvg docs/features/*/diagrams/*.puml
-    # Commit SVGs back to repo or upload as artifacts
+    # Either commit back via auto-commit action, or fail the build if
+    # any .svg is missing (forces local render before push).
 ```
 
 ---
