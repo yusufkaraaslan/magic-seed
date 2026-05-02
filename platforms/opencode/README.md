@@ -4,7 +4,9 @@ Install magic-seed for use with [OpenCode](https://opencode.ai).
 
 ## What gets installed
 
-Seven skills, not one:
+**7 skills + 6 commands = 13 files.** The skills are for agent auto-invocation (description-driven); the commands are for user-typed slash invocation. They complement each other.
+
+### Skills (7)
 
 | Skill | Source | Role |
 |---|---|---|
@@ -16,7 +18,20 @@ Seven skills, not one:
 | `deploy-wizard` | `platforms/opencode/wizard-skills/deploy-wizard/SKILL.md` | Phase: build/export/release |
 | `docs-wizard` | `platforms/opencode/wizard-skills/docs-wizard/SKILL.md` | Phase: knowledge-base maintenance |
 
-Each wizard skill has an imperative description naming its trigger phrases (e.g. design-wizard fires on "design feature X", "let's design X", "plan X"). This makes wizards discoverable in OpenCode's skill picker and gives the agent strong signals about which one to invoke for a given request — without these per-wizard skills, only `magic-seed` shows up in the picker and the agent has no project-level pressure to defer to a specific wizard.
+Each wizard skill has an imperative description naming its trigger phrases. The agent uses these descriptions to decide whether to invoke `skill({ name })` when the user makes a natural-language request like "design feature X."
+
+### Commands (6)
+
+| Command | Source | Invocation |
+|---|---|---|
+| `/design <feature>` | `platforms/opencode/commands/design.md` | Run design-wizard for a feature |
+| `/implement <feature> [issue]` | `platforms/opencode/commands/implement.md` | Implement one issue from a designed feature |
+| `/test [feature]` | `platforms/opencode/commands/test.md` | Run or add tests |
+| `/pr <feature> [mode]` | `platforms/opencode/commands/pr.md` | Pre-PR validation, feedback, or capture |
+| `/deploy [feature]` | `platforms/opencode/commands/deploy.md` | Build verification + smoke test |
+| `/docs [scope]` | `platforms/opencode/commands/docs.md` | Audit/update knowledge base |
+
+Each command is a prompt template that loads the matching wizard skill and passes `$ARGUMENTS` as the feature/issue. Without these, the developer has to either rely on natural-language matching to the skills (works but unreliable) or use `/skills → pick` (two clicks). With commands, `/design board-system` is one keystroke.
 
 ## Install
 
@@ -31,7 +46,7 @@ From your project root:
 ```bash
 git clone https://github.com/yourusername/magic-seed.git .ai-workflow
 
-# Install all seven skills as symlinks (preferred):
+# Install 7 skills + 6 commands as symlinks (preferred):
 for skill in magic-seed design-wizard implement-wizard pr-wizard test-wizard deploy-wizard docs-wizard; do
   mkdir -p ".opencode/skills/$skill"
   if [ "$skill" = "magic-seed" ]; then
@@ -39,6 +54,11 @@ for skill in magic-seed design-wizard implement-wizard pr-wizard test-wizard dep
   else
     ln -s "../../../.ai-workflow/platforms/opencode/wizard-skills/$skill/SKILL.md" ".opencode/skills/$skill/SKILL.md"
   fi
+done
+
+mkdir -p ".opencode/commands"
+for cmd in design implement test pr deploy docs; do
+  ln -s "../../.ai-workflow/platforms/opencode/commands/$cmd.md" ".opencode/commands/$cmd.md"
 done
 ```
 
@@ -52,6 +72,11 @@ for skill in magic-seed design-wizard implement-wizard pr-wizard test-wizard dep
   else
     cp ".ai-workflow/platforms/opencode/wizard-skills/$skill/SKILL.md" ".opencode/skills/$skill/SKILL.md"
   fi
+done
+
+mkdir -p ".opencode/commands"
+for cmd in design implement test pr deploy docs; do
+  cp ".ai-workflow/platforms/opencode/commands/$cmd.md" ".opencode/commands/$cmd.md"
 done
 ```
 
